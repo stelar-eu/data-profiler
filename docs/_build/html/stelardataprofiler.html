@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stelardataprofiler package &mdash; stelardataprofiler  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            stelardataprofiler
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">stelardataprofiler package</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">stelardataprofiler</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">stelardataprofiler package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/stelardataprofiler.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-stelardataprofiler">
+<span id="stelardataprofiler-package"></span><h1>stelardataprofiler package<a class="headerlink" href="#module-stelardataprofiler" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="stelardataprofiler.profiler_timeseries">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profiler_timeseries</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>time_column: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em>, <em>mode: str = 'verbose'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler_timeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for a given timeseries .csv file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_file_path</strong> (<em>str</em>) – the path to a .csv file containing a datetime columns and one/multiple timeseries columns.</li>
+<li><strong>time_column</strong> (<em>str</em>) – the name of the datetime column.</li>
+<li><strong>header</strong> (<em>str</em><em>, </em><em>optional</em>) – row to use to parse column labels. Defaults to the first row. Prior rows will be discarded.</li>
+<li><strong>sep</strong> (<em>str</em><em>, </em><em>optional</em>) – separator character to use for the csv.</li>
+<li><strong>html_path</strong> (<em>str</em><em>, </em><em>optional</em>) – the file path where the html file will be saved.</li>
+<li><strong>display_html</strong> (<em>bool</em><em>, </em><em>optional</em>) – a boolean that determines whether the html will be displayed in the output.</li>
+<li><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – ‘default’ -&gt; calculate tsfresh features for the timeseries and use them as variables (useful if many timeseries columns), ‘verbose’ -&gt; use the timeseries as variables.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the timeseries data.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profiler_tabular">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profiler_tabular</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>crs: str = 'EPSG:4326'</em>, <em>longitude_column: str = None</em>, <em>latitude_column: str = None</em>, <em>wkt_column: str = None</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler_tabular" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for a given tabular .csv or .shp file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_file_path</strong> (<em>str</em>) – the path to a .csv or .shp file containing different data types of columns.</li>
+<li><strong>header</strong> (<em>str</em><em>, </em><em>optional</em>) – row to use to parse column labels. Defaults to the first row. Prior rows will be discarded.</li>
+<li><strong>sep</strong> (<em>str</em><em>, </em><em>optional</em>) – separator character to use for the csv.</li>
+<li><strong>crs</strong> (<em>str</em><em>, </em><em>optional</em>) – the Coordinate Reference System (CRS) represented as an authority string (eg “EPSG:4326”).</li>
+<li><strong>longitude_column</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the longitude column.</li>
+<li><strong>latitude_column</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the latitude column.</li>
+<li><strong>wkt_column</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the column that has wkt geometries.</li>
+<li><strong>html_path</strong> (<em>str</em><em>, </em><em>optional</em>) – the file path where the html file will be saved.</li>
+<li><strong>display_html</strong> (<em>bool</em><em>, </em><em>optional</em>) – a boolean that determines whether the html will be displayed in the output.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the tabular data.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_raster">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_raster</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profile_raster" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for either a single image or many images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_path</strong> (<em>str</em>) – the path to either an image file or a folder that has image files.</li>
+<li><strong>image_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the images that exist in the folder if the given path is a folder path.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the image or images.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_textual">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_textual</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span><a class="headerlink" href="#stelardataprofiler.profile_textual" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for either a single text or many texts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_path</strong> (<em>str</em>) – the path to either a text file or a folder that has text files.</li>
+<li><strong>text_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the texts that exist in the folder if the given path is a folder path.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the text or texts.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_hierarchical">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_hierarchical</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profile_hierarchical" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for a given json file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>my_file_path</strong> (<em>str</em>) – the path to a json file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict which contains the results of the profiler for the json.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_rdfGraph">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_rdfGraph</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>parse_format: str = 'application/rdf+xml'</em><span class="sig-paren">)</span><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for a given rdf file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_file_path</strong> (<em>str</em>) – the path to a rdf file.</li>
+<li><strong>parse_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the format of the rdf file. (see rdflib package to find the available formats e.g. ‘turtle’, ‘application/rdf+xml’, ‘n3’, ‘nt’, etc.)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the rdf.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_single_raster">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_single_raster</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profile_single_raster" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for an image file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>my_file_path</strong> (<em>str</em>) – the path to an image file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict which contains the results of the profiler for the image.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_multiple_rasters">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_multiple_rasters</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profile_multiple_rasters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for the image files that exist in the given folder path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_folder_path</strong> (<em>str</em>) – the path to a folder that has image files.</li>
+<li><strong>image_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the images that exist in the given folder path.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the images.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_single_text">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_single_text</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profile_single_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for a text file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>my_file_path</strong> (<em>str</em>) – the path to a text file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict which contains the results of the profiler for the text.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_multiple_texts">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_multiple_texts</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profile_multiple_texts" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for the text files that exist in the given folder path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>my_folder_path</strong> (<em>str</em>) – the path to a folder that has text files.</li>
+<li><strong>text_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the texts that exist in the given folder path.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the texts.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.write_to_json">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">write_to_json</code><span class="sig-paren">(</span><em>output_dict: dict, output_file: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#stelardataprofiler.write_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the profile dictionary to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_dict</strong> (<em>dict</em>) – the profile dictionary that will writen.</li>
+<li><strong>output_file</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – The name or the path of the file to generate including the extension (.json).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the texts.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Panos Betchavas.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
