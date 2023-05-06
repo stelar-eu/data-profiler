@@ -1,7 +1,6 @@
 import sys
 import os
 
-sys.path.append('..')
 from pandas_profiling import ProfileReport
 from pandas_profiling.model.typeset import ProfilingTypeSet
 from pandas_profiling.config import Settings
@@ -23,7 +22,6 @@ from stelardataprofiler.profile_notebook import __get_notebook_iframe
 import yaml
 from sklearn.cluster import DBSCAN
 from datetime import datetime
-from rasterio.transform import from_origin
 import rasterio as rio
 from scipy import stats
 import dateutil.parser
@@ -863,6 +861,14 @@ def profile_single_text(my_file_path: str) -> dict:
 
         # Find languages
         nlp = spacy.load('en_core_web_sm')
+        try:
+            nlp = spacy.load('en_core_web_sm')
+        except OSError:
+            print('Downloading language model for the spaCy POS tagger\n'
+                  "(don't worry, this will only happen once)", file=stderr)
+            from spacy.cli import download
+            download('en')
+            nlp = spacy.load('en_core_web_sm')
         if not Language.has_factory("language_detector"):
             Language.factory("language_detector", func=__get_lang_detector)
         nlp.add_pipe('language_detector', last=True)
@@ -1391,7 +1397,14 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = '.txt') -> di
                     profile_dict['table']['ratio_special_characters'] += ratioSpecialChars
 
                     # Find languages
-                    nlp = spacy.load('en_core_web_sm')
+                    try:
+                        nlp = spacy.load('en_core_web_sm')
+                    except OSError:
+                        print('Downloading language model for the spaCy POS tagger\n'
+                              "(don't worry, this will only happen once)", file=stderr)
+                        from spacy.cli import download
+                        download('en')
+                        nlp = spacy.load('en_core_web_sm')
                     if not Language.has_factory("language_detector"):
                         Language.factory("language_detector", func=__get_lang_detector)
                     nlp.add_pipe('language_detector', last=True)
