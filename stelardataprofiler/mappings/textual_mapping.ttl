@@ -1,0 +1,686 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <http://schema.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix locn: <http://www.w3.org/ns/locn#> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix iana: <https://www.iana.org/assignments/media-types/application/> .
+@prefix klms: <http://stelar-project.eu/klms#> .
+
+@prefix fnml: <http://semweb.mmlab.be/ns/fnml#> .
+@prefix fno: <https://w3id.org/function/ontology#> .
+@prefix idlab-fn: <http://example.com/idlab/function/> .
+@prefix grel: <http://users.ugent.be/~bjdmeest/function/grel.ttl#> .
+
+@base <http://stelar-project.eu/klms#> .
+
+
+<TextualProfilerMapping> a rr:TriplesMap;
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$"
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class dcat:Distribution ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ];
+
+
+  rr:predicateObjectMap [
+    rr:predicate klms:profileURL ;
+    rr:objectMap [
+      rr:parentTriplesMap <TextualProfile>
+	  ]
+	].
+
+
+<TextualProfile>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "profile/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:Textual ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:language;
+    rr:objectMap [
+      rml:reference "language";
+      rr:datatype xsd:string ;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:numWords;
+    rr:objectMap [
+      rml:reference "num_words";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:numDistinctWords;
+    rr:objectMap [
+      rml:reference "num_distinct_words";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:numSentences;
+    rr:objectMap [
+      rml:reference "num_sentences";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:numCharacters;
+    rr:objectMap [
+      rml:reference "num_characters";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:ratioUppercase;
+    rr:objectMap [
+      rml:reference "ratio_uppercase";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:ratioDigits;
+    rr:objectMap [
+      rml:reference "ratio_digits";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:ratioSpecialChars;
+    rr:objectMap [
+      rml:reference "ratio_special_characters";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate klms:languageDistribution;
+    rr:objectMap [
+      rr:parentTriplesMap <LanguageDistribution>;
+      rr:joinCondition [
+        rr:child "name";
+        rr:parent "name";
+        ];
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate klms:specialCharsDistribution;
+    rr:objectMap [
+      rr:parentTriplesMap <SpecialCharsDistribution>;
+      rr:joinCondition [
+        rr:child "name";
+        rr:parent "name";
+        ];
+    ]
+  ];
+
+
+  rr:predicateObjectMap [
+    rr:predicate klms:sentenceLengthDistribution;
+    rr:objectMap [
+      rr:parentTriplesMap <SentenceLengthDistribution>;
+      rr:joinCondition [
+        rr:child "name";
+        rr:parent "name";
+        ];
+     ]
+   ];
+
+  rr:predicateObjectMap [
+    rr:predicate klms:wordLengthDistribution;
+    rr:objectMap [
+      rr:parentTriplesMap <WordLengthDistribution>;
+      rr:joinCondition [
+        rr:child "name";
+        rr:parent "name";
+        ];
+     ]
+   ];
+
+
+  rr:predicateObjectMap [
+    rr:predicate dct:type;
+    rr:objectMap [
+      rml:reference "profiler_type";
+      rr:language "en";
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate dcat:byteSize ;
+    rr:objectMap [
+      rml:reference "byte_size";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ].
+
+
+
+<LanguageDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "categorical_distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:CategoricalDistribution ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate klms:contains;
+    rr:objectMap [
+      rr:parentTriplesMap <LanguageValues>
+	  ]
+  ].
+
+
+<LanguageValues>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*].language_distribution[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "category/" ]  # kv_pair
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:Category;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+   rr:predicateObjectMap [
+    rr:predicate klms:name;
+    rr:objectMap [
+      rml:reference "language";
+      rr:termType rr:Literal ;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentage;   # NOT in the ontology; use "count" instead?
+    rr:objectMap [
+      rml:reference "percentage";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ].
+
+
+
+<SpecialCharsDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "categorical_distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:CategoricalDistribution ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate klms:contains;
+    rr:objectMap [
+      rr:parentTriplesMap <SpecialCharValueDistribution>
+	  ]
+  ].
+
+
+<SpecialCharValueDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*].special_characters_distribution[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "category/" ]  # kv_pair
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:Category;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+   rr:predicateObjectMap [
+    rr:predicate klms:name;
+    rr:objectMap [
+      rml:reference "type";
+      rr:termType rr:Literal ;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:count;
+    rr:objectMap [
+      rml:reference "count";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ].
+
+
+
+<SentenceLengthDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "numerical_distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:NumericalDistribution ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+   rr:predicateObjectMap [
+    rr:predicate klms:count;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.count";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:min;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.min";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:max;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.max";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:average;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.average";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:stddev;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.stddev";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:variance;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.variance";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:kurtosis;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.kurtosis";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:skewness;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.skewness";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile10;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.percentile10";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile25;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.percentile25";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile75;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.percentile75";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile90;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.percentile90";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:median;
+    rr:objectMap [
+      rml:reference "sentence_length_distribution.median";
+      rr:datatype xsd:decimal;
+    ]
+  ].
+
+
+<WordLengthDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "numerical_distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:NumericalDistribution ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+   rr:predicateObjectMap [
+    rr:predicate klms:count;
+    rr:objectMap [
+      rml:reference "word_length_distribution.count";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:min;
+    rr:objectMap [
+      rml:reference "word_length_distribution.min";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:max;
+    rr:objectMap [
+      rml:reference "word_length_distribution.max";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:average;
+    rr:objectMap [
+      rml:reference "word_length_distribution.average";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:stddev;
+    rr:objectMap [
+      rml:reference "word_length_distribution.stddev";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:variance;
+    rr:objectMap [
+      rml:reference "word_length_distribution.variance";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:kurtosis;
+    rr:objectMap [
+      rml:reference "word_length_distribution.kurtosis";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:skewness;
+    rr:objectMap [
+      rml:reference "word_length_distribution.skewness";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile10;
+    rr:objectMap [
+      rml:reference "word_length_distribution.percentile10";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile25;
+    rr:objectMap [
+      rml:reference "word_length_distribution.percentile25";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile75;
+    rr:objectMap [
+      rml:reference "word_length_distribution.percentile75";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile90;
+    rr:objectMap [
+      rml:reference "word_length_distribution.percentile90";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:median;
+    rr:objectMap [
+      rml:reference "word_length_distribution.median";
+      rr:datatype xsd:decimal;
+    ]
+  ].
+

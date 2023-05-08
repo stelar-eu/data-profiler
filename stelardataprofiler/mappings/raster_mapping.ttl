@@ -1,0 +1,358 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <http://schema.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix locn: <http://www.w3.org/ns/locn#> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix iana: <https://www.iana.org/assignments/media-types/application/> .
+@prefix klms: <http://stelar-project.eu/klms#> .
+
+@prefix fnml: <http://semweb.mmlab.be/ns/fnml#> .
+@prefix fno: <https://w3id.org/function/ontology#> .
+@prefix idlab-fn: <http://example.com/idlab/function/> .
+@prefix grel: <http://users.ugent.be/~bjdmeest/function/grel.ttl#> .
+
+@base <http://stelar-project.eu/klms#> .
+
+
+<RasterProfilerMapping> a rr:TriplesMap;
+  rml:logicalSource [
+    rml:source "./out/profile.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$"
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class dcat:Distribution ;
+#    rr:termType rr:BlankNode ; # If BlankNode should be assigned 
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate klms:profileURL ;
+    rr:objectMap [
+      rr:parentTriplesMap <RasterProfile>;
+    ]
+  ].
+
+
+<RasterProfile>
+  rml:logicalSource [
+    rml:source "./out/profile.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.variables[*]" ;
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "profile/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:Raster ;
+#    rr:termType rr:BlankNode ; # If BlankNode should be assigned 
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:name ;
+    rr:objectMap [
+      rml:reference "name" ;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:width ;
+    rr:objectMap [
+      rml:reference "width" ;
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:height ;
+    rr:objectMap [
+      rml:reference "height" ;
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:crs ;
+    rr:objectMap [
+      rml:reference "crs" ;  # should be EPSG code
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate dct:temporal ;  #  temporal coverage
+    rr:objectMap [
+      rml:reference "date" ;
+      rr:datatype xsd:dateTime ;   # should be dcterms:PeriodOfTime 
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate dcat:temporalResolution ;   # temporal resolution
+    rr:objectMap [
+      rml:reference "temporal_resolution" ;   # should be xsd:duration
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate locn:geometry ;   # spatial coverage (expressed as a non-rectilinear polygon, not a bounding box)
+    rr:objectMap [
+      rml:reference "spatial_coverage" ;
+      rr:datatype geo:wktLiteral ;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate dcat:spatialResolutionInMeters ;  # spatial resolution (in meters)
+    rr:objectMap [
+      rml:reference "spatial_resolution.pixel_size_x" ;
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate klms:contains ;
+    rr:objectMap [
+      rr:parentTriplesMap <Band> ;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate dct:type ;
+    rr:objectMap [
+      rml:reference "profiler_type" ;
+      rr:language "en"
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate dct:format ;
+    rr:objectMap [
+      rml:reference "format";   # dcat:mediaType should be used if the type of the distribution is defined by IANA
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate dcat:byteSize ;
+    rr:objectMap [
+      rml:reference "byte_size";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ].
+
+
+<Band>
+  rml:logicalSource [
+    rml:source "./out/profile.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.variables[*].bands[*]" ;
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "attribute/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:Attribute ;
+#    rr:termType rr:BlankNode ; # If BlankNode should be assigned 
+  ] ;
+
+   rr:predicateObjectMap [
+    rr:predicate dct:title ;
+    rr:objectMap [
+      rml:reference "name" ;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate klms:valueDistribution;
+    rr:objectMap [
+      rr:parentTriplesMap <NumericalValueDistribution>;
+      rr:joinCondition [
+        rr:child "uuid";
+        rr:parent "uuid";
+      ];
+    ]
+  ].
+
+
+<NumericalValueDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*].bands[*]";
+  ];
+
+  rr:subjectMap [
+    rr:template "http://stelar-project.eu/klms#numerical_distribution/{uuid}";
+    rr:class klms:NumericalDistribution ;
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:count;
+    rr:objectMap [
+      rml:reference "count";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:min;
+    rr:objectMap [
+      rml:reference "min";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:max;
+    rr:objectMap [
+      rml:reference "max";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:average;
+    rr:objectMap [
+      rml:reference "average";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:stddev;
+    rr:objectMap [
+      rml:reference "stddev";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:variance;
+    rr:objectMap [
+      rml:reference "variance";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:kurtosis;
+    rr:objectMap [
+      rml:reference "kurtosis";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:skewness;
+    rr:objectMap [
+      rml:reference "skewness";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile10;
+    rr:objectMap [
+      rml:reference "percentile10";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile25;
+    rr:objectMap [
+      rml:reference "percentile25";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile75;
+    rr:objectMap [
+      rml:reference "percentile75";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentile90;
+    rr:objectMap [
+      rml:reference "percentile90";
+      rr:datatype xsd:decimal;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:median;
+    rr:objectMap [
+      rml:reference "median";
+      rr:datatype xsd:decimal;
+    ]
+  ].
+
