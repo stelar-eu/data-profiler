@@ -74,8 +74,8 @@
   <div class="section" id="module-stelardataprofiler.profiler">
 <span id="stelardataprofiler-package"></span><h1>stelardataprofiler package<a class="headerlink" href="#module-stelardataprofiler.profiler" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profiler_timeseries">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profiler_timeseries</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>time_column: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em>, <em>mode: str = 'verbose'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler.profiler_timeseries" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profiler.profile_timeseries">
+<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_timeseries</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>time_column: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em>, <em>mode: str = 'verbose'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler.profile_timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given timeseries .csv file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -103,8 +103,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profiler_tabular">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profiler_tabular</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>crs: str = 'EPSG:4326'</em>, <em>longitude_column: str = None</em>, <em>latitude_column: str = None</em>, <em>wkt_column: str = None</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler.profiler_tabular" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profiler.profile_tabular">
+<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_tabular</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>crs: str = 'EPSG:4326'</em>, <em>longitude_column: str = None</em>, <em>latitude_column: str = None</em>, <em>wkt_column: str = None</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler.profile_tabular" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given tabular .csv or .shp file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -158,8 +158,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_textual">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_textual</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span><a class="headerlink" href="#stelardataprofiler.profiler.profile_textual" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profiler.profile_text">
+<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_text</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span><a class="headerlink" href="#stelardataprofiler.profiler.profile_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for either a single text or many texts.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -285,7 +285,7 @@
 
 <dl class="function">
 <dt id="stelardataprofiler.profiler.profile_multiple_texts">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_multiple_texts</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler.profile_multiple_texts" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_multiple_texts</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>text_format: str = 'txt'</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#stelardataprofiler.profiler.profile_multiple_texts" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for the text files that exist in the given folder path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

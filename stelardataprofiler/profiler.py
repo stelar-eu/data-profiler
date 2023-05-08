@@ -1,6 +1,10 @@
-import sys
 import os
-
+import warnings
+from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 from pandas_profiling import ProfileReport
 from pandas_profiling.model.typeset import ProfilingTypeSet
 from pandas_profiling.config import Settings
@@ -26,7 +30,6 @@ import rasterio as rio
 from scipy import stats
 import dateutil.parser
 import json
-import warnings
 from pathlib import Path
 from typing import Union, Any
 from IPython.display import display
@@ -58,7 +61,7 @@ import uuid
 import re
 from rasterio.warp import transform_bounds
 
-__all__ = ['profiler_timeseries', 'profiler_tabular', 'profile_raster', 'profile_textual',
+__all__ = ['profile_timeseries', 'profile_tabular', 'profile_raster', 'profile_text',
            'profile_hierarchical', 'profile_rdfGraph', 'profile_single_raster',
            'profile_multiple_rasters', 'profile_single_text', 'profile_multiple_texts',
            'write_to_json']
@@ -73,8 +76,8 @@ tsfresh_json_file = str(
 
 
 # ------------ TIMESERIES ------------#
-def profiler_timeseries(my_file_path: str, time_column: str, header: int = 0, sep: str = ',',
-                        html_path: str = '', display_html: bool = False, mode: str = 'verbose') -> dict:
+def profile_timeseries(my_file_path: str, time_column: str, header: int = 0, sep: str = ',',
+                       html_path: str = '', display_html: bool = False, mode: str = 'verbose') -> dict:
     """
     This method performs profiling and generates a profiling dictionary for a given timeseries .csv file that exists in the given path.
 
@@ -96,8 +99,8 @@ def profiler_timeseries(my_file_path: str, time_column: str, header: int = 0, se
     :rtype: dict
 
     """
-    profile_dict, config, html_dict, sample_timeseries = __profiler_timeseries_main(my_file_path, time_column, header,
-                                                                                    sep, mode=mode, minimal=True)
+    profile_dict, config, html_dict, sample_timeseries = __profile_timeseries_main(my_file_path, time_column, header,
+                                                                                   sep, mode=mode, minimal=True)
 
     if html_path.strip() or display_html:
         html_report = __get_html_report(config, html_dict, sample_timeseries)
@@ -116,9 +119,9 @@ def profiler_timeseries(my_file_path: str, time_column: str, header: int = 0, se
 
 
 # -------------- TABULAR + VECTOR --------------#
-def profiler_tabular(my_file_path: str, header: int = 0, sep: str = ',', crs: str = "EPSG:4326",
-                     longitude_column: str = None, latitude_column: str = None,
-                     wkt_column: str = None, html_path: str = '', display_html: bool = False) -> dict:
+def profile_tabular(my_file_path: str, header: int = 0, sep: str = ',', crs: str = "EPSG:4326",
+                    longitude_column: str = None, latitude_column: str = None,
+                    wkt_column: str = None, html_path: str = '', display_html: bool = False) -> dict:
     """
     This method performs profiling and generates a profiling dictionary for a given tabular .csv or .shp file that exists in the given path.
 
@@ -144,10 +147,10 @@ def profiler_tabular(my_file_path: str, header: int = 0, sep: str = ',', crs: st
     :rtype: dict
 
     """
-    profile_dict, config, html_dict = __profiler_tabular_main(my_file_path=my_file_path, header=header,
-                                                              sep=sep, longitude_column=longitude_column,
-                                                              latitude_column=latitude_column, wkt_column=wkt_column,
-                                                              minimal=True)
+    profile_dict, config, html_dict = __profile_tabular_main(my_file_path=my_file_path, header=header,
+                                                             sep=sep, longitude_column=longitude_column,
+                                                             latitude_column=latitude_column, wkt_column=wkt_column,
+                                                             minimal=True)
 
     if html_path.strip() or display_html:
         html_report = __get_html_report(config, html_dict, None)
@@ -379,7 +382,7 @@ def profile_multiple_rasters(my_folder_path: str, image_format: str = '.tif') ->
     profile_dict['analysis']['date_start'] = start_string
 
     for image in os.listdir(my_folder_path):
-        if image.endswith(image_format):
+        if image.lower().endswith(image_format.lower()):
             my_file_path = my_folder_path + '/' + image
 
             profile_dict['analysis']['filenames'].append(my_file_path)
@@ -608,7 +611,6 @@ def profile_single_text(my_file_path: str) -> dict:
     :rtype: dict
 
     """
-
     # Used in language detection
     def __get_lang_detector(nlp, name):
         return LanguageDetector(seed=2023)
@@ -860,12 +862,11 @@ def profile_single_text(my_file_path: str) -> dict:
         profile_dict['table']['ratio_special_characters'] = text_dict['ratio_special_characters']
 
         # Find languages
-        nlp = spacy.load('en_core_web_sm')
         try:
             nlp = spacy.load('en_core_web_sm')
         except OSError:
             print('Downloading language model for the spaCy POS tagger\n'
-                  "(don't worry, this will only happen once)", file=stderr)
+                  "(don't worry, this will only happen once)")
             from spacy.cli import download
             download('en')
             nlp = spacy.load('en_core_web_sm')
@@ -1117,7 +1118,7 @@ def profile_single_text(my_file_path: str) -> dict:
 
 
 # ----------- MULTIPLE TEXTS -----------#
-def profile_multiple_texts(my_folder_path: str, text_format: str = '.txt') -> dict:
+def profile_multiple_texts(my_folder_path: str, text_format: str = 'txt') -> dict:
     """
     This method performs profiling and generates a profiling dictionary for the text files that exist in the given folder path.
 
@@ -1129,6 +1130,7 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = '.txt') -> di
     :rtype: dict
 
     """
+
     # Used in language detection
     def __get_lang_detector(nlp, name):
         return LanguageDetector(seed=2023)
@@ -1301,7 +1303,7 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = '.txt') -> di
     }
 
     for text_file in os.listdir(my_folder_path):
-        if text_file.endswith(text_format):
+        if text_file.lower().endswith(text_format.lower()):
             filepath = my_folder_path + '/' + text_file
             profile_dict['analysis']['filenames'].append(filepath)
             with open(filepath, 'r+') as text:
@@ -1401,7 +1403,7 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = '.txt') -> di
                         nlp = spacy.load('en_core_web_sm')
                     except OSError:
                         print('Downloading language model for the spaCy POS tagger\n'
-                              "(don't worry, this will only happen once)", file=stderr)
+                              "(don't worry, this will only happen once)")
                         from spacy.cli import download
                         download('en')
                         nlp = spacy.load('en_core_web_sm')
@@ -1705,7 +1707,7 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = '.txt') -> di
 
 
 # ----------- MAIN FUNCTION ----------#
-def profile_textual(my_path: str, text_format: str = '.txt'):
+def profile_text(my_path: str, text_format: str = '.txt'):
     """
     This method performs profiling and generates a profiling dictionary for either a single text or many texts.
 
@@ -1844,6 +1846,7 @@ def profile_rdfGraph(my_file_path: str, parse_format: str = 'application/rdf+xml
     :rtype: dict
 
     """
+
     # Calculate the number of nodes
     def __calc_num_nodes(g: Graph):
         return len(g.all_nodes())
@@ -2099,7 +2102,8 @@ def profile_rdfGraph(my_file_path: str, parse_format: str = 'application/rdf+xml
     nx_g = rdflib_to_networkx_multidigraph(g)
 
     # Number of connected components + List of connected components
-    profile_dict['table']['num_connected_components'], profile_dict['table']['connected_components'] = __calc_cc_features(
+    profile_dict['table']['num_connected_components'], profile_dict['table'][
+        'connected_components'] = __calc_cc_features(
         nx_g)
 
     # Density
@@ -2191,8 +2195,8 @@ def __read_files(my_file, header=None, sep=',', encoding='UTF-8'):
     return df
 
 
-def __profiler_timeseries_main(my_file_path: str, time_column: str, header: int = 0,
-                               sep: str = ',', mode: str = "default", minimal: bool = True):
+def __profile_timeseries_main(my_file_path: str, time_column: str, header: int = 0,
+                              sep: str = ',', mode: str = "default", minimal: bool = True):
     df = __read_files(my_file_path, header, sep)
     df[time_column] = pd.to_datetime(df[time_column])
     if minimal:
@@ -2611,9 +2615,9 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
     return profile_dict
 
 
-def __profiler_tabular_main(my_file_path: str, header: int = 0, sep: str = ',', crs: str = "EPSG:4326",
-                            longitude_column: str = None,
-                            latitude_column: str = None, wkt_column: str = None, minimal: bool = True):
+def __profile_tabular_main(my_file_path: str, header: int = 0, sep: str = ',', crs: str = "EPSG:4326",
+                           longitude_column: str = None,
+                           latitude_column: str = None, wkt_column: str = None, minimal: bool = True):
     if my_file_path.__contains__('.shp'):
         pois = gp.read_file(my_file_path)
         crs = pois.crs

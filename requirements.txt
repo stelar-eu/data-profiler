@@ -1,6 +1,6 @@
-DataProfiler==0.8.8
-notebook==6.4.5
 jupyter==1.0.0
+DataProfiler==0.8.9
+notebook==6.4.5
 PyYAML==6.0
 tqdm==4.64.1
 Jinja2==3.0.1

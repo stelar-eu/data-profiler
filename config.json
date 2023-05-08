@@ -1,0 +1,30 @@
+{
+	"input": {
+		"path": "datasets/tabular/csv",
+		"file": "tabular_vector_example.csv",
+		"format": ".csv",
+		"_COMMENT_format_options_" : [".csv", ".txt", ".tif", ".rdf", "..."],
+		"separator": "|",
+		"header": 0,
+		"serialization" : "turtle",
+		"_COMMENT_serialization_options_" : ["application/rdf+xml (DEFAULT)", "nquads", "nquads", "turtle", "ntriples", "trig", "trix", "jsonld", "hdt", "..."],
+		"columns" : {	
+			"longitude": "lon",
+			"latitude": "lat",
+			"wkt": "wkt",
+			"time": "date" 
+		}
+	},
+	"output": {
+		"path": "output",
+		"json": "json/tabular_vector_profile.json",
+		"html": "html/tabular_vector_profile.html",
+		"rdf": "results.rdf",
+		"serialization" : "nquads",
+		"_COMMENT_serialization_options_" : ["nquads (DEFAULT)", "turtle", "ntriples", "trig", "trix", "jsonld", "hdt"]
+	},
+	"profile": {
+		"type": "tabular",
+        "_COMMENT_profile_type_options_" : ["timeseries", "tabular", "raster", "textual", "hierarchical", "rdfGraph"]
+	}
+}
