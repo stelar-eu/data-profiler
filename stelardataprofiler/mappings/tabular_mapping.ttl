@@ -824,7 +824,7 @@
   ] ;
 
    rr:predicateObjectMap [
-    rr:predicate dct:title ;
+    rr:predicate klms:name ;
     rr:objectMap [
       rml:reference "type";
     ]
@@ -835,6 +835,14 @@
     rr:objectMap [
       rml:reference "count";
       rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentage;
+    rr:objectMap [
+      rml:reference "percentage";
+      rr:datatype xsd:decimal;
     ]
   ].
 
