@@ -43,6 +43,18 @@ profiler-mappings config.json
 ```
 > **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config.json and change the 'path' parameters of the config.json to correctly take the input and write the output.
 
+### Apply mappings to generate RDF graph
+
+Predefined mappings for profiles of the various types of datasets can be used to generate an RDF graph with the profiling information. 
+The customized mappings are expressed in the RDF Mapping language (RML) and can be used to transform the JSON profile into various serializations in RDF, as specified by the user in a configuration.
+To apply such mappings, you need to download the latest release of [RML Mapper](https://github.com/RMLio/rmlmapper-java/releases/) and execute the downloaded JAR in Java as follows: 
+
+```sh
+java -jar <path-to-RML_Mapper.JAR> -m <output-path>/mapping.ttl -d -s <RDF-serialization> -o <path-to-output-RDF-file>
+```
+
+Note that the required ```mapping.ttl``` will be located in the same folder as the JSON profile, as specified in the user's configuration. 
+Options for the ```<RDF-serialization>``` include: ```nquads``` (__default__), ```turtle```, ```ntriples```, ```trig```, ```trix```, ```jsonld```, ```hdt```. If the path to the output RDF file is ommited, then the RDF triples will be listed in standard output.
 
 ### License
 
