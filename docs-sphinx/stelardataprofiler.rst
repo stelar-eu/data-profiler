@@ -1,7 +1,7 @@
 stelardataprofiler package
 ==========================
 
-.. automodule:: stelardataprofiler.profiler
+.. automodule:: stelardataprofiler
     :members:
     :undoc-members:
     :show-inheritance:

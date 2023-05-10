@@ -71,11 +71,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-stelardataprofiler.profiler">
-<span id="stelardataprofiler-package"></span><h1>stelardataprofiler package<a class="headerlink" href="#module-stelardataprofiler.profiler" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stelardataprofiler">
+<span id="stelardataprofiler-package"></span><h1>stelardataprofiler package<a class="headerlink" href="#module-stelardataprofiler" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="stelardataprofiler.profiler.run_profile">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">run_profile</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#run_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.run_profile" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.run_profile">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">run_profile</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#run_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.run_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method executes the specified profiler and writes the resulting profile dictionary, and HTML if specified, based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -92,8 +92,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_timeseries">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_timeseries</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>time_column: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em>, <em>mode: str = 'verbose'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_timeseries" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_timeseries">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_timeseries</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>time_column: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em>, <em>mode: str = 'verbose'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given timeseries .csv file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -121,8 +121,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_timeseries_with_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_timeseries_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_timeseries_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_timeseries_with_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_timeseries_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_timeseries_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_timeseries_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_timeseries_with_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling on timeseries data and write the resulting profile dictionary based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -139,8 +139,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_tabular">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_tabular</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>crs: str = 'EPSG:4326'</em>, <em>longitude_column: str = None</em>, <em>latitude_column: str = None</em>, <em>wkt_column: str = None</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_tabular"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_tabular" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_tabular">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_tabular</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>crs: str = 'EPSG:4326'</em>, <em>longitude_column: str = None</em>, <em>latitude_column: str = None</em>, <em>wkt_column: str = None</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_tabular"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_tabular" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given tabular .csv or .shp file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -170,8 +170,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_tabular_with_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_tabular_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_tabular_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_tabular_with_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_tabular_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_tabular_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_tabular_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_tabular_with_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling on tabular and/or vector data and write the resulting profile dictionary based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -188,8 +188,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_raster">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_raster</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_raster" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_raster">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_raster</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_raster" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for either a single image or many images.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -212,8 +212,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_raster_with_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_raster_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_raster_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_raster_with_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_raster_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_raster_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_raster_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_raster_with_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling on raster data and write the resulting profile dictionary based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -230,8 +230,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_text">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_text</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_text" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_text">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_text</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for either a single text or many texts.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -254,8 +254,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_text_with_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_text_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_text_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_text_with_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_text_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_text_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_text_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_text_with_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling on text data and write the resulting profile dictionary based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -272,8 +272,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_hierarchical">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_hierarchical</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_hierarchical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_hierarchical" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_hierarchical">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_hierarchical</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_hierarchical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_hierarchical" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given json file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -290,8 +290,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_hierarchical_with_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_hierarchical_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_hierarchical_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_hierarchical_with_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_hierarchical_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_hierarchical_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_hierarchical_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_hierarchical_with_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling on hierarchical data and write the resulting profile dictionary based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -308,8 +308,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_rdfGraph">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_rdfGraph</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>parse_format: str = 'application/rdf+xml'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_rdfGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_rdfGraph" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_rdfGraph">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_rdfGraph</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>parse_format: str = 'application/rdf+xml'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_rdfGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given rdf file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -332,8 +332,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_rdfGraph_with_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_rdfGraph_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_rdfGraph_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_rdfGraph_with_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_rdfGraph_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_rdfGraph_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_rdfGraph_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph_with_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling on rdfGraph data and write the resulting profile dictionary based on a configuration dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -350,8 +350,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.prepare_mapping">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">prepare_mapping</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#prepare_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.prepare_mapping" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.prepare_mapping">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">prepare_mapping</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#prepare_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.prepare_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method prepares the suitable mapping for subsequent generation of the RDF graph, if “rdf” and “serialization” options are specified in config.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -368,8 +368,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_single_raster">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_single_raster</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_single_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_single_raster" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_single_raster">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_single_raster</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_single_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_single_raster" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for an image file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -386,8 +386,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_multiple_rasters">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_multiple_rasters</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_multiple_rasters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_multiple_rasters" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_multiple_rasters">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_multiple_rasters</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_multiple_rasters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_multiple_rasters" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for the image files that exist in the given folder path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -410,8 +410,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_single_text">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_single_text</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_single_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_single_text" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_single_text">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_single_text</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_single_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_single_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a text file that exists in the given path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -428,8 +428,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.profile_multiple_texts">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">profile_multiple_texts</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>text_format: str = 'txt'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_multiple_texts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.profile_multiple_texts" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.profile_multiple_texts">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_multiple_texts</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>text_format: str = 'txt'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_multiple_texts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_multiple_texts" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for the text files that exist in the given folder path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -452,8 +452,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.write_to_json">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">write_to_json</code><span class="sig-paren">(</span><em>output_dict: dict, output_file: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#write_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.write_to_json" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.write_to_json">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">write_to_json</code><span class="sig-paren">(</span><em>output_dict: dict, output_file: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#write_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.write_to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the profile dictionary to a file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -476,8 +476,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="stelardataprofiler.profiler.read_config">
-<code class="descclassname">stelardataprofiler.profiler.</code><code class="descname">read_config</code><span class="sig-paren">(</span><em>json_file: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#read_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profiler.read_config" title="Permalink to this definition">¶</a></dt>
+<dt id="stelardataprofiler.read_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">read_config</code><span class="sig-paren">(</span><em>json_file: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#read_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.read_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method reads configuration settings from a json file. Configuration includes all parameters for input/output.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

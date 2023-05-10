@@ -150,7 +150,7 @@
 <span class="c1"># ------------------------------------#</span>
 <span class="c1"># ------ PROFILER MAIN FUNCTION ------#</span>
 <span class="c1"># ------------------------------------#</span>
-<div class="viewcode-block" id="run_profile"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.run_profile">[docs]</a><span class="k">def</span> <span class="nf">run_profile</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="run_profile"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.run_profile">[docs]</a><span class="k">def</span> <span class="nf">run_profile</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method executes the specified profiler and writes the resulting profile dictionary, and HTML if specified, based on a configuration dictionary.</span>
 
@@ -179,7 +179,7 @@
               <span class="s2">&quot;&#39;timeseries&#39;, &#39;tabular&#39;, &#39;vector&#39;, &#39;raster&#39;, &#39;text&#39;, &#39;hierarchical&#39;, &#39;rdfGraph&#39;&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="prepare_mapping"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.prepare_mapping">[docs]</a><span class="k">def</span> <span class="nf">prepare_mapping</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="prepare_mapping"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.prepare_mapping">[docs]</a><span class="k">def</span> <span class="nf">prepare_mapping</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method prepares the suitable mapping for subsequent generation of the RDF graph, if &quot;rdf&quot; and &quot;serialization&quot; options are specified in config.</span>
 
@@ -237,7 +237,7 @@
 
 
 <span class="c1"># ------------ TIMESERIES ------------#</span>
-<div class="viewcode-block" id="profile_timeseries_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_timeseries_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_timeseries_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_timeseries_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_timeseries_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_timeseries_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling on timeseries data and write the resulting profile dictionary based on a configuration dictionary.</span>
 
@@ -285,7 +285,7 @@
               <span class="s1">&#39;as value in the JSON under input.columns&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="profile_timeseries"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_timeseries">[docs]</a><span class="k">def</span> <span class="nf">profile_timeseries</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">time_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+<div class="viewcode-block" id="profile_timeseries"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_timeseries">[docs]</a><span class="k">def</span> <span class="nf">profile_timeseries</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">time_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
                        <span class="n">html_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">display_html</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;verbose&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for a given timeseries .csv file that exists in the given path.</span>
@@ -328,7 +328,7 @@
 
 
 <span class="c1"># -------------- TABULAR + VECTOR --------------#</span>
-<div class="viewcode-block" id="profile_tabular_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_tabular_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_tabular_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_tabular_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_tabular_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_tabular_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling on tabular and/or vector data and write the resulting profile dictionary based on a configuration dictionary.</span>
 
@@ -389,7 +389,7 @@
     <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="profile_tabular"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_tabular">[docs]</a><span class="k">def</span> <span class="nf">profile_tabular</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">crs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="profile_tabular"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_tabular">[docs]</a><span class="k">def</span> <span class="nf">profile_tabular</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">crs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
                     <span class="n">longitude_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">latitude_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">wkt_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">html_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">display_html</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -440,7 +440,7 @@
 
 <span class="c1"># -------------- RASTER --------------#</span>
 <span class="c1"># ----------- SINGLE IMAGE -----------#</span>
-<div class="viewcode-block" id="profile_single_raster"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_single_raster">[docs]</a><span class="k">def</span> <span class="nf">profile_single_raster</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_single_raster"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_single_raster">[docs]</a><span class="k">def</span> <span class="nf">profile_single_raster</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for an image file that exists in the given path.</span>
 
@@ -605,7 +605,7 @@
 
 
 <span class="c1"># ----------- MULTIPLE IMAGES -----------#</span>
-<div class="viewcode-block" id="profile_multiple_rasters"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_multiple_rasters">[docs]</a><span class="k">def</span> <span class="nf">profile_multiple_rasters</span><span class="p">(</span><span class="n">my_folder_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_multiple_rasters"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_multiple_rasters">[docs]</a><span class="k">def</span> <span class="nf">profile_multiple_rasters</span><span class="p">(</span><span class="n">my_folder_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for the image files that exist in the given folder path.</span>
 
@@ -847,7 +847,7 @@
 
 
 <span class="c1"># ----------- MAIN FUNCTION ----------#</span>
-<div class="viewcode-block" id="profile_raster_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_raster_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_raster_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_raster_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_raster_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_raster_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling on raster data and write the resulting profile dictionary based on a configuration dictionary.</span>
 
@@ -890,7 +890,7 @@
     <span class="c1"># Write resulting profile dictionary</span>
     <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="profile_raster"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_raster">[docs]</a><span class="k">def</span> <span class="nf">profile_raster</span><span class="p">(</span><span class="n">my_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_raster"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_raster">[docs]</a><span class="k">def</span> <span class="nf">profile_raster</span><span class="p">(</span><span class="n">my_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for either a single image or many images.</span>
 
@@ -914,7 +914,7 @@
 
 <span class="c1"># -------------- TEXTUAL -------------#</span>
 <span class="c1"># ----------- SINGLE TEXT -----------#</span>
-<div class="viewcode-block" id="profile_single_text"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_single_text">[docs]</a><span class="k">def</span> <span class="nf">profile_single_text</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_single_text"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_single_text">[docs]</a><span class="k">def</span> <span class="nf">profile_single_text</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for a text file that exists in the given path.</span>
 
@@ -1432,7 +1432,7 @@
 
 
 <span class="c1"># ----------- MULTIPLE TEXTS -----------#</span>
-<div class="viewcode-block" id="profile_multiple_texts"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_multiple_texts">[docs]</a><span class="k">def</span> <span class="nf">profile_multiple_texts</span><span class="p">(</span><span class="n">my_folder_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_multiple_texts"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_multiple_texts">[docs]</a><span class="k">def</span> <span class="nf">profile_multiple_texts</span><span class="p">(</span><span class="n">my_folder_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for the text files that exist in the given folder path.</span>
 
@@ -2021,7 +2021,7 @@
 
 
 <span class="c1"># ----------- MAIN FUNCTION ----------#</span>
-<div class="viewcode-block" id="profile_text_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_text_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_text_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_text_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_text_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_text_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling on text data and write the resulting profile dictionary based on a configuration dictionary.</span>
 
@@ -2065,7 +2065,7 @@
     <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="profile_text"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_text">[docs]</a><span class="k">def</span> <span class="nf">profile_text</span><span class="p">(</span><span class="n">my_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.txt&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="profile_text"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_text">[docs]</a><span class="k">def</span> <span class="nf">profile_text</span><span class="p">(</span><span class="n">my_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.txt&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for either a single text or many texts.</span>
 
@@ -2088,7 +2088,7 @@
 
 
 <span class="c1"># ---------- HIERARCHICAL ---------#</span>
-<div class="viewcode-block" id="profile_hierarchical_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_hierarchical_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_hierarchical_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_hierarchical_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_hierarchical_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_hierarchical_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling on hierarchical data and write the resulting profile dictionary based on a configuration dictionary.</span>
 
@@ -2123,7 +2123,7 @@
 
 
 <span class="c1"># TODO: Add num_attributes (number of distinct tags)</span>
-<div class="viewcode-block" id="profile_hierarchical"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_hierarchical">[docs]</a><span class="k">def</span> <span class="nf">profile_hierarchical</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_hierarchical"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_hierarchical">[docs]</a><span class="k">def</span> <span class="nf">profile_hierarchical</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for a given json file that exists in the given path.</span>
 
@@ -2226,7 +2226,7 @@
 
 
 <span class="c1"># ---------- RDF-GRAPH ---------#</span>
-<div class="viewcode-block" id="profile_rdfGraph_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_rdfGraph_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_rdfGraph_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="profile_rdfGraph_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_rdfGraph_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_rdfGraph_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling on rdfGraph data and write the resulting profile dictionary based on a configuration dictionary.</span>
 
@@ -2265,7 +2265,7 @@
     <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="profile_rdfGraph"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.profile_rdfGraph">[docs]</a><span class="k">def</span> <span class="nf">profile_rdfGraph</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parse_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;application/rdf+xml&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="profile_rdfGraph"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_rdfGraph">[docs]</a><span class="k">def</span> <span class="nf">profile_rdfGraph</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parse_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;application/rdf+xml&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for a given rdf file that exists in the given path.</span>
 
@@ -2566,7 +2566,7 @@
 
 
 <span class="c1"># ---------- OTHER FUNCTIONS ---------#</span>
-<div class="viewcode-block" id="read_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.read_config">[docs]</a><span class="k">def</span> <span class="nf">read_config</span><span class="p">(</span><span class="n">json_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="read_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.read_config">[docs]</a><span class="k">def</span> <span class="nf">read_config</span><span class="p">(</span><span class="n">json_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method reads configuration settings from a json file. Configuration includes all parameters for input/output.</span>
 
@@ -2585,7 +2585,7 @@
     <span class="k">return</span> <span class="n">config_dict</span></div>
 
 
-<div class="viewcode-block" id="write_to_json"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profiler.write_to_json">[docs]</a><span class="k">def</span> <span class="nf">write_to_json</span><span class="p">(</span><span class="n">output_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="write_to_json"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.write_to_json">[docs]</a><span class="k">def</span> <span class="nf">write_to_json</span><span class="p">(</span><span class="n">output_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the profile dictionary to a file.</span>
 
