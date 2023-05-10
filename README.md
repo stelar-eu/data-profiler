@@ -54,7 +54,7 @@ java -jar <path-to-RML_Mapper.JAR> -m <output-path>/mapping.ttl -d -s <RDF-seria
 ```
 
 Note that the required ```mapping.ttl``` will be located in the same folder as the JSON profile, as specified in the user's configuration. 
-Options for the ```<RDF-serialization>``` include: ```nquads``` (__default__), ```turtle```, ```ntriples```, ```trig```, ```trix```, ```jsonld```, ```hdt```. If the path to the output RDF file is ommited, then the RDF triples will be listed in standard output.
+Options for the ```<RDF-serialization>``` include: ```nquads``` (__default__), ```turtle```, ```ntriples```, ```trig```, ```trix```, ```jsonld```, ```hdt```. If the path to the output RDF file is ommitted, then the RDF triples will be listed in standard output.
 
 ### License
 
