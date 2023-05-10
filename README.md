@@ -33,13 +33,13 @@ import stelardataprofiler
 ```
 
 ### Configuration
-Change the [config](https://github.com/stelar-eu/data-profiler/blob/main/config.json) according to the requirements of each profiler and execute [main.py](https://github.com/stelar-eu/data-profiler/blob/main/stelardataprofiler/main.py) to create the mapping.ttl file.
+Change the [config_template](https://github.com/stelar-eu/data-profiler/blob/main/config_template.json) according to the requirements of each profiler and execute [main.py](https://github.com/stelar-eu/data-profiler/blob/main/stelardataprofiler/main.py) to create the mapping.ttl file.
 
 ### Execute profiler-mappings script (after local library installation)
 
 ```sh
 cd data-profiler
-profiler-mappings config.json
+profiler-mappings config_template.json
 ```
 > **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config.json and change the 'path' parameters of the config.json to correctly take the input and write the output.
 

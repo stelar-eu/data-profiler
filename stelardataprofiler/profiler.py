@@ -1,6 +1,7 @@
 import os
 import warnings
 from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -30,6 +31,7 @@ import rasterio as rio
 from scipy import stats
 import dateutil.parser
 import json
+import shutil
 from pathlib import Path
 from typing import Union, Any
 from IPython.display import display
@@ -61,10 +63,16 @@ import uuid
 import re
 from rasterio.warp import transform_bounds
 
-__all__ = ['profile_timeseries', 'profile_tabular', 'profile_raster', 'profile_text',
-           'profile_hierarchical', 'profile_rdfGraph', 'profile_single_raster',
-           'profile_multiple_rasters', 'profile_single_text', 'profile_multiple_texts',
-           'write_to_json']
+__all__ = ['run_profile', 'profile_timeseries', 'profile_timeseries_with_config',
+           'profile_tabular', 'profile_tabular_with_config',
+           'profile_raster', 'profile_raster_with_config',
+           'profile_text', 'profile_text_with_config',
+           'profile_hierarchical', 'profile_hierarchical_with_config',
+           'profile_rdfGraph', 'profile_rdfGraph_with_config',
+           'prepare_mapping',  'profile_single_raster',
+           'profile_multiple_rasters', 'profile_single_text',
+           'profile_multiple_texts', 'write_to_json', 'read_config'
+           ]
 
 tsfresh_json_file = str(
     os.path.dirname(os.path.abspath(__file__))) + '/json_files/tsfresh_json.json'
@@ -73,9 +81,141 @@ tsfresh_json_file = str(
 # ------------------------------------#
 # ------ PROFILER MAIN FUNCTION ------#
 # ------------------------------------#
+def run_profile(config: dict) -> None:
+    """
+    This method executes the specified profiler and writes the resulting profile dictionary, and HTML if specified, based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    profile_type: str = config['profile']['type'].lower()
+    if profile_type == 'timeseries':
+        profile_timeseries_with_config(config)
+    elif profile_type in ['tabular', 'vector']:
+        profile_tabular_with_config(config)
+    elif profile_type == 'raster':
+        profile_raster_with_config(config)
+    elif profile_type == 'textual':
+        profile_text_with_config(config)
+    elif profile_type == 'hierarchical':
+        profile_hierarchical_with_config(config)
+    elif profile_type == 'rdfgraph':
+        profile_rdfGraph_with_config(config)
+    else:
+        print('The profile type is not available!\n'
+              'Please use one of the following types:\n'
+              "'timeseries', 'tabular', 'vector', 'raster', 'text', 'hierarchical', 'rdfGraph'")
+
+
+def prepare_mapping(config: dict) -> None:
+    """
+    This method prepares the suitable mapping for subsequent generation of the RDF graph, if "rdf" and "serialization" options are specified in config.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+
+    import sys
+    # Get parameters required for conversion to RDF
+    output_path = config['output']['path']
+    json_file = config['output']['json']
+    rdf_file = config['output']['rdf']
+    profile_type = config['profile']['type'].lower()
+    rdf_serialization = config['output']['serialization']
+
+    # Handle special cases (timeseries, vector) of tabular profile
+    if profile_type == 'vector' or profile_type == 'timeseries':
+        profile_type = 'tabular'
+
+    # Concatenate path and file names
+    in_file = os.path.join(output_path, json_file)
+    map_template = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
+                                '/mappings', profile_type + '_mapping.ttl')
+    map_file = os.path.join(output_path, 'mapping.ttl')
+    out_file = os.path.join(output_path, rdf_file)
+
+    # Copy mapping template to temporary 'mapping.ttl'
+    if not os.path.isfile(map_template):
+        print('ERROR: Mapping ', map_template, 'not found! Check whether such mapping exists in',
+              os.path.abspath(map_template))
+        sys.exit(1)
+    else:
+        shutil.copyfile(map_template, map_file)
+        print('Mapping ', map_template, ' copied to', map_file)
+
+    # Check if mapping file exists
+    if not os.path.isfile(map_file):
+        print('ERROR: Mapping for', profile_type, 'profiles not found! Check whether such mapping exists in',
+              os.path.abspath(map_file))
+        sys.exit(1)
+
+    # Edit the mapping file
+    with open(map_file, 'r') as file:
+        filedata = file.read()
+
+    # Replace the input with the path to actual JSON profile
+    filedata = filedata.replace('./out/profile.json', in_file)
+
+    # Write the file out again
+    with open(map_file, 'w') as file:
+        file.write(filedata)
 
 
 # ------------ TIMESERIES ------------#
+def profile_timeseries_with_config(config: dict) -> None:
+    """
+    This method performs profiling on timeseries data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_dir_path = config['input']['path']
+    input_file_name = config['input']['file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+    output_html_name = ''
+    if 'html' in config['output']:
+        output_html_name = config['output']['html']
+    only_directory_path = False
+
+    # Create input file path
+    my_file_path = ''
+    if input_file_name == '':
+        print('No input file was found for timeseries profile!')
+        return None
+    else:
+        my_file_path = os.path.abspath(os.path.join(input_dir_path, input_file_name))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+    output_html_path = ''
+    if output_html_name != '':
+        output_html_path = os.path.abspath(os.path.join(output_dir_path, output_html_name))
+
+    # Run timeseries profile
+    if 'time' in config['input']['columns']:
+        time_column = config['input']['columns']['time']
+        header = config['input']['header']
+        sep = config['input']['separator']
+        profile_dict = profile_timeseries(my_file_path=my_file_path, time_column=time_column,
+                                          header=header, sep=sep, html_path=output_html_path)
+        # Write resulting profile dictionary
+        write_to_json(profile_dict, output_json_path)
+    else:
+        print("Please add 'time' as key and the time column name of the input .csv "
+              'as value in the JSON under input.columns')
+
+
 def profile_timeseries(my_file_path: str, time_column: str, header: int = 0, sep: str = ',',
                        html_path: str = '', display_html: bool = False, mode: str = 'verbose') -> dict:
     """
@@ -119,6 +259,67 @@ def profile_timeseries(my_file_path: str, time_column: str, header: int = 0, sep
 
 
 # -------------- TABULAR + VECTOR --------------#
+def profile_tabular_with_config(config: dict) -> None:
+    """
+    This method performs profiling on tabular and/or vector data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_dir_path = config['input']['path']
+    input_file_name = config['input']['file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+    output_html_name = ''
+    if 'html' in config['output']:
+        output_html_name = config['output']['html']
+    only_directory_path = False
+
+    # Create input file path
+    my_file_path = ''
+    if input_file_name == '':
+        print('No input file was found for tabular and/or vector profiles!')
+        return None
+    else:
+        my_file_path = os.path.abspath(os.path.join(input_dir_path, input_file_name))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+    output_html_path = ''
+    if output_html_name != '':
+        output_html_path = os.path.abspath(os.path.join(output_dir_path, output_html_name))
+
+    # Run tabular/vector profile
+    header = config['input']['header']
+    sep = config['input']['separator']
+    columns_dict: dict = config['input']['columns']
+    longitude_column: str = None
+    latitude_column: str = None
+    wkt_column: str = None
+    if ('longitude' in columns_dict) and ('latitude' in columns_dict) and ('wkt' in columns_dict):
+        longitude_column = columns_dict['longitude']
+        latitude_column = columns_dict['latitude']
+        wkt_column = columns_dict['wkt']
+
+    elif ('longitude' in columns_dict) and ('latitude' in columns_dict):
+        longitude_column = columns_dict['longitude']
+        latitude_column = columns_dict['latitude']
+
+    elif 'wkt' in columns_dict:
+        wkt_column = columns_dict['wkt']
+
+    profile_dict = profile_tabular(my_file_path=my_file_path, header=header, sep=sep,
+                                   longitude_column=longitude_column, latitude_column=latitude_column,
+                                   wkt_column=wkt_column, html_path=output_html_path)
+
+    # Write resulting profile dictionary
+    write_to_json(profile_dict, output_json_path)
+
+
 def profile_tabular(my_file_path: str, header: int = 0, sep: str = ',', crs: str = "EPSG:4326",
                     longitude_column: str = None, latitude_column: str = None,
                     wkt_column: str = None, html_path: str = '', display_html: bool = False) -> dict:
@@ -577,6 +778,49 @@ def profile_multiple_rasters(my_folder_path: str, image_format: str = '.tif') ->
 
 
 # ----------- MAIN FUNCTION ----------#
+def profile_raster_with_config(config: dict) -> None:
+    """
+    This method performs profiling on raster data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_dir_path = config['input']['path']
+    input_file_name = config['input']['file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+
+    # Create input file path
+    only_directory_path = False
+    if input_file_name == '':
+        my_path = os.path.abspath(input_dir_path)
+        only_directory_path = True
+    else:
+        my_path = os.path.abspath(os.path.join(input_dir_path, input_file_name))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+
+    # Run raster profile
+    if only_directory_path:
+        print('You are running raster profile for multiple image files!\n'
+              'Please make sure you have the right format for the image files.')
+        if 'format' not in config['input']:
+            print("No format is specified so the default '.tif' is used.")
+            image_format: str = '.tif'
+        else:
+            image_format: str = str(config['input']['format']).lower()
+        profile_dict = profile_raster(my_path=my_path, image_format=image_format)
+    else:
+        profile_dict = profile_raster(my_path=my_path)
+
+    # Write resulting profile dictionary
+    write_to_json(profile_dict, output_json_path)
+
 def profile_raster(my_path: str, image_format: str = '.tif') -> dict:
     """
     This method performs profiling and generates a profiling dictionary for either a single image or many images.
@@ -611,6 +855,7 @@ def profile_single_text(my_file_path: str) -> dict:
     :rtype: dict
 
     """
+
     # Used in language detection
     def __get_lang_detector(nlp, name):
         return LanguageDetector(seed=2023)
@@ -1707,6 +1952,50 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = 'txt') -> dic
 
 
 # ----------- MAIN FUNCTION ----------#
+def profile_text_with_config(config: dict) -> None:
+    """
+    This method performs profiling on text data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_dir_path = config['input']['path']
+    input_file_name = config['input']['file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+
+    # Create input file path
+    only_directory_path = False
+    if input_file_name == '':
+        my_path = os.path.abspath(input_dir_path)
+        only_directory_path = True
+    else:
+        my_path = os.path.abspath(os.path.join(input_dir_path, input_file_name))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+
+    # Run raster profile
+    if only_directory_path:
+        print('You are running text profile for multiple text files!\n'
+              'Please make sure you have the right format for the text files.')
+        if 'format' not in config['input']:
+            print("No format is specified so the default '.txt' is used.")
+            text_format: str = '.txt'
+        else:
+            text_format: str = str(config['input']['format']).lower()
+        profile_dict = profile_text(my_path=my_path, text_format=text_format)
+    else:
+        profile_dict = profile_text(my_path=my_path)
+
+    # Write resulting profile dictionary
+    write_to_json(profile_dict, output_json_path)
+
+
 def profile_text(my_path: str, text_format: str = '.txt'):
     """
     This method performs profiling and generates a profiling dictionary for either a single text or many texts.
@@ -1730,6 +2019,40 @@ def profile_text(my_path: str, text_format: str = '.txt'):
 
 
 # ---------- HIERARCHICAL ---------#
+def profile_hierarchical_with_config(config: dict) -> None:
+    """
+    This method performs profiling on hierarchical data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_dir_path = config['input']['path']
+    input_file_name = config['input']['file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+
+    # Create input file path
+    my_file_path = ''
+    if input_file_name == '':
+        print('No input file was found for hierarchical profile!')
+        return None
+    else:
+        my_file_path = os.path.abspath(os.path.join(input_dir_path, input_file_name))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+
+    # Run raster profile
+    profile_dict = profile_hierarchical(my_file_path=my_file_path)
+
+    # Write resulting profile dictionary
+    write_to_json(profile_dict, output_json_path)
+
+
 # TODO: Add num_attributes (number of distinct tags)
 def profile_hierarchical(my_file_path: str) -> dict:
     """
@@ -1834,6 +2157,45 @@ def profile_hierarchical(my_file_path: str) -> dict:
 
 
 # ---------- RDF-GRAPH ---------#
+def profile_rdfGraph_with_config(config: dict) -> None:
+    """
+    This method performs profiling on rdfGraph data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_dir_path = config['input']['path']
+    input_file_name = config['input']['file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+
+    # Create input file path
+    my_file_path = ''
+    if input_file_name == '':
+        print('No input file was found for rdfGraph profile!')
+        return None
+    else:
+        my_file_path = os.path.abspath(os.path.join(input_dir_path, input_file_name))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+
+    # Run raster profile
+    if 'serialization' not in config['input']:
+        print("No rdflib format is specified so the default 'application/rdf+xml' is used.")
+        parse_format: str = 'application/rdf+xml'
+    else:
+        parse_format: str = str(config['input']['serialization']).lower()
+    profile_dict = profile_rdfGraph(my_file_path=my_file_path, parse_format=parse_format)
+
+    # Write resulting profile dictionary
+    write_to_json(profile_dict, output_json_path)
+
+
 def profile_rdfGraph(my_file_path: str, parse_format: str = 'application/rdf+xml'):
     """
     This method performs profiling and generates a profiling dictionary for a given rdf file that exists in the given path.
@@ -2135,6 +2497,25 @@ def profile_rdfGraph(my_file_path: str, parse_format: str = 'application/rdf+xml
 
 
 # ---------- OTHER FUNCTIONS ---------#
+def read_config(json_file: str) -> dict:
+    """
+    This method reads configuration settings from a json file. Configuration includes all parameters for input/output.
+
+    :param json_file: path to .json file that contains the configuration parameters.
+    :type json_file: str
+    :return: A dictionary with all configuration settings.
+    :rtype: dict
+
+    """
+    try:
+        config_dict: dict = json.loads(json_file)
+    except ValueError as e:
+        with open(json_file) as f:
+            config_dict: dict = json.load(f)
+            return config_dict
+    return config_dict
+
+
 def write_to_json(output_dict: dict, output_file: Union[str, Path]) -> None:
     """
     Write the profile dictionary to a file.
@@ -2143,7 +2524,7 @@ def write_to_json(output_dict: dict, output_file: Union[str, Path]) -> None:
     :type output_dict: dict
     :param output_file: The name or the path of the file to generate including the extension (.json).
     :type output_file: Union[str, Path]
-    :return: A dict which contains the results of the profiler for the texts.
+    :return: a dict which contains the results of the profiler for the texts.
     :rtype: dict
 
     """
@@ -2167,7 +2548,7 @@ def write_to_json(output_dict: dict, output_file: Union[str, Path]) -> None:
                     elif isinstance(o, set):
                         return {encode_it(v) for v in o}
                     elif isinstance(o, (pd.DataFrame, pd.Series)):
-                        return encode_it(o.to_dict(orient="records"))
+                        return encode_it(o.to_dict('records'))
                     elif isinstance(o, np.ndarray):
                         return encode_it(o.tolist())
                     elif isinstance(o, np.generic):
