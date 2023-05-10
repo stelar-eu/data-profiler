@@ -41,7 +41,7 @@ Change the [config_template](https://github.com/stelar-eu/data-profiler/blob/mai
 cd data-profiler
 profiler-mappings config_template.json
 ```
-> **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config.json and change the 'path' parameters of the config.json to correctly take the input and write the output.
+> **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config_template.json and change the 'path' parameters of the config_template.json to correctly take the input and write the output.
 
 ### Apply mappings to generate RDF graph
 
