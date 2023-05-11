@@ -53,8 +53,10 @@ To apply such mappings, you need to download the latest release of [RML Mapper](
 java -jar <path-to-RML_Mapper.JAR> -m <output-path>/mapping.ttl -d -s <RDF-serialization> -o <path-to-output-RDF-file>
 ```
 
-Note that the required ```mapping.ttl``` will be located in the same folder as the JSON profile, as specified in the user's configuration. 
+File ```mapping.ttl``` required for this step has been created in the same folder as the JSON output produced by the data-profiler, as specified in the user's configuration. 
 Options for the ```<RDF-serialization>``` include: ```nquads``` (__default__), ```turtle```, ```ntriples```, ```trig```, ```trix```, ```jsonld```, ```hdt```. If the path to the output RDF file is ommitted, then the RDF triples will be listed in standard output.
+
+> **_NOTE:_**  Executing this operation with the RML Mapper requires Java 11 or later.
 
 ### License
 
