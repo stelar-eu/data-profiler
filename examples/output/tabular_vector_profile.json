@@ -1,0 +1,1581 @@
+{
+   "analysis": {
+      "title": "Profiling Report",
+      "date_start": "2023-05-11 15:00:32.915669",
+      "date_end": "2023-05-11 15:00:32.969457",
+      "duration": "0:00:00.053788",
+      "filenames": [
+         "/home/kpatro/proc/stelar/profiler/data-profiler/datasets/tabular_vector_example.csv"
+      ]
+   },
+   "table": {
+      "profiler_type": "Tabular",
+      "byte_size": 58273,
+      "num_rows": 242,
+      "num_attributes": 19,
+      "types": [
+         {
+            "type": "Categorical",
+            "count": 7
+         },
+         {
+            "type": "Textual",
+            "count": 6
+         },
+         {
+            "type": "Numeric",
+            "count": 3
+         },
+         {
+            "type": "Geometry",
+            "count": 2
+         },
+         {
+            "type": "Unsupported",
+            "count": 1
+         }
+      ]
+   },
+   "variables": [
+      {
+         "name": "osm_id",
+         "type": "Textual",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 1.0,
+         "ratio_uppercase": 0.10193765796124685,
+         "ratio_digits": 0.8980623420387531,
+         "ratio_special_characters": 0.0,
+         "num_chars_distribution": {
+            "name": "osm_id",
+            "min": 8.0,
+            "max": 11.0,
+            "average": 9.809917355371901,
+            "stddev": 0.6481899417689265,
+            "median": 10.0,
+            "kurtosis": -0.31942689697249493,
+            "skewness": 0.021557305907061165,
+            "variance": 0.4201502006104043,
+            "percentile10": 9.0,
+            "percentile25": 9.0,
+            "percentile75": 10.0,
+            "percentile90": 11.0
+         },
+         "num_words_distribution": {
+            "name": "osm_id",
+            "min": 8.0,
+            "max": 11.0,
+            "average": 9.809917355371901,
+            "stddev": 0.6481899417689265,
+            "median": 10.0,
+            "kurtosis": -0.31942689697249493,
+            "skewness": 0.021557305907061165,
+            "variance": 0.4201502006104043,
+            "percentile10": 9.0,
+            "percentile25": 9.0,
+            "percentile75": 10.0,
+            "percentile90": 11.0
+         }
+      },
+      {
+         "name": "category",
+         "type": "Categorical",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 0.0,
+         "frequency_distribution": [
+            {
+               "name": "category",
+               "type": "TRANSPORT",
+               "count": 242
+            }
+         ]
+      },
+      {
+         "name": "type",
+         "type": "Categorical",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 0.0,
+         "frequency_distribution": [
+            {
+               "name": "type",
+               "type": "FUEL",
+               "count": 242
+            }
+         ]
+      },
+      {
+         "name": "lon",
+         "type": "Numeric",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 1.0,
+         "min": 13.1951954228348,
+         "max": 13.5527829,
+         "average": 13.382815940681128,
+         "stddev": 0.09034695619127212,
+         "median": 13.37682955777925,
+         "kurtosis": -0.8825197488070251,
+         "skewness": 0.025780523631092105,
+         "variance": 0.008162572493027643,
+         "percentile5": 13.2378569,
+         "percentile10": 13.26627881119758,
+         "percentile25": 13.3146505058082,
+         "percentile75": 13.4497347,
+         "percentile90": 13.513776518520881,
+         "percentile95": 13.528689293885785
+      },
+      {
+         "name": "lat",
+         "type": "Numeric",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 1.0,
+         "min": 52.4231039300391,
+         "max": 52.6133651613323,
+         "average": 52.511718391688355,
+         "stddev": 0.05147991041621834,
+         "median": 52.5165921369796,
+         "kurtosis": -1.0600583248841304,
+         "skewness": -0.03403042532703864,
+         "variance": 0.0026501811764618657,
+         "percentile5": 52.43218180237346,
+         "percentile10": 52.43617954740914,
+         "percentile25": 52.46464241458622,
+         "percentile75": 52.5547287573108,
+         "percentile90": 52.57808351740098,
+         "percentile95": 52.595087969999994
+      },
+      {
+         "name": "name",
+         "type": "Categorical",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 0.17355371900826447,
+         "frequency_distribution": [
+            {
+               "name": "name",
+               "type": "Aral",
+               "count": 31
+            },
+            {
+               "name": "name",
+               "type": "Shell",
+               "count": 25
+            },
+            {
+               "name": "name",
+               "type": "Total",
+               "count": 23
+            },
+            {
+               "name": "name",
+               "type": "Star",
+               "count": 13
+            },
+            {
+               "name": "name",
+               "type": "Jet",
+               "count": 12
+            },
+            {
+               "name": "name",
+               "type": "HEM",
+               "count": 12
+            },
+            {
+               "name": "name",
+               "type": "Esso",
+               "count": 12
+            },
+            {
+               "name": "name",
+               "type": "Shell Tankstelle",
+               "count": 11
+            },
+            {
+               "name": "name",
+               "type": "Aral Tankstelle",
+               "count": 10
+            },
+            {
+               "name": "name",
+               "type": "Sprint",
+               "count": 9
+            },
+            {
+               "name": "name",
+               "type": "sun",
+               "count": 6
+            },
+            {
+               "name": "name",
+               "type": "Agip",
+               "count": 5
+            },
+            {
+               "name": "name",
+               "type": "Esso Tankstelle",
+               "count": 4
+            },
+            {
+               "name": "name",
+               "type": "ARAL",
+               "count": 3
+            },
+            {
+               "name": "name",
+               "type": "Sprint Tankstelle",
+               "count": 3
+            },
+            {
+               "name": "name",
+               "type": "Elan",
+               "count": 3
+            },
+            {
+               "name": "name",
+               "type": "ESSO",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "Tamoil",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "SB Tank",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "Aral-Tankstelle",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "Mr. Wash",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "STAR",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "Total Station",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "GO",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "SHELL",
+               "count": 2
+            },
+            {
+               "name": "name",
+               "type": "Autogas Fernholz Apparat...",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Hans Engelke Energie",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Peter Lindner GmbH",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "BarMalGas GmbH",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Tankcenter Marzahn",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "bft",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Propan Geppert",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "TOTAL Tankstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Esso-Tankstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Streiber & Beetz",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Oil Tank & Go",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Shell Prinzenallee",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "JET Tankstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "star",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Sprint Tankstelle, Ruhlebener Stra\u00dfe",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Aral Center",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "BEHALA",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "ELAN",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "SUN",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Q1",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "SB-Tankstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Aral Tankstelle Ralf-Udo Gildhorn",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Tankstelle Krumme Lanke",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "BarMal Gas GmbH",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "LPG Autogas",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Total Tankstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "ARWE",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "clean car",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Shell Station",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Coreana",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Clean Car",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Hager Autogas Service",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "CleanCar",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Bavaria petrol",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "SB Tankstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Autogas 24h",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Go",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Fl\u00fcssiggas Ritter",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "LAT",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "1. FC Union Zapfstelle",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Westfehling",
+               "count": 1
+            },
+            {
+               "name": "name",
+               "type": "Total Chausseestra\u00dfe",
+               "count": 1
+            }
+         ]
+      },
+      {
+         "name": "int_name",
+         "type": "Unsupported",
+         "count": 0,
+         "num_missing": 242,
+         "uniqueness": 0
+      },
+      {
+         "name": "street",
+         "type": "Textual",
+         "count": 161,
+         "num_missing": 81,
+         "uniqueness": 0.6273291925465838,
+         "ratio_uppercase": 0.10489795918367346,
+         "ratio_digits": 0.0,
+         "ratio_special_characters": 0.04,
+         "num_chars_distribution": {
+            "name": "street",
+            "min": 9.0,
+            "max": 25.0,
+            "average": 15.217391304347826,
+            "stddev": 3.5137153629988176,
+            "median": 15.0,
+            "kurtosis": -0.11526335464914084,
+            "skewness": 0.5530548877730126,
+            "variance": 12.346195652173913,
+            "percentile10": 11.0,
+            "percentile25": 12.0,
+            "percentile75": 17.0,
+            "percentile90": 20.0
+         },
+         "num_words_distribution": {
+            "name": "street",
+            "min": 2.0,
+            "max": 24.0,
+            "average": 10.40174672489083,
+            "stddev": 4.57061519397114,
+            "median": 11.0,
+            "kurtosis": 0.20052923575706494,
+            "skewness": 0.5152271652201252,
+            "variance": 20.89052325135984,
+            "percentile10": 4.0,
+            "percentile25": 6.0,
+            "percentile75": 13.0,
+            "percentile90": 16.0
+         }
+      },
+      {
+         "name": "housenumber",
+         "type": "Categorical",
+         "count": 157,
+         "num_missing": 85,
+         "uniqueness": 0.5796178343949044,
+         "frequency_distribution": [
+            {
+               "name": "housenumber",
+               "type": "20",
+               "count": 6
+            },
+            {
+               "name": "housenumber",
+               "type": "47",
+               "count": 4
+            },
+            {
+               "name": "housenumber",
+               "type": "2",
+               "count": 4
+            },
+            {
+               "name": "housenumber",
+               "type": "9",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "29",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "10",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "61",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "102",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "1",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "6",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "16",
+               "count": 3
+            },
+            {
+               "name": "housenumber",
+               "type": "34",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "179",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "101",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "19",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "41-42",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "86",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "8",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "25",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "75",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "1A",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "26",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "1-3",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "67",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "42",
+               "count": 2
+            },
+            {
+               "name": "housenumber",
+               "type": "185",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "35,37",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "67-69",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "130",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "50",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "15a",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "127",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "91",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "95",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "62",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "133",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "8-10",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "341",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "246",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "170-172",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "121",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "70-73",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "4",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "33-35",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "22, 23",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "44",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "63",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "12,13",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "30",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "225",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "376",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "28",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "175",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "119",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "77-79",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "64",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "220",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "136",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "128",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "42a",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "20-22",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "19;21",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "22b-23",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "168",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "51",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "36",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "240",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "181",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "38",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "27",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "90",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "71",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "45 b",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "7",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "57",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "9-9a",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "176",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "2 - 4",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "60",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "126/ 127",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "108",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "32",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "174",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "55",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "13,14",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "267",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "151",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "49",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "138",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "200",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "116",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "31",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "14",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "33-36",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "69-72",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "12/14",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "11a",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "9-10",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "52",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "54",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "18-19",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "11",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "26a",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "259-263",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "113",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "140",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "48a",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "79",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "1-2",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "35",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "26-31",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "25A",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "148",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "82",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "306",
+               "count": 1
+            },
+            {
+               "name": "housenumber",
+               "type": "195",
+               "count": 1
+            }
+         ]
+      },
+      {
+         "name": "postcode",
+         "type": "Numeric",
+         "count": 162,
+         "num_missing": 80,
+         "uniqueness": 0.3148148148148148,
+         "min": 10115.0,
+         "max": 16356.0,
+         "average": 12427.333333333334,
+         "stddev": 1279.8689034185838,
+         "median": 12359.0,
+         "kurtosis": -0.275453029358816,
+         "skewness": -0.03347301223792527,
+         "variance": 1638064.4099378882,
+         "percentile5": 10405.1,
+         "percentile10": 10555.2,
+         "percentile25": 12043.5,
+         "percentile75": 13406.5,
+         "percentile90": 14052.0,
+         "percentile95": 14163.0
+      },
+      {
+         "name": "city",
+         "type": "Categorical",
+         "count": 161,
+         "num_missing": 81,
+         "uniqueness": 0.006211180124223602,
+         "frequency_distribution": [
+            {
+               "name": "city",
+               "type": "Berlin",
+               "count": 160
+            },
+            {
+               "name": "city",
+               "type": "Ahrensfelde",
+               "count": 1
+            }
+         ]
+      },
+      {
+         "name": "country",
+         "type": "Categorical",
+         "count": 133,
+         "num_missing": 109,
+         "uniqueness": 0.0,
+         "frequency_distribution": [
+            {
+               "name": "country",
+               "type": "DE",
+               "count": 133
+            }
+         ]
+      },
+      {
+         "name": "phone",
+         "type": "Textual",
+         "count": 89,
+         "num_missing": 153,
+         "uniqueness": 1.0,
+         "ratio_uppercase": 0.0,
+         "ratio_digits": 0.8198859005704972,
+         "ratio_special_characters": 0.18011409942950285,
+         "num_chars_distribution": {
+            "name": "phone",
+            "min": 10.0,
+            "max": 20.0,
+            "average": 13.786516853932584,
+            "stddev": 1.6058975832873563,
+            "median": 14.0,
+            "kurtosis": 1.5546659822619513,
+            "skewness": 0.0876104082022456,
+            "variance": 2.5789070480081713,
+            "percentile10": 11.8,
+            "percentile25": 12.0,
+            "percentile75": 15.0,
+            "percentile90": 15.0
+         },
+         "num_words_distribution": {
+            "name": "phone",
+            "min": 1.0,
+            "max": 14.0,
+            "average": 4.70995670995671,
+            "stddev": 3.0571136568929362,
+            "median": 3.0,
+            "kurtosis": 0.15153865416227275,
+            "skewness": 1.0154213955675013,
+            "variance": 9.345943911161301,
+            "percentile10": 2.0,
+            "percentile25": 2.0,
+            "percentile75": 7.0,
+            "percentile90": 8.0
+         }
+      },
+      {
+         "name": "fax",
+         "type": "Textual",
+         "count": 11,
+         "num_missing": 231,
+         "uniqueness": 1.0,
+         "ratio_uppercase": 0.0,
+         "ratio_digits": 0.7987804878048781,
+         "ratio_special_characters": 0.20121951219512196,
+         "num_chars_distribution": {
+            "name": "fax",
+            "min": 12.0,
+            "max": 20.0,
+            "average": 14.909090909090908,
+            "stddev": 2.119176512447486,
+            "median": 15.0,
+            "kurtosis": 3.260447912056696,
+            "skewness": 1.0692157716728323,
+            "variance": 4.49090909090909,
+            "percentile10": 12.0,
+            "percentile25": 14.5,
+            "percentile75": 15.0,
+            "percentile90": 16.0
+         },
+         "num_words_distribution": {
+            "name": "fax",
+            "min": 1.0,
+            "max": 15.0,
+            "average": 4.5625,
+            "stddev": 3.5644978834739574,
+            "median": 3.0,
+            "kurtosis": 1.4318985885537479,
+            "skewness": 1.432619546988995,
+            "variance": 12.705645161290322,
+            "percentile10": 2.0,
+            "percentile25": 2.0,
+            "percentile75": 7.25,
+            "percentile90": 8.0
+         }
+      },
+      {
+         "name": "email",
+         "type": "Textual",
+         "count": 2,
+         "num_missing": 240,
+         "uniqueness": 1.0,
+         "ratio_uppercase": 0.0,
+         "ratio_digits": 0.2,
+         "ratio_special_characters": 0.125,
+         "num_chars_distribution": {
+            "name": "email",
+            "min": 19.0,
+            "max": 21.0,
+            "average": 20.0,
+            "stddev": 1.4142135623730951,
+            "median": 20.0,
+            "kurtosis": NaN,
+            "skewness": NaN,
+            "variance": 2.0,
+            "percentile10": 19.2,
+            "percentile25": 19.5,
+            "percentile75": 20.5,
+            "percentile90": 20.8
+         },
+         "num_words_distribution": {
+            "name": "email",
+            "min": 1.0,
+            "max": 12.0,
+            "average": 6.666666666666667,
+            "stddev": 4.96655480858378,
+            "median": 7.0,
+            "kurtosis": -2.01190650109569,
+            "skewness": -0.14311949393617995,
+            "variance": 24.666666666666664,
+            "percentile10": 1.0,
+            "percentile25": 2.25,
+            "percentile75": 11.0,
+            "percentile90": 12.0
+         }
+      },
+      {
+         "name": "website",
+         "type": "Textual",
+         "count": 76,
+         "num_missing": 166,
+         "uniqueness": 0.8026315789473685,
+         "ratio_uppercase": 0.012996566944580677,
+         "ratio_digits": 0.06939676311917607,
+         "ratio_special_characters": 0.179009318293281,
+         "num_chars_distribution": {
+            "name": "website",
+            "min": 12.0,
+            "max": 129.0,
+            "average": 53.6578947368421,
+            "stddev": 27.793789537270825,
+            "median": 60.5,
+            "kurtosis": -0.41900171757187765,
+            "skewness": 0.2343932326116714,
+            "variance": 772.4947368421052,
+            "percentile10": 19.0,
+            "percentile25": 23.0,
+            "percentile75": 74.0,
+            "percentile90": 81.0
+         },
+         "num_words_distribution": {
+            "name": "website",
+            "min": 1.0,
+            "max": 88.0,
+            "average": 13.684563758389261,
+            "stddev": 21.852146955773687,
+            "median": 4.0,
+            "kurtosis": 2.1603850442918247,
+            "skewness": 1.864513393886854,
+            "variance": 477.5163265767292,
+            "percentile10": 1.0,
+            "percentile25": 1.0,
+            "percentile75": 14.0,
+            "percentile90": 56.0
+         }
+      },
+      {
+         "name": "opening_hours",
+         "type": "Categorical",
+         "count": 85,
+         "num_missing": 157,
+         "uniqueness": 0.24705882352941178,
+         "frequency_distribution": [
+            {
+               "name": "opening_hours",
+               "type": "24/7",
+               "count": 58
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Su 06:00-22:00",
+               "count": 4
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 06:00-22:00; Sa,Su 07:00-22:00",
+               "count": 2
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Sa 08:00-19:00;Su 09:00-18:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "06:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "05:00-24:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 06:00-23:00; Sa 07:00-23:00; Su 08:00-23:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 07:00-17:00; Sa 09:00-12:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Su 06:00-23:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 05:00-22:00; Sa,Su 07:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Tu 07:00-14:00; We-Th 07:00-18:00; Fr 07:00-14:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 07:00-18:00; Sa 07:00-14:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 05:00-23:00; Sa,Su 06:00-23:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 08:00-17:00; Sa 09:00-13:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Sa 06:00-23:00; Su 07:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 06:00-22:00; Sa-Su 07:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "05:00-23:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 06:30-21:30; Sa,Su 07:30-22:30",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 05:30-23:30; Sa 06:00-23:30; Su 06:00-22:30",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 05:00-22:00; Sa,Su 06:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 09:00-18:00; Sa 09:00-14:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 05:00-22:00; Sa 07:00-22:00; Su 09:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 06:00-22:00; Sa 07:00-22:00; Su 08:00-22:00",
+               "count": 1
+            },
+            {
+               "name": "opening_hours",
+               "type": "Mo-Fr 08:00-20:00; Sa 08:00-14:00",
+               "count": 1
+            }
+         ]
+      },
+      {
+         "name": "wkt",
+         "type": "Geometry",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 1.0,
+         "mbr": "POLYGON ((13.552783 52.422893, 13.552783 52.61343, 13.195097 52.61343, 13.195097 52.422893, 13.552783 52.422893))",
+         "centroid": "POINT (13.38254263962484 52.51504030259606)",
+         "crs": "EPSG:4326",
+         "length_distribution": {
+            "name": "wkt",
+            "count": 242.0,
+            "min": 0.0,
+            "max": 0.0033011213943020326,
+            "average": 0.0005900278743645533,
+            "stddev": 0.0007568309298505907,
+            "median": 0.0,
+            "kurtosis": 0.2665994276161756,
+            "skewness": 1.0633717503821072,
+            "variance": 5.727930563785099e-07,
+            "percentile10": 0.0,
+            "percentile25": 0.0,
+            "percentile75": 0.0010666673679912485,
+            "percentile90": 0.0017563381116290381
+         },
+         "area_distribution": {
+            "name": "wkt",
+            "count": 242.0,
+            "min": 0.0,
+            "max": 3.8993199999921745e-07,
+            "average": 4.159044628098606e-08,
+            "stddev": 7.340509912560872e-08,
+            "median": 0.0,
+            "kurtosis": 0,
+            "skewness": 0.0,
+            "variance": 5.388308577640441e-15,
+            "percentile10": 0.0,
+            "percentile25": 0.0,
+            "percentile75": 5.098600000054263e-08,
+            "percentile90": 1.4609329999934613e-07
+         },
+         "geom_type_distribution": [
+            {
+               "name": "wkt",
+               "type": "Point",
+               "count": 132
+            },
+            {
+               "name": "wkt",
+               "type": "MultiPolygon",
+               "count": 110
+            }
+         ]
+      },
+      {
+         "name": "geometry_lon_lat",
+         "type": "Geometry",
+         "count": 242,
+         "num_missing": 0,
+         "uniqueness": 1.0,
+         "mbr": "POLYGON ((13.552783 52.423104, 13.552783 52.613365, 13.195195 52.613365, 13.195195 52.423104, 13.552783 52.423104))",
+         "centroid": "POINT (13.38281592561983 52.51171840495864)",
+         "crs": "EPSG:4326",
+         "length_distribution": {
+            "name": "geometry_lon_lat",
+            "count": 242.0,
+            "min": 0.0,
+            "max": 0.0,
+            "average": 0.0,
+            "stddev": 0.0,
+            "median": 0.0,
+            "kurtosis": 0,
+            "skewness": 0,
+            "variance": 0.0,
+            "percentile10": 0.0,
+            "percentile25": 0.0,
+            "percentile75": 0.0,
+            "percentile90": 0.0
+         },
+         "area_distribution": {
+            "name": "geometry_lon_lat",
+            "count": 242.0,
+            "min": 0.0,
+            "max": 0.0,
+            "average": 0.0,
+            "stddev": 0.0,
+            "median": 0.0,
+            "kurtosis": 0,
+            "skewness": 0,
+            "variance": 0.0,
+            "percentile10": 0.0,
+            "percentile25": 0.0,
+            "percentile75": 0.0,
+            "percentile90": 0.0
+         },
+         "geom_type_distribution": [
+            {
+               "name": "geometry_lon_lat",
+               "type": "Point",
+               "count": 242
+            }
+         ]
+      }
+   ],
+   "package": {
+      "pandas_profiling_version": "v3.5.0",
+      "pandas_profiling_config": "{\"title\": \"Pandas Profiling Report\", \"dataset\": {\"description\": \"\", \"creator\": \"\", \"author\": \"\", \"copyright_holder\": \"\", \"copyright_year\": \"\", \"url\": \"\"}, \"variables\": {\"descriptions\": {}}, \"infer_dtypes\": false, \"show_variable_description\": true, \"pool_size\": 0, \"progress_bar\": true, \"vars\": {\"num\": {\"quantiles\": [0.05, 0.25, 0.5, 0.75, 0.95, 0.1, 0.9], \"skewness_threshold\": 20, \"low_categorical_threshold\": 5, \"chi_squared_threshold\": 0.0}, \"cat\": {\"length\": false, \"characters\": false, \"words\": false, \"cardinality_threshold\": 50, \"n_obs\": 5, \"chi_squared_threshold\": 0.0, \"coerce_str_to_date\": false, \"redact\": false, \"histogram_largest\": 10, \"stop_words\": []}, \"image\": {\"active\": false, \"exif\": false, \"hash\": false}, \"bool\": {\"n_obs\": 3, \"mappings\": {\"t\": true, \"f\": false, \"True\": true, \"False\": false, \"y\": true, \"n\": false, \"yes\": true, \"no\": false, \"true\": true, \"false\": false}}, \"path\": {\"active\": false}, \"file\": {\"active\": false}, \"url\": {\"active\": false}, \"timeseries\": {\"active\": false, \"sortby\": null, \"autocorrelation\": 0.7, \"lags\": [1, 7, 12, 24, 30], \"significance\": 0.05, \"pacf_acf_lag\": 100}}, \"sort\": null, \"missing_diagrams\": {\"bar\": false, \"matrix\": false, \"heatmap\": false}, \"correlations\": {\"pearson\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 1, \"threshold\": 0.9, \"n_bins\": 10}, \"spearman\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 0, \"threshold\": 0.9, \"n_bins\": 10}, \"kendall\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 0, \"threshold\": 0.9, \"n_bins\": 10}, \"phi_k\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 0, \"threshold\": 0.9, \"n_bins\": 10}, \"cramers\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 1, \"threshold\": 0.9, \"n_bins\": 10}, \"auto\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 1, \"threshold\": 0.9, \"n_bins\": 10}}, \"interactions\": {\"continuous\": false, \"targets\": []}, \"categorical_maximum_correlation_distinct\": 100, \"memory_deep\": false, \"plot\": {\"missing\": {\"force_labels\": true, \"cmap\": \"RdBu\"}, \"image_format\": \"svg\", \"correlation\": {\"cmap\": \"RdBu\", \"bad\": \"#000000\"}, \"dpi\": 800, \"histogram\": {\"bins\": 50, \"max_bins\": 250, \"x_axis_labels\": true}, \"scatter_threshold\": 1000, \"cat_freq\": {\"show\": true, \"type\": \"bar\", \"max_unique\": 10, \"colors\": null}}, \"duplicates\": {\"head\": 0, \"key\": \"# duplicates\"}, \"samples\": {\"head\": 0, \"tail\": 0, \"random\": 0}, \"reject_variables\": true, \"n_obs_unique\": 5, \"n_freq_table_max\": 10, \"n_extreme_obs\": 5, \"report\": {\"precision\": 10}, \"html\": {\"style\": {\"primary_colors\": [\"#377eb8\", \"#e41a1c\", \"#4daf4a\"], \"logo\": \"\", \"theme\": null}, \"navbar_show\": true, \"minify_html\": true, \"use_local_assets\": true, \"inline\": true, \"assets_prefix\": null, \"assets_path\": null, \"full_width\": false}, \"notebook\": {\"iframe\": {\"height\": \"800px\", \"width\": \"100%\", \"attribute\": \"srcdoc\"}}}"
+   }
+}

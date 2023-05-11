@@ -1,0 +1,35 @@
+<http://stelar-project.eu/klms#distribution/52e22c04-5bb2-4df2-9b44-88b96333e04b> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/dcat#Distribution>.
+<http://stelar-project.eu/klms#distribution/52e22c04-5bb2-4df2-9b44-88b96333e04b> <http://stelar-project.eu/klms#profileURL> <http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901>.
+<http://stelar-project.eu/klms#attribute/0bce4b94-bbdd-4772-83cc-04026e324dcc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://stelar-project.eu/klms#TemporalAttribute>.
+<http://stelar-project.eu/klms#attribute/0bce4b94-bbdd-4772-83cc-04026e324dcc> <http://purl.org/dc/terms/title> "date".
+<http://stelar-project.eu/klms#attribute/0bce4b94-bbdd-4772-83cc-04026e324dcc> <http://www.w3.org/ns/dcat#startDate> "2020-01-02 00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>.
+<http://stelar-project.eu/klms#attribute/0bce4b94-bbdd-4772-83cc-04026e324dcc> <http://www.w3.org/ns/dcat#endDate> "2021-12-22 00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://stelar-project.eu/klms#SeriesAttribute>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://purl.org/dc/terms/title> "(7576,3809)".
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://stelar-project.eu/klms#absEnergy> "835.46"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://stelar-project.eu/klms#absSumChanges> "44.6"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://stelar-project.eu/klms#lenAboveMean> "35.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://stelar-project.eu/klms#lenBelowMean> "62.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://stelar-project.eu/klms#numPeaks> "4.0"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger>.
+<http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229> <http://stelar-project.eu/klms#valueDistribution> <http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50>.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://stelar-project.eu/klms#Tabular>.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://stelar-project.eu/klms#numRows> "124"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger>.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://stelar-project.eu/klms#numColumns> "2"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger>.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://stelar-project.eu/klms#contains> <http://stelar-project.eu/klms#attribute/0bce4b94-bbdd-4772-83cc-04026e324dcc>.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://stelar-project.eu/klms#contains> <http://stelar-project.eu/klms#attribute/f7655390-638f-4a7e-ad94-df2d47447229>.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://purl.org/dc/terms/type> "TimeSeries"@en.
+<http://stelar-project.eu/klms#profile/bb59b4bc-e1e6-4791-b3aa-323df8b00901> <http://www.w3.org/ns/dcat#byteSize> "1852"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://stelar-project.eu/klms#NumericalDistribution>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#count> "97"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#min> "0.1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#max> "7.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#average> "1.8907216494845358"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#stddev> "2.256245151159462"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#variance> "5.090642182130584"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#kurtosis> "-1.0672148904071372"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#skewness> "0.8208883571040428"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#percentile10> "0.1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#percentile25> "0.2"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#percentile75> "4.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#percentile90> "5.54"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://stelar-project.eu/klms#numerical_distribution/0567e73c-ab27-4171-b76f-1f49640b0a50> <http://stelar-project.eu/klms#median> "0.3"^^<http://www.w3.org/2001/XMLSchema#decimal>.

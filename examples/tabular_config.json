@@ -1,0 +1,24 @@
+{
+	"input": {
+		"path": "../datasets",
+		"file": "tabular_vector_example.csv",
+		"format": ".csv",
+		"separator": "|",
+		"header": 0,
+		"columns" : {	
+			"longitude": "lon",
+			"latitude": "lat",
+			"wkt": "wkt" 
+		}
+	},
+	"output": {
+		"path": "./output",
+		"json": "tabular_vector_profile.json",
+		"html": "tabular_vector_profile.html",
+		"rdf": "tabular_vector_results.rdf",
+		"serialization" : "nquads"
+	},
+	"profile": {
+		"type": "tabular"
+	}
+}

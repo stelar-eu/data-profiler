@@ -1,0 +1,72 @@
+{
+   "analysis": {
+      "title": "Profiling Report",
+      "date_start": "2023-05-11 15:02:54.297517",
+      "date_end": "2023-05-11 15:02:54.333615",
+      "duration": "0:00:00.036098",
+      "filenames": [
+         "/home/kpatro/proc/stelar/profiler/data-profiler/datasets/timeseries/one_timeseries_example.csv"
+      ]
+   },
+   "table": {
+      "profiler_type": "TimeSeries",
+      "byte_size": 1852,
+      "num_rows": 124,
+      "num_attributes": 2,
+      "types": [
+         {
+            "type": "DateTime",
+            "count": 1
+         },
+         {
+            "type": "TimeSeries",
+            "count": 1
+         }
+      ]
+   },
+   "variables": [
+      {
+         "name": "date",
+         "type": "DateTime",
+         "count": 124,
+         "num_missing": 0,
+         "uniqueness": 1.0,
+         "start": "2020-01-02 00:00:00",
+         "end": "2021-12-22 00:00:00",
+         "date_range": "720 days, 0:00:00"
+      },
+      {
+         "name": "(7576,3809)",
+         "type": "TimeSeries",
+         "count": 97,
+         "num_missing": 27,
+         "uniqueness": 0.16494845360824742,
+         "min": 0.1,
+         "max": 7.0,
+         "average": 1.8907216494845358,
+         "stddev": 2.256245151159462,
+         "median": 0.3,
+         "kurtosis": -1.0672148904071372,
+         "skewness": 0.8208883571040428,
+         "variance": 5.090642182130584,
+         "percentile5": 0.1,
+         "percentile10": 0.1,
+         "percentile25": 0.2,
+         "percentile75": 4.0,
+         "percentile90": 5.54,
+         "percentile95": 5.8199999999999985,
+         "seasonal": false,
+         "stationary": false,
+         "add_fuller": 0.19822265661024618,
+         "abs_energy": 835.46,
+         "abs_sum_changes": 44.6,
+         "len_above_mean": 35.0,
+         "len_below_mean": 62.0,
+         "num_peaks": 4.0
+      }
+   ],
+   "package": {
+      "pandas_profiling_version": "v3.5.0",
+      "pandas_profiling_config": "{\"title\": \"Profiling Report\", \"dataset\": {\"description\": \"\", \"creator\": \"\", \"author\": \"\", \"copyright_holder\": \"\", \"copyright_year\": \"\", \"url\": \"\"}, \"variables\": {\"descriptions\": {}}, \"infer_dtypes\": false, \"show_variable_description\": true, \"pool_size\": 0, \"progress_bar\": true, \"vars\": {\"num\": {\"quantiles\": [0.05, 0.25, 0.5, 0.75, 0.95, 0.1, 0.9], \"skewness_threshold\": 20, \"low_categorical_threshold\": 5, \"chi_squared_threshold\": 0.0}, \"cat\": {\"length\": false, \"characters\": false, \"words\": false, \"cardinality_threshold\": 50, \"n_obs\": 5, \"chi_squared_threshold\": 0.0, \"coerce_str_to_date\": false, \"redact\": false, \"histogram_largest\": 10, \"stop_words\": []}, \"image\": {\"active\": false, \"exif\": false, \"hash\": false}, \"bool\": {\"n_obs\": 3, \"mappings\": {\"t\": true, \"f\": false, \"True\": true, \"False\": false, \"y\": true, \"n\": false, \"yes\": true, \"no\": false, \"true\": true, \"false\": false}}, \"path\": {\"active\": false}, \"file\": {\"active\": false}, \"url\": {\"active\": false}, \"timeseries\": {\"active\": true, \"sortby\": \"date\", \"autocorrelation\": 0.3, \"lags\": [1, 7, 12, 24, 30], \"significance\": 0.05, \"pacf_acf_lag\": 100}}, \"sort\": null, \"missing_diagrams\": {\"bar\": false, \"matrix\": false, \"heatmap\": false}, \"correlations\": {\"pearson\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 1, \"threshold\": 0.9, \"n_bins\": 10}, \"spearman\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 0, \"threshold\": 0.9, \"n_bins\": 10}, \"kendall\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 0, \"threshold\": 0.9, \"n_bins\": 10}, \"phi_k\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 0, \"threshold\": 0.9, \"n_bins\": 10}, \"cramers\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 1, \"threshold\": 0.9, \"n_bins\": 10}, \"auto\": {\"key\": \"\", \"calculate\": false, \"warn_high_correlations\": 1, \"threshold\": 0.9, \"n_bins\": 10}}, \"interactions\": {\"continuous\": false, \"targets\": []}, \"categorical_maximum_correlation_distinct\": 100, \"memory_deep\": false, \"plot\": {\"missing\": {\"force_labels\": true, \"cmap\": \"RdBu\"}, \"image_format\": \"svg\", \"correlation\": {\"cmap\": \"RdBu\", \"bad\": \"#000000\"}, \"dpi\": 800, \"histogram\": {\"bins\": 50, \"max_bins\": 250, \"x_axis_labels\": true}, \"scatter_threshold\": 1000, \"cat_freq\": {\"show\": true, \"type\": \"bar\", \"max_unique\": 10, \"colors\": null}}, \"duplicates\": {\"head\": 0, \"key\": \"# duplicates\"}, \"samples\": {\"head\": 0, \"tail\": 0, \"random\": 0}, \"reject_variables\": true, \"n_obs_unique\": 5, \"n_freq_table_max\": 10, \"n_extreme_obs\": 5, \"report\": {\"precision\": 10}, \"html\": {\"style\": {\"primary_colors\": [\"#377eb8\", \"#e41a1c\", \"#4daf4a\"], \"logo\": \"\", \"theme\": null}, \"navbar_show\": true, \"minify_html\": true, \"use_local_assets\": true, \"inline\": true, \"assets_prefix\": null, \"assets_path\": null, \"full_width\": false}, \"notebook\": {\"iframe\": {\"height\": \"800px\", \"width\": \"100%\", \"attribute\": \"srcdoc\"}}}"
+   }
+}

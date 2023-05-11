@@ -1,0 +1,22 @@
+{
+	"input": {
+		"path": "../datasets/timeseries",
+		"file": "one_timeseries_example.csv",
+		"format": ".csv",
+		"separator": ",",
+		"header": 0,
+		"columns" : {	
+			"time": "date" 
+		}
+	},
+	"output": {
+		"path": "./output",
+		"json": "timeseries_profile.json",
+		"html": "timeseries_profile.html",
+		"rdf": "timeseries_results.rdf",
+		"serialization" : "turtle"
+	},
+	"profile": {
+		"type": "timeseries"
+	}
+}
