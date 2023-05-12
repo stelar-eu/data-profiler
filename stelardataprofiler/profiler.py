@@ -294,8 +294,12 @@ def profile_tabular_with_config(config: dict) -> None:
         output_html_path = os.path.abspath(os.path.join(output_dir_path, output_html_name))
 
     # Run tabular/vector profile
-    header = config['input']['header']
-    sep = config['input']['separator']
+    header = 0
+    sep = ','
+    if 'header' in config['input']:
+        header = config['input']['header']
+    if 'separator' in config['input']:
+        sep = config['input']['separator']
     columns_dict: dict = config['input']['columns']
     longitude_column: str = None
     latitude_column: str = None
@@ -440,6 +444,9 @@ def profile_single_raster(my_file_path: str) -> dict:
 
     # find general image data
     img_dict.update(img.meta)
+
+    # making transform JSON-serializable
+    img_dict['transform'] = list(img_dict['transform'])
 
     profile_dict['table']['avg_width'] = img_dict['width']
     profile_dict['table']['avg_height'] = img_dict['height']
@@ -621,6 +628,9 @@ def profile_multiple_rasters(my_folder_path: str, image_format: str = '.tif') ->
             # find general image data
             img_dict.update(img.meta)
 
+            # making transform JSON-serializable
+            img_dict['transform'] = list(img_dict['transform'])
+
             profile_dict['table']['avg_width'] += img_dict['width']
             profile_dict['table']['avg_height'] += img_dict['height']
 
@@ -789,7 +799,9 @@ def profile_raster_with_config(config: dict) -> None:
 
     """
     input_dir_path = config['input']['path']
-    input_file_name = config['input']['file']
+    input_file_name = ''
+    if 'file' in config['input']:
+        input_file_name = config['input']['file']
     output_dir_path = config['output']['path']
     output_json_name = config['output']['json']
 
@@ -2513,8 +2525,8 @@ def read_config(json_file: str) -> dict:
         with open(json_file) as f:
             config_dict: dict = json.load(f)
             return config_dict
-    return config_dict
 
+    return config_dict
 
 def write_to_json(output_dict: dict, output_file: Union[str, Path]) -> None:
     """
