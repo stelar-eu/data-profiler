@@ -47,7 +47,7 @@ profiler-mappings config_template.json
 #### JSON
 All profiling functions output the results in a JSON and an HTML file. A brief example of the JSON output of the raster profiler given two images as input is as follows.
 
-'''
+```
 {
 "analysis":  { "date_start": "2023-04-28 12:09:45.815132",
                "date_end": "2023-04-28 12:09:54.920661",
@@ -63,9 +63,9 @@ All profiling functions output the results in a JSON and an HTML file. A brief e
                "spatial_coverage": "POLYGON ((83 275, 183 0, 83 275))"
               }, ...\]
 }
-'''
+```
 
-In short, the '''analysis''' field contains some metadata regarding the profiling task, such as the start and end time. The '''table''' field contains profiling results regarding the whole dataset, i.e., not considering the input images separately (e.g., number of images and total size in bytes). Finally, the '''variables''' field contains per image results, such as the CRS and spatial coverage.
+In short, the ```analysis``` field contains some metadata regarding the profiling task, such as the start and end time. The ```table``` field contains profiling results regarding the whole dataset, i.e., not considering the input images separately (e.g., number of images and total size in bytes). Finally, the ```variables``` field contains per image results, such as the CRS and spatial coverage.
 
 A complete JSON output example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.json).
 
