@@ -57,11 +57,11 @@ All profiling functions output the results in a JSON and an HTML file. A brief e
                "n_of_imgs": 2,
                 ...
              },
-"variables": \[{"name": "image_1",
+"variables": [{"name": "image_1",
                "type": "Raster",
                "crs": "EPSG:4326",
                "spatial_coverage": "POLYGON ((83 275, 183 0, 83 275))"
-              }, ...\]
+              }, ...]
 }
 ```
 
