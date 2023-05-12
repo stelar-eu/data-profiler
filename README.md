@@ -43,6 +43,36 @@ profiler-mappings config_template.json
 ```
 > **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config_template.json and change the 'path' parameters of the config_template.json to correctly take the input and write the output.
 
+### Profiler output
+#### JSON
+All profiling functions output the results in a JSON and an HTML file. A brief example of the JSON output of the raster profiler given two images as input is as follows.
+
+'''
+{
+"analysis":  { "date_start": "2023-04-28 12:09:45.815132",
+               "date_end": "2023-04-28 12:09:54.920661",
+                ... 
+             },
+"table":     { "byte_size": 2925069,
+               "n_of_imgs": 2,
+                ...
+             },
+"variables": \[{"name": "image_1",
+               "type": "Raster",
+               "crs": "EPSG:4326",
+               "spatial_coverage": "POLYGON ((83 275, 183 0, 83 275))"
+              }, ...\]
+}
+'''
+
+In short, the '''analysis''' field contains some metadata regarding the profiling task, such as the start and end time. The '''table''' field contains profiling results regarding the whole dataset, i.e., not considering the input images separately (e.g., number of images and total size in bytes). Finally, the '''variables''' field contains per image results, such as the CRS and spatial coverage.
+
+A complete JSON output example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.json).
+
+#### HTML
+The HTML file contains various plots that visualize the profiling results. An example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.html).
+
+
 ### Apply mappings to generate RDF graph
 
 Predefined mappings for profiles of the various types of datasets can be used to generate an RDF graph with the profiling information. 
