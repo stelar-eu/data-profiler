@@ -70,13 +70,13 @@ In short, the ```analysis``` field contains some metadata regarding the profilin
 A complete JSON output example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.json).
 
 #### HTML
-The HTML file contains various plots that visualize the profiling results. An example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.html).
+The HTML file contains various plots that visualize the profiling results. Examples of such HTML visualizations of profiles can be found [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.html) and [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/timeseries_profile.html).
 
 
 ### Apply mappings to generate RDF graph
 
-Predefined mappings for profiles of the various types of datasets can be used to generate an RDF graph with the profiling information. 
-The customized mappings are expressed in the RDF Mapping language (RML) and can be used to transform the JSON profile into various serializations in RDF, as specified by the user in a configuration.
+Predefined [mappings](https://github.com/stelar-eu/data-profiler/tree/main/stelardataprofiler/mappings) for profiles of the various types of datasets are available and can be used to generate an RDF graph with the profiling information. Once the profiling process completes, an automatically configured ```mapping.ttl``` file is available in the same folder as the output JSON.
+All such customized mappings are expressed in the RDF Mapping language (RML) and can be used to transform the JSON profile into various serializations in RDF, as specified by the user in a configuration.
 To apply such mappings, you need to download the latest release of [RML Mapper](https://github.com/RMLio/rmlmapper-java/releases/) and execute the downloaded JAR in Java as follows: 
 
 ```sh
