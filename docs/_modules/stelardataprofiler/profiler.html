@@ -363,8 +363,12 @@
         <span class="n">output_html_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir_path</span><span class="p">,</span> <span class="n">output_html_name</span><span class="p">))</span>
 
     <span class="c1"># Run tabular/vector profile</span>
-    <span class="n">header</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;header&#39;</span><span class="p">]</span>
-    <span class="n">sep</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;separator&#39;</span><span class="p">]</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;header&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;header&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;separator&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;separator&#39;</span><span class="p">]</span>
     <span class="n">columns_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span>
     <span class="n">longitude_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">latitude_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
@@ -509,6 +513,9 @@
 
     <span class="c1"># find general image data</span>
     <span class="n">img_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+
+    <span class="c1"># making transform JSON-serializable</span>
+    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">])</span>
 
     <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
     <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
@@ -690,6 +697,9 @@
             <span class="c1"># find general image data</span>
             <span class="n">img_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
 
+            <span class="c1"># making transform JSON-serializable</span>
+            <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">])</span>
+
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_width&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_height&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
 
@@ -858,7 +868,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">input_dir_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
-    <span class="n">input_file_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;file&#39;</span><span class="p">]</span>
+    <span class="n">input_file_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;file&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
+        <span class="n">input_file_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;file&#39;</span><span class="p">]</span>
     <span class="n">output_dir_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
     <span class="n">output_json_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;json&#39;</span><span class="p">]</span>
 
@@ -2582,8 +2594,8 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">config_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">config_dict</span>
-    <span class="k">return</span> <span class="n">config_dict</span></div>
 
+    <span class="k">return</span> <span class="n">config_dict</span></div>
 
 <div class="viewcode-block" id="write_to_json"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.write_to_json">[docs]</a><span class="k">def</span> <span class="nf">write_to_json</span><span class="p">(</span><span class="n">output_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>

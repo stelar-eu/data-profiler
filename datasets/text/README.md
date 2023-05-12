@@ -1,0 +1,3 @@
+The .txt files were created from data extracted from datasets released by the [GDELT Project](https://www.gdeltproject.org/).
+
+[Here](https://www.gdeltproject.org/about.html#termsofuse) are the terms of use.
