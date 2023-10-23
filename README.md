@@ -52,8 +52,8 @@ $ streamlit run app.py -- <absolute-folder-path-for-app-outputs>
 > data-profiler/streamlitapp folder. <br />
 > In the first case we can run the app from anywhere.<br /> 
 > Additionally, in both options we can make use of streamlit flags. For example:
-> * stelardataprofilerapp run --server.port 9040 -- <absolute-path-for-app-outputs>
-> * streamlit run app.py --server.port 9040 -- <absolute-path-to-output-folder>
+> * stelardataprofilerapp run --server.port 9040 -- absolute-path-for-app-outputs
+> * streamlit run app.py --server.port 9040 -- absolute-path-to-output-folder
 
 ### Configuration
 Change the [config_template](https://github.com/stelar-eu/data-profiler/blob/main/config_template.json) according to the requirements of each profiler and execute [main.py](https://github.com/stelar-eu/data-profiler/blob/main/stelardataprofiler/main.py) to create the mapping.ttl file.
