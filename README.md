@@ -93,7 +93,7 @@ In short, the ```analysis``` field contains some metadata regarding the profilin
 A complete JSON output example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.json).
 
 #### HTML
-The HTML file contains various plots that visualize the profiling results. Examples of such HTML visualizations of profiles can be found [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.html) and [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/timeseries_profile.html).
+The HTML file contains various plots that visualize the profiling results. Examples of such HTML visualizations of profiles can be found [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_profile.html), [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.html) and [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/timeseries_profile.html).
 
 
 ### Apply mappings to generate RDF graph
