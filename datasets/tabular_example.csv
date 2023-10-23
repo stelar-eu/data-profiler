@@ -1,0 +1,243 @@
+osm_id|category|type|name|int_name|street|housenumber|postcode|city|country|phone|fax|email|website|opening_hours
+W453382180|TRANSPORT|FUEL|Jet||Rhinstraße|240|13055.0|Berlin|DE|||||
+N106982118|TRANSPORT|FUEL|Tamoil||Alt-Friedrichsfelde|61|10315.0|Berlin|DE|+49 30 5129124||||
+W151820193|TRANSPORT|FUEL|Agip||Halenseestraße|47|14055.0|Berlin|DE|+49303024929|||http://www.eni.com|
+N3241436496|TRANSPORT|FUEL|Elan||Storkower Straße|116|10407.0|Berlin|DE|+49 30 4217562||||
+W242133422|TRANSPORT|FUEL|ESSO||Seydlitzstraße|20|12247.0|Berlin|DE|+49 30 772 80 58||||
+N529686827|TRANSPORT|FUEL|Aral Tankstelle||Hauptstraße|86|12159.0|Berlin|DE|+49 30 8515286|||http://www.aral.de|
+N76474858|TRANSPORT|FUEL|Shell Tankstelle||Bundesallee|200|10717.0|Berlin|DE|+49 30 2112352|||http://www.shell.de|
+W51801043|TRANSPORT|FUEL|Shell Tankstelle||Oranienstraße|138|10969.0|Berlin|DE|+49 30 6145866|||http://www.shell.de|
+N68363395|TRANSPORT|FUEL|Aral Tankstelle||Vor dem Schlesischen Tor|2|10997.0|Berlin|DE|+49 30 61286590|||http://www.aral.de/tankstelle/berlin/vor_dem_schlesischen_tor/11034600.html|
+N808169779|TRANSPORT|FUEL|Shell||Ollenhauerstraße|101|13403.0|Berlin|DE|+49 30 41700522|||http://www.shell.de|
+N270814683|TRANSPORT|FUEL|Aral||Argentinische Allee|49|14163.0|Berlin|DE|030 81496169|||http://www.aral.de/tankstelle/berlin/argentinische_allee/11022200.html|
+N255328663|TRANSPORT|FUEL|Shell Tankstelle||Spandauer Damm|151|14050.0|Berlin|DE|030 3040525|||http://www.shell.de|
+N271882472|TRANSPORT|FUEL|Shell||Karl-Marx-Straße|267|12057.0|Berlin|DE|+49 30 6852016|||http://www.shell.de|
+N303068243|TRANSPORT|FUEL|Esso Tankstelle||Martin-Luther-Straße|67|10779.0|Berlin|DE|030 2141411|||http://www.essofuelfinder.de/426309-frank-wilke-berlin|
+N667211367|TRANSPORT|FUEL|Aral Tankstelle Ralf-Udo Gildhorn||Reichsstraße|13,14|14052.0|Berlin|DE|+49303042708|||http://www.aral.de|
+N26756830|TRANSPORT|FUEL|Aral Tankstelle||Beusselstraße|55|10553.0|Berlin|DE|+49 30 3914404|||http://tankstelle.aral.de/tankstelle/berlin/beusselstrasse-55/28607100|
+W42699074|TRANSPORT|FUEL|Total||Storkower Straße|174|10369.0|Berlin|DE|+49309720385||||
+W180998277|TRANSPORT|FUEL|Shell||Bergstraße|32|12169.0|Berlin|DE|+49-30-7954096||||
+W256834228|TRANSPORT|FUEL|ARAL||Spenglerstraße|2|16356.0|Ahrensfelde|DE|+49 030-941132-52||||
+N270814682|TRANSPORT|FUEL|Tankstelle Krumme Lanke||Argentinische Allee|47|14163.0|Berlin|DE|0308134736||||
+W131402438|TRANSPORT|FUEL|Aral Tankstelle||Skalitzer Straße|26|10999.0|Berlin|DE|+49 30 61702190|||http://tankstelle.aral.de/tankstelle/berlin/skalitzer-strasse-26/28602200/|
+N732714056|TRANSPORT|FUEL|BarMal Gas GmbH||Tempelhofer Damm|108|12099.0|Berlin|DE|+49 (0)3378 2089 500|+49 (0)3378 2089 501|office@barmalgas.de|http://www.barmalgas.de|
+W341796337|TRANSPORT|FUEL|Shell Tankstelle||Martin-Luther-Straße|29|10777.0|Berlin|DE|+49 30 2183917|+49 30 21967968||http://www.shell.de|
+N367054547|TRANSPORT|FUEL|Sprint Tankstelle||Kantstraße|126/ 127|10625.0|Berlin|DE|+49 30 30831878|+49 30 30831878|51724000@go-sprint.de|http://www.sprint-tank.com/tankstellen/sprint-tankstelle-kantstra%C3%9Fe|
+N26882421|TRANSPORT|FUEL|Aral|||||||||||
+W44010325|TRANSPORT|FUEL|LPG Autogas|||||||||||
+N1279628530|TRANSPORT|FUEL|HEM|||||||||||
+N444638607|TRANSPORT|FUEL|Sprint|||||||||||
+W41292619|TRANSPORT|FUEL|Shell|||||||||||
+W326746304|TRANSPORT|FUEL|Total|||||||||||
+N2315735171|TRANSPORT|FUEL|Total Tankstelle||Britzer Damm|60|12347.0|Berlin|DE|||||
+N27385326|TRANSPORT|FUEL|Aral|||||||||||
+N262318783|TRANSPORT|FUEL|Total|||||||||||
+N388418547|TRANSPORT|FUEL|ARAL||Mühlenstraße|26|13187.0|Berlin|DE|||||
+N1456142872|TRANSPORT|FUEL|ARWE||Flughafen Tegel||13405.0|Berlin||||||
+N539771910|TRANSPORT|FUEL|Esso|||||||||||
+W251599204|TRANSPORT|FUEL|HEM||Romain-Rolland-Straße|2 - 4|13089.0|Berlin|DE|||||
+W42159004|TRANSPORT|FUEL|Total|||||||||||
+N258535790|TRANSPORT|FUEL|Aral|||||||||||
+N279966479|TRANSPORT|FUEL|Aral|||||||||||
+W309379875|TRANSPORT|FUEL|Esso||Bundesallee|176|10715.0|Berlin|DE|||||
+N312060338|TRANSPORT|FUEL|Total|||||||||||
+N263678117|TRANSPORT|FUEL|Aral||||12679.0|||||||
+W321242511|TRANSPORT|FUEL|Total|||||||||||
+W234800815|TRANSPORT|FUEL|Elan|||||||||||
+W94619392|TRANSPORT|FUEL|clean car|||||||||||
+W43595176|TRANSPORT|FUEL|Aral|||||||||||
+N201922027|TRANSPORT|FUEL|Aral|||||||||||
+N16541597|TRANSPORT|FUEL|Aral|||||||||||
+N1823370852|TRANSPORT|FUEL|Shell Station||Kaiserin-Augusta-Allee|9-9a|10553.0|Berlin|DE|030/34098757|030/34098722|||
+W238277136|TRANSPORT|FUEL|SB Tank||Bessemerstraße|57|12103.0|Berlin|DE|||||
+N3974152805|TRANSPORT|FUEL|Coreana||Albrechtstraße|7|12165.0|Berlin||||||
+N289681341|TRANSPORT|FUEL|Total||Blockdammweg|6|10317.0|Berlin|DE|||||
+N270940131|TRANSPORT|FUEL|ARAL||Kaiser-Friedrich-Straße|45 b|10627.0|Berlin|DE|||||
+N316134702|TRANSPORT|FUEL|Esso||Wilhelmsruher Damm|||||||||
+N259814897|TRANSPORT|FUEL|SB-Tankstelle|||||||||||
+N504427277|TRANSPORT|FUEL|Aral|||||||||||
+N506367895|TRANSPORT|FUEL|Clean Car|||||||||||
+W52735013|TRANSPORT|FUEL|Star|||||Berlin||||||
+N1745498209|TRANSPORT|FUEL|SHELL|||||||||||
+W36936293|TRANSPORT|FUEL|Shell|||||||||||
+W284293863|TRANSPORT|FUEL|HEM|||||||||||
+W31307727|TRANSPORT|FUEL|Shell|||||||||||
+N1120057606|TRANSPORT|FUEL|Aral|||||||||||
+N308811402|TRANSPORT|FUEL|Shell|||||||||||
+W122528724|TRANSPORT|FUEL|Aral||Gartenfelder Straße|71|13599.0|Berlin|DE|||||
+N101387833|TRANSPORT|FUEL|Total|||||||||||
+W121023985|TRANSPORT|FUEL|Shell Tankstelle||Hauptstraße|90|12159.0|Berlin|DE|||||
+N1184134376|TRANSPORT|FUEL|Tamoil|||||||||||
+N4316892750|TRANSPORT|FUEL|CleanCar|||||||||||
+N443928729|TRANSPORT|FUEL|Total|||||||||||
+W78348962|TRANSPORT|FUEL|Agip||Potsdamer Straße|31|14163.0|Berlin|DE|||||
+N336057250|TRANSPORT|FUEL|Shell|||||||||||
+N279305173|TRANSPORT|FUEL|HEM|||||||||||
+N260744445|TRANSPORT|FUEL|Total||Bulgarische Straße|9|12435.0|Berlin|DE|||||
+W24725845|TRANSPORT|FUEL|Aral|||||||||||
+W25486588|TRANSPORT|FUEL|Star|||||||||||
+N26867411|TRANSPORT|FUEL|Bavaria petrol||Heilbronner Straße|14|10711.0|Berlin|DE|||||
+N322544083|TRANSPORT|FUEL|Total|||||||||||
+W79868402|TRANSPORT|FUEL|SB Tankstelle||Fraunhoferstraße|33-36|10587.0|Berlin|DE|030/3417057|030/34703677|||
+N313160419|TRANSPORT|FUEL|Star|||||||||||
+W365895665|TRANSPORT|FUEL|Jet|||||||||||
+W51260955|TRANSPORT|FUEL|Sprint|||||||||||
+N283733696|TRANSPORT|FUEL|Jet|||||||||||
+N309018886|TRANSPORT|FUEL|Jet|||||||||||
+N428081389|TRANSPORT|FUEL|Jet|||||||||||
+N313160280|TRANSPORT|FUEL|HEM||Berliner Straße|140|13467.0|Berlin|DE|||||
+N27409122|TRANSPORT|FUEL|SUN|||||||||||
+N3149313946|TRANSPORT|FUEL|Autogas 24h|||||||||||
+W119405813|TRANSPORT|FUEL|Aral||Berliner Straße|67||Berlin|DE|||||
+N312391523|TRANSPORT|FUEL|Sprint|||||||||||
+N330499646|TRANSPORT|FUEL|Go||Mariendorfer Damm|306|12107.0|Berlin|DE|||||
+W27460494|TRANSPORT|FUEL|Shell||Manteuffelstraße|6|12103.0|Berlin|DE|||||
+N60436413|TRANSPORT|FUEL|Shell|||||||||||
+N1549545406|TRANSPORT|FUEL|HEM|||||||||||
+N273428058|TRANSPORT|FUEL|Aral|||||||||||
+W77381781|TRANSPORT|FUEL|Shell Tankstelle||Großbeerenstraße|82|12107.0|Berlin|DE|+49 30 7412059||||
+W25020356|TRANSPORT|FUEL|Jet||Holzhauser Straße|34|13509.0|Berlin|DE|030-43004086||||24/7
+N533756324|TRANSPORT|FUEL|Flüssiggas Ritter|||||||||||
+N270595145|TRANSPORT|FUEL|Esso|||||||||||
+N294795274|TRANSPORT|FUEL|LAT|||||||||||
+N330356982|TRANSPORT|FUEL|Total||Rudower Straße|148|12351.0|Berlin|DE|||||
+N669888809|TRANSPORT|FUEL|Total Station||Prenzlauer Allee|1|10405.0|Berlin|DE|||||24/7
+W65622934|TRANSPORT|FUEL|Star||Königsberger Straße|25A|12207.0|Berlin|DE|||||Mo-Fr 06:00-22:00; Sa 07:00-22:00; Su 08:00-22:00
+W24161230|TRANSPORT|FUEL|1. FC Union Zapfstelle||Michael-Brückner-Straße|26-31|12439.0|Berlin|DE|||||24/7
+N1964624280|TRANSPORT|FUEL|Westfehling|||||||||||Mo-Fr 05:00-22:00; Sa 07:00-22:00; Su 09:00-22:00
+N732714957|TRANSPORT|FUEL|Hager Autogas Service||||13509.0|Berlin|DE|||||Mo-Fr 09:00-18:00; Sa 09:00-14:00
+N283733803|TRANSPORT|FUEL|Star|||||||||||24/7
+N432779736|TRANSPORT|FUEL|Shell||Karower Damm|35|13129.0|Berlin||||||Mo-Fr 05:00-22:00; Sa,Su 06:00-22:00
+W263824280|TRANSPORT|FUEL|Shell||Paulstraße|20|10557.0|Berlin||||||24/7
+N339240589|TRANSPORT|FUEL|Star||Rhinstraße|47|10315.0|Berlin|DE|+49 30 5437321||||24/7
+W33062784|TRANSPORT|FUEL|HEM|||||||||||24/7
+N60959479|TRANSPORT|FUEL|Sprint|||||||||||24/7
+W344070484|TRANSPORT|FUEL|Jet|||||||||||24/7
+W24230227|TRANSPORT|FUEL|Aral|||||||||||24/7
+N456407461|TRANSPORT|FUEL|Shell||Rudower Straße|102|12351.0|Berlin||||||Mo-Fr 05:30-23:30; Sa 06:00-23:30; Su 06:00-22:30
+W30676115|TRANSPORT|FUEL|Total|||||||||||24/7
+N3273363412|TRANSPORT|FUEL|Aral||Bismarckstraße|1-2||Berlin|DE|||||24/7
+W222001845|TRANSPORT|FUEL|Q1|||||||+49 30 7062128||||Mo-Fr 06:30-21:30; Sa,Su 07:30-22:30
+N331479141|TRANSPORT|FUEL|Sprint Tankstelle||Residenzstraße|79|13409.0|Berlin||+49 30 49997232|||http://www.sprint-tank.com/tankstellen/sprint-tankstelle-residenzstra%C3%9Fe|05:00-23:00
+W47946012|TRANSPORT|FUEL|Sprint||Körnerstraße|48a|12157.0|Berlin|DE|+49 30 67033071|||http://www.sprint-tank.com/tankstellen/sprint-tanktstelle-k%C3%B6rnerstra%C3%9Fe|Mo-Su 06:00-22:00
+N1037216342|TRANSPORT|FUEL|Aral||Sonnenallee|113|12045.0|Berlin||+49 30 6811313|||http://tankstelle.aral.de/tankstelle/berlin/sonnenallee-113/11029500/|24/7
+N604272892|TRANSPORT|FUEL|Oil Tank & Go||Genslerstraße|69-72|13055.0|Berlin|DE||||http://www.oil-tankstellen.de/index.php?con=tsfinder_details&login=&id=276|24/7
+W138639270|TRANSPORT|FUEL|Star||||||||||http://www.star-tankstellen.de/index.php?id=18&user_astfinder_pi1[tsid]=523|Mo-Fr 06:00-22:00; Sa-Su 07:00-22:00
+W24161183|TRANSPORT|FUEL|ELAN||Adlergestell|179|12489.0|Berlin|DE|+49306718211|||http://elfstation-wetzel.de/|24/7
+N1892331562|TRANSPORT|FUEL|Jet||Karl-Marx-Straße|259-263|12057.0|Berlin||+49 30 56823849|||https://www.jet-tankstellen.de/kraftstoff/filialfinder/XJ05811|24/7
+N620758494|TRANSPORT|FUEL|Sprint Tankstelle||Grüner Weg|75|12359.0|Berlin||+49 30 66528453|||http://www.sprint-tank.com/tankstellen/sprint-tankstelle-gr%C3%BCner-weg|Mo-Sa 06:00-23:00; Su 07:00-22:00
+N3876775720|TRANSPORT|FUEL|sun|||||||+49 30 92094255|||http://www.sun-tankstellen.de/sites/station_hansastrasse.htm|24/7
+N1556354599|TRANSPORT|FUEL|sun|||||||+49 30 91147921|||http://www.sun-tankstellen.de/sites/station_berliner_allee.htm|24/7
+W93903232|TRANSPORT|FUEL|Aral||Drakestraße|26a|12205.0|Berlin|DE|+49 30 84309770|+49 30 84309771||http://tankstelle.aral.de/tankstelle/berlin/drakestrasse-26a/28606000/|24/7
+N563284596|TRANSPORT|FUEL|Tankcenter Marzahn||Bitterfelder Straße|29|12681.0|||||||Mo-Su 06:00-22:00
+W267639376|TRANSPORT|FUEL|Total||Am Feuchten Winkel|11|13129.0|Berlin||+49 30 4742621|||http://store.total.de/germany/store-total-de/berlin/berlin-am-feuchten-winkel-11/ND020255|24/7
+W112450351|TRANSPORT|FUEL|Shell||Tempelhofer Weg|102|12347.0|Berlin||+49 30 6078733||||24/7
+W123644874|TRANSPORT|FUEL|GO||Reuterstraße|18-19|12043.0|Berlin||+49 30 6233662||||24/7
+N175706216|TRANSPORT|FUEL|sun||Oranienburger Straße|181|13437.0|Berlin||+49 30 40303921|||http://www.sun-tankstellen.de/sites/station_oranienburger.htm|24/7
+W121660183|TRANSPORT|FUEL|Star||Waidmannsluster Damm|54|13509.0|Berlin||+49 30 43004517|||https://www.star.de/service/tankstellenfinder/detail/star-waidmannsluster-damm-54-berlin-822|Mo-Su 06:00-22:00
+N187648557|TRANSPORT|FUEL|Esso||Holländerstraße|52|13407.0|Berlin||+49 30 4962033|||http://www.essofuelfinder.de/425956-mike-praum-berlin|24/7
+N61818198|TRANSPORT|FUEL|Aral||Westfälische Straße|9-10|10709.0|Berlin||+49 30 86409379|||http://tankstelle.aral.de/tankstelle/berlin/westfaelische-strasse-9-10/28608100/|24/7
+N255328697|TRANSPORT|FUEL|Jet||Charlottenburger Chaussee|47|13597.0|Berlin||+49 30 30127285|||https://www.jet-tankstellen.de/kraftstoff/filialfinder/XJ05388/|Mo-Fr 05:00-23:00; Sa,Su 06:00-23:00
+W78355689|TRANSPORT|FUEL|Sprint||Potsdamer Straße|11a|14163.0|Berlin||+49 30 36752645|||http://www.sprint-tank.com/tankstellen/sprint-tankstelle-potsdamer-stra%C3%9Fe|24/7
+N4583828565|TRANSPORT|FUEL|Hans Engelke Energie||Tempelhofer Weg|10|12099.0|Berlin|||||http://hans-engelke.de/|Mo-Fr 08:00-17:00; Sa 09:00-13:00
+N101388246|TRANSPORT|FUEL|Esso||Indira-Gandhi-Straße|75|13053.0|Berlin||+49 30 9269396|||http://www.essofuelfinder.de/de/425959-dieter-becker-berlin|24/7
+N64707597|TRANSPORT|FUEL|Aral||Holzmarktstraße|12/14|10179.0|Berlin||+49 30 24720748|||http://tankstelle.aral.de/tankstelle/berlin/holzmarktstrasse-1214/27100000/|24/7
+N669891011|TRANSPORT|FUEL|Total Station||Margarete-Sommer-Straße|2|10407.0|Berlin||+49 30 42852514|||http://store.total.de/de/germany/store-total-de/berlin/berlin-margarete-sommer-str-2/ND020487|24/7
+W341194707|TRANSPORT|FUEL|ESSO||Königin-Luise-Straße|101|14195.0|Berlin|DE|||||24/7
+N95041105|TRANSPORT|FUEL|Mr. Wash||Nonnendammallee|27|13599.0|Berlin|DE|+49 30 3377330|||http://www.mrwash.de/standorte/berlin/berlin-spandau|Mo-Sa 08:00-19:00;Su 09:00-18:00
+N732712010|TRANSPORT|FUEL|Autogas Fernholz Apparat...||Sophie-Charlotten-Straße||14059.0|Berlin|DE|||||Mo-Fr 07:00-18:00; Sa 07:00-14:00
+W293386231|TRANSPORT|FUEL|Total||Holzmarktstraße|38|10243.0|Berlin|DE|030 2493777|||http://www.outletfinder.rm.total.com/otfe/ficheDetail.do?&outletCode=DETOT0000ND020438&reseauId=13&lang=DE&mode=amode&otherparams|24/7
+N732715804|TRANSPORT|FUEL|Peter Lindner GmbH||||13127.0|Berlin|DE|||||Mo-Tu 07:00-14:00; We-Th 07:00-18:00; Fr 07:00-14:00
+N530090079|TRANSPORT|FUEL|Shell||Rummelsburger Landstraße|16|12459.0|Berlin|DE|+49 30 53780043||||Mo-Fr 05:00-22:00; Sa,Su 07:00-22:00
+W236852825|TRANSPORT|FUEL|Esso Tankstelle||Berliner Straße|20-22|14169.0|Berlin|DE|||||24/7
+W40162955|TRANSPORT|FUEL|Star||Adlergestell|121|12439.0|Berlin|DE|||||24/7
+N3096958384|TRANSPORT|FUEL|BarMalGas GmbH||Rathausstraße|42|12105.0|Berlin|DE|||||24/7
+W44429511|TRANSPORT|FUEL|Sprint||Nonnendammallee|42|13599.0|Berlin|DE|||||24/7
+W228994430|TRANSPORT|FUEL|Shell Tankstelle||Mariendorfer Damm|170-172|12107.0|Berlin|DE|||||Mo-Su 06:00-23:00
+W43090240|TRANSPORT|FUEL|Aral||Mariendorfer Damm|341|12107.0|Berlin|DE|||||24/7
+N29997723|TRANSPORT|FUEL|Aral Tankstelle||Messedamm|8-10|14057.0|Berlin|DE||||http://tankstelle.aral.de/tankstelle/berlin/messedamm-6/28601500/|24/7
+W94441889|TRANSPORT|FUEL|STAR||Finckensteinallee|133|12205.0|Berlin|DE|+49-30-8175128|+49-30-84708898||http://www.startankstellen.de/|Mo-Su 06:00-22:00
+N3835317332|TRANSPORT|FUEL|Propan Geppert||Greinerstraße|10|12107.0|Berlin|DE||||http://www.propan-geppert.de/|Mo-Fr 07:00-17:00; Sa 09:00-12:00
+W137930622|TRANSPORT|FUEL|Shell||Königsberger Straße|8|12207.0|Berlin|DE|||||Mo-Fr 06:00-23:00; Sa 07:00-23:00; Su 08:00-23:00
+W40750133|TRANSPORT|FUEL|HEM||Saatwinkler Damm|62|13627.0|Berlin|DE|||||05:00-24:00
+W236852834|TRANSPORT|FUEL|Total||Berliner Straße|15a|14169.0|Berlin|DE|||||Mo-Fr 06:00-22:00; Sa,Su 07:00-22:00
+W8075580|TRANSPORT|FUEL|TOTAL Tankstelle||Eichborndamm|91|13403.0|Berlin|DE|+49 30 41703023|||http://store.total.de/de/germany/store-total-de/berlin/berlin-eichborndamm-91/ND038364|24/7
+W351274590|TRANSPORT|FUEL|Esso-Tankstelle||Sonnenallee|9|12047.0|Berlin||+49 30 6935268|||http://www.essofuelfinder.de/426300-marcus-rockstroh-berlin|24/7
+W225096721|TRANSPORT|FUEL|Agip||Dietzgenstraße|127|13158.0|Berlin|DE|+49 30 47750441|+49 30 47750442||http://www.agip-pankow.com/|24/7
+W104111011|TRANSPORT|FUEL|Esso||Unter den Eichen|67-69|12205.0|Berlin|DE|+49 30 8328022|||http://www.essofuelfinder.de/426311-frank-wilke-berlin|Mo-Fr 06:00-22:00; Sa,Su 07:00-22:00
+W253448057|TRANSPORT|FUEL|Jet||Prenzlauer Promenade|41-42|13089.0|Berlin|DE|+49 30 43723602||||24/7
+N3404338422|TRANSPORT|FUEL|Total||Jafféstraße|35,37|14055.0|Berlin|DE|030 50569275||||24/7
+N64887131|TRANSPORT|FUEL|sun||Pablo-Picasso-Straße|50|13057.0|Berlin|DE|+49 30 91205894|||http://www.sun-tankstellen.de/sites/station_pablo.htm|24/7
+W37896281|TRANSPORT|FUEL|Aral||Prinzenstraße|29|10969.0|Berlin|DE|+49 30 6149860|||http://tankstelle.aral.de/tankstelle/berlin/prinzenstrasse-29/11019700/|24/7
+W106404741|TRANSPORT|FUEL|sun||Klosterstraße|20|13581.0|Berlin|DE|+49 30 35102936|||http://www.sun-tankstellen.de/sites/station_klosterstr.htm|06:00-22:00
+W420456287|TRANSPORT|FUEL|Aral||Grenzallee|6|12057.0|Berlin|DE|+49 30 63227487|||http://tankstelle.aral.de/tankstelle/berlin/grenzallee-6/11034500/|24/7
+W92098172|TRANSPORT|FUEL|Shell Tankstelle||Kaiserdamm|34|14057.0|Berlin|DE|030 3028976|||http://www.shell.de|24/7
+W44965132|TRANSPORT|FUEL|Shell Tankstelle||Letterhausweg|2|13627.0|Berlin|DE|030 3821001|||http://www.shell.de|24/7
+N27586473|TRANSPORT|FUEL|Esso Tankstelle||Ruhlebener Straße|185|13597.0|Berlin|DE|+49 30 3311895|||http://www.essofuelfinder.de/de/426310-hans-peter-hacker-berlin|24/7
+W30051409|TRANSPORT|FUEL|sun||Prenzlauer Promenade|70-73|13089.0|Berlin|DE|+49 30 47004661|||http://www.sun-tankstellen.de/sites/station_prenzlauer_promenade.htm|24/7
+W24718205|TRANSPORT|FUEL|Shell||Hohenzollerndamm|41-42|10713.0|Berlin|DE|+49 30 8731774|||http://www.shell.de/|24/7
+N252656011|TRANSPORT|FUEL|Shell Tankstelle||Kaiser-Friedrich-Straße|95|10585.0|Berlin|DE|+49 30 34094693|||http://www.shell.de|24/7
+N2879827701|TRANSPORT|FUEL|Aral Tankstelle||Falkenseer Damm|16|13585.0|Berlin|DE|+49 30 3333811|||http://www.aral.de/tankstelle/berlin/falkenseer_damm/11019900.html|24/7
+N290188321|TRANSPORT|FUEL|Total||Tempelhofer Ufer|33-35|10963.0|Berlin|DE|+49 30 2621259|+49 30 2628860||http://store.total.de/de/germany/store-total-de/berlin/berlin-tempelhofer-ufer-33-35/ND038133|24/7
+W24230098|TRANSPORT|FUEL|Aral Tankstelle|||||||||||24/7
+W331121196|TRANSPORT|FUEL|Agip|||||||||||24/7
+N313006469|TRANSPORT|FUEL|Esso|||||||||||24/7
+N1120057632|TRANSPORT|FUEL|bft||Blankenburger Straße|36|13156.0|Berlin||+49 30 48626980||||24/7
+N732714021|TRANSPORT|FUEL|Streiber & Beetz||||13507.0|||||||Mo-Fr 08:00-20:00; Sa 08:00-14:00
+W325281718|TRANSPORT|FUEL|Elan|||||||||||
+W256850061|TRANSPORT|FUEL|SHELL||Bernauer Straße|1A|16356.0|||||||
+R3930389|TRANSPORT|FUEL|SB Tank|||||||||||
+N281775191|TRANSPORT|FUEL|Shell|||||||||||
+N1406258332|TRANSPORT|FUEL|Shell|||||||||||
+N290659635|TRANSPORT|FUEL|STAR|||||||||||
+W420046391|TRANSPORT|FUEL|Total|||||||||||
+N322490355|TRANSPORT|FUEL|HEM|||||||||||
+W231410592|TRANSPORT|FUEL|Total|||||||||||
+N288485788|TRANSPORT|FUEL|Aral-Tankstelle||Buschkrugallee||12359.0|Berlin|DE|||||
+N2046037902|TRANSPORT|FUEL|Shell|||||||||||
+W137574174|TRANSPORT|FUEL|Shell Prinzenallee||Prinzenallee|20|13357.0|Berlin|DE|+49 30 4947030|||http://www.shell.de/|
+N205064299|TRANSPORT|FUEL|Esso||Belßstraße|51|12249.0|Berlin|DE|+49307754350|||http://www.exxonmobil.com|
+N667211388|TRANSPORT|FUEL|GO||Reichsstraße|86|14052.0|Berlin|DE|030 3046042|||http://www.go-tankstellen.de/tankstellen/go-tankstelle-berlin-reichsstra%C3%9Fe|
+W305924516|TRANSPORT|FUEL|HEM||Müllerstraße|168|13353.0|Berlin|DE|030 46605816|||http://www.meinehem.de/tankstellen-finder/details/gasstation/berlin-muellerstr-168|
+N318731350|TRANSPORT|FUEL|HEM|||||||+493040372555|||http://www.hem-station-rene-lange.de|
+N2292708704|TRANSPORT|FUEL|Shell||Müllerstraße|22b-23|13353.0|Berlin|DE|030 46064512|||http://www.shell.de|
+W184484790|TRANSPORT|FUEL|Aral Tankstelle||Dudenstraße|19;21|10965.0|Berlin|DE|+49 30 789 13831|+49 30 789 13832||http://www.aral.de/tankstelle/berlin/dudenstrasse/28606600.html|
+N247687679|TRANSPORT|FUEL|Shell Tankstelle||Streitstraße|19|13587.0|Berlin|DE|+49 30 3354525|||http://www.shell.de|
+N272517807|TRANSPORT|FUEL|JET Tankstelle||Kreuzbergstraße|42a|10965.0|Berlin|DE|030 78895526|||http://www.jet-tankstellen.de|
+W66990506|TRANSPORT|FUEL|star||Schustehrusstraße|102|10585.0|Berlin|DE||||http://www.star-tankstellen.de/index.php?id=18&user_astfinder_pi1%5Btsid%5D=303|
+N26882423|TRANSPORT|FUEL|Aral Tankstelle||Kurfürstendamm|128|10711.0|Berlin|DE|030 89096972|||http://www.aral.de/tankstelle/berlin/kurfuerstendamm/28608200.html|
+N324374904|TRANSPORT|FUEL|Mr. Wash||Rhinstraße|136|12681.0|Berlin|DE|030 54700371|||http://www.mrwash.de/standorte/berlin/berlin-marzahn|
+W45727466|TRANSPORT|FUEL|Star||Hansastraße|220|13051.0|Berlin||||||
+N263703997|TRANSPORT|FUEL|Aral||Alt-Friedrichsfelde|64|12683.0|Berlin||+49 30 5133078|||http://tankstelle.aral.de/tankstelle/berlin/alt-friedrichsfelde-64/28739400/|
+W395113525|TRANSPORT|FUEL|Star||Steglitzer Damm|77-79|12169.0|Berlin||||||
+N2875569869|TRANSPORT|FUEL|Sprint Tankstelle, Ruhlebener Straße||Ruhlebener Straße|1A|13597.0|Berlin|DE||||http://www.sprint-tank.com|
+N2953838662|TRANSPORT|FUEL|Aral||Roedernallee|179|13407.0|Berlin|DE|||||
+W391115418|TRANSPORT|FUEL|Aral Center||Brunnenstraße|119|13355.0|Berlin|DE|||||24/7
+N260753895|TRANSPORT|FUEL|Aral||Schöneberger Straße|20|12103.0|Berlin|DE|||||
+W44203228|TRANSPORT|FUEL|Total||Rhinstraße|175|13053.0|Berlin|DE|||||
+W201866135|TRANSPORT|FUEL|Sprint||Barnackufer|25|12207.0|Berlin|DE|||||
+W43789840|TRANSPORT|FUEL|Total||Landsberger Allee|376|12681.0|Berlin|DE|||||
+W288125112|TRANSPORT|FUEL|Star||Malchower Chaussee|1|13088.0|Berlin|DE|||||
+W367868428|TRANSPORT|FUEL|Shell||Buchberger Straße|30|10365.0|Berlin|DE|||||
+W251349203|TRANSPORT|FUEL|Esso Tankstelle||Hubertusallee|1-3|14193.0|Berlin|DE|||||
+N60436516|TRANSPORT|FUEL|Aral||Scharnweberstraße|12,13|13405.0|Berlin|DE|||||
+W54769627|TRANSPORT|FUEL|Aral||Schloßstraße|63|12165.0|Berlin|DE|||||
+W30130060|TRANSPORT|FUEL|Esso||Tempelhofer Damm|20|12101.0|Berlin|DE|||||
+W28679989|TRANSPORT|FUEL|Esso||Mariendorfer Damm|44|12109.0|Berlin|DE|||||
+N27259583|TRANSPORT|FUEL|Esso||Lessingstraße|4|10555.0|Berlin|DE|||||
+W59315035|TRANSPORT|FUEL|Shell||Oranienburger Straße|61|13437.0|Berlin|DE|||||
+W26930320|TRANSPORT|FUEL|Agip||Westhafenstraße|1-3|13353.0|Berlin|DE|||||
+W47048556|TRANSPORT|FUEL|Star||Gehrenseestraße|10|13053.0|Berlin|DE|||||
+N60436247|TRANSPORT|FUEL|HEM||Wittestraße|16|13509.0|Berlin|DE|||||
+W48375475|TRANSPORT|FUEL|Shell||Buckower Damm|225|12349.0|Berlin|DE|||||
+W78061404|TRANSPORT|FUEL|Aral||Kronberger Straße|28|14193.0|Berlin|DE|||||
+W243113965|TRANSPORT|FUEL|Shell||Damerowstraße|22, 23|13187.0|Berlin|DE|||||
+N309880944|TRANSPORT|FUEL|Jet||Storkower Straße|130|10407.0|Berlin|DE|||||
+N83502731|TRANSPORT|FUEL|Jet||Märkische Allee|246|12679.0|Berlin|DE|||||
+N295120593|TRANSPORT|FUEL|BEHALA||Westhafenstraße|1|13353.0|Berlin|DE|+4930390950|||http://www.behala.de|
+W423457085|TRANSPORT|FUEL|Total||Heidestraße|19|10557.0|Berlin|DE|030 30873987|||http://www.outletfinder.rm.total.com/otfe/ficheDetail.do?&outletCode=DETOT0000ND038034&reseauId=13&lang=DE&mode=amode&otherparams|
+W255182361|TRANSPORT|FUEL|Total Chausseestraße||Chausseestraße|61|10115.0|Berlin|DE|+498008682533|||www.total.de|
+W42960506|TRANSPORT|FUEL|Sprint||Kniprodestraße|25|10407.0|Berlin|DE|||||
+W206426091|TRANSPORT|FUEL|Aral-Tankstelle||Mariendorfer Damm|195|12107.0|Berlin|DE|||||
+W104781637|TRANSPORT|FUEL|Aral||Rathenower Straße|8|10559.0|Berlin|DE|||||
+N2702355628|TRANSPORT|FUEL|Aral Tankstelle||Levetzowstraße|9|10555.0|Berlin|DE|+49 30 3914575|+49 30 39904636|||

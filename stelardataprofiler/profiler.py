@@ -42,7 +42,11 @@ nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 nltk.download('vader_lexicon', quiet=True)
 from nltk.corpus import stopwords
-from spacy_language_detection import LanguageDetector
+from spacy_language_detection import LanguageDetector, detect_langs, DetectorFactory
+from ftlangdetect import detect
+import fasttext
+
+fasttext.FastText.eprint = lambda x: None
 import spacy
 from spacy.language import Language
 import string
@@ -62,6 +66,8 @@ from pyproj import CRS
 import uuid
 import re
 from rasterio.warp import transform_bounds
+from rasterio.transform import from_origin
+from rasterio.io import MemoryFile
 
 __all__ = ['run_profile', 'profile_timeseries', 'profile_timeseries_with_config',
            'profile_tabular', 'profile_tabular_with_config',
@@ -69,7 +75,8 @@ __all__ = ['run_profile', 'profile_timeseries', 'profile_timeseries_with_config'
            'profile_text', 'profile_text_with_config',
            'profile_hierarchical', 'profile_hierarchical_with_config',
            'profile_rdfGraph', 'profile_rdfGraph_with_config',
-           'prepare_mapping',  'profile_single_raster',
+           'profile_vista_rasters', 'profile_vista_rasters_with_config',
+           'prepare_mapping', 'profile_single_raster',
            'profile_multiple_rasters', 'profile_single_text',
            'profile_multiple_texts', 'write_to_json', 'read_config'
            ]
@@ -104,10 +111,12 @@ def run_profile(config: dict) -> None:
         profile_hierarchical_with_config(config)
     elif profile_type == 'rdfgraph':
         profile_rdfGraph_with_config(config)
+    elif profile_type == 'vista':
+        profile_vista_rasters_with_config(config)
     else:
         print('The profile type is not available!\n'
               'Please use one of the following types:\n'
-              "'timeseries', 'tabular', 'vector', 'raster', 'text', 'hierarchical', 'rdfGraph'")
+              "'timeseries', 'tabular', 'vector', 'raster', 'text', 'hierarchical', 'rdfGraph', 'vista")
 
 
 def prepare_mapping(config: dict) -> None:
@@ -132,6 +141,10 @@ def prepare_mapping(config: dict) -> None:
     # Handle special cases (timeseries, vector) of tabular profile
     if profile_type == 'vector' or profile_type == 'timeseries':
         profile_type = 'tabular'
+
+    # Handle special cases (raster, vista) of raster profile
+    if profile_type == 'raster' or profile_type == 'vista':
+        profile_type = 'raster'
 
     # Concatenate path and file names
     in_file = os.path.join(output_path, json_file)
@@ -300,21 +313,22 @@ def profile_tabular_with_config(config: dict) -> None:
         header = config['input']['header']
     if 'separator' in config['input']:
         sep = config['input']['separator']
-    columns_dict: dict = config['input']['columns']
     longitude_column: str = None
     latitude_column: str = None
     wkt_column: str = None
-    if ('longitude' in columns_dict) and ('latitude' in columns_dict) and ('wkt' in columns_dict):
-        longitude_column = columns_dict['longitude']
-        latitude_column = columns_dict['latitude']
-        wkt_column = columns_dict['wkt']
+    if 'columns' in config['input']:
+        columns_dict: dict = config['input']['columns']
+        if ('longitude' in columns_dict) and ('latitude' in columns_dict) and ('wkt' in columns_dict):
+            longitude_column = columns_dict['longitude']
+            latitude_column = columns_dict['latitude']
+            wkt_column = columns_dict['wkt']
 
-    elif ('longitude' in columns_dict) and ('latitude' in columns_dict):
-        longitude_column = columns_dict['longitude']
-        latitude_column = columns_dict['latitude']
+        elif ('longitude' in columns_dict) and ('latitude' in columns_dict):
+            longitude_column = columns_dict['longitude']
+            latitude_column = columns_dict['latitude']
 
-    elif 'wkt' in columns_dict:
-        wkt_column = columns_dict['wkt']
+        elif 'wkt' in columns_dict:
+            wkt_column = columns_dict['wkt']
 
     profile_dict = profile_tabular(my_file_path=my_file_path, header=header, sep=sep,
                                    longitude_column=longitude_column, latitude_column=latitude_column,
@@ -436,11 +450,8 @@ def profile_single_raster(my_file_path: str) -> dict:
     img = rio.open(my_file_path)
 
     # find image name
-    pattern = '[\w-]+?(?=\.)'
-    # searching the pattern
-    a = re.search(pattern, my_file_path)
-    # printing the match
-    img_dict['name'] = a.group()
+    name = Path(my_file_path).stem
+    img_dict['name'] = name
 
     # find general image data
     img_dict.update(img.meta)
@@ -619,11 +630,8 @@ def profile_multiple_rasters(my_folder_path: str, image_format: str = '.tif') ->
             img = rio.open(my_file_path)
 
             # find image name
-            pattern = '[\w-]+?(?=\.)'
-            # searching the pattern
-            a = re.search(pattern, my_file_path)
-            # printing the match
-            img_dict['name'] = a.group()
+            name = Path(my_file_path).stem
+            img_dict['name'] = name
 
             # find general image data
             img_dict.update(img.meta)
@@ -832,6 +840,7 @@ def profile_raster_with_config(config: dict) -> None:
 
     # Write resulting profile dictionary
     write_to_json(profile_dict, output_json_path)
+
 
 def profile_raster(my_path: str, image_format: str = '.tif') -> dict:
     """
@@ -1266,14 +1275,13 @@ def profile_single_text(my_file_path: str) -> dict:
         dic = gensim.corpora.Dictionary(corpus)
         bow_corpus = [dic.doc2bow(doc) for doc in corpus]
 
-        lda_model = gensim.models.LdaMulticore(bow_corpus,
-                                               num_topics=1,
-                                               id2word=dic,
-                                               passes=100,
-                                               iterations=100,
-                                               random_state=2023,
-                                               workers=3,
-                                               alpha='asymmetric')
+        lda_model = gensim.models.LdaModel(bow_corpus,
+                                           num_topics=1,
+                                           id2word=dic,
+                                           passes=100,
+                                           iterations=100,
+                                           random_state=2023,
+                                           alpha='asymmetric')
 
         text_dict['topics'] = list(
             [token for token, score in lda_model.show_topic(i, topn=10)] for i in
@@ -1808,14 +1816,13 @@ def profile_multiple_texts(my_folder_path: str, text_format: str = 'txt') -> dic
                     dic = gensim.corpora.Dictionary(corpus)
                     bow_corpus = [dic.doc2bow(doc) for doc in corpus]
 
-                    lda_model = gensim.models.LdaMulticore(bow_corpus,
-                                                           num_topics=1,
-                                                           id2word=dic,
-                                                           passes=100,
-                                                           iterations=100,
-                                                           random_state=2023,
-                                                           workers=3,
-                                                           alpha='asymmetric')
+                    lda_model = gensim.models.LdaModel(bow_corpus,
+                                                       num_topics=1,
+                                                       id2word=dic,
+                                                       passes=100,
+                                                       iterations=100,
+                                                       random_state=2023,
+                                                       alpha='asymmetric')
 
                     text_dict['topics'] = list(
                         [token for token, score in lda_model.show_topic(i, topn=10)] for i in
@@ -2108,6 +2115,7 @@ def profile_hierarchical(my_file_path: str) -> dict:
     data = Data(my_file_path)
     profile = Profiler(data, profiler_type='structured')
     readable_report = profile.report(report_options={'output_format': 'pretty'})
+
     profile_dict['table']['num_records'] = readable_report['global_stats']['column_count']
     depth = dict()
 
@@ -2508,6 +2516,465 @@ def profile_rdfGraph(my_file_path: str, parse_format: str = 'application/rdf+xml
     return profile_dict
 
 
+# ------ VISTA (RHD, RAS FILES) ------#
+def profile_vista_rasters_with_config(config: dict) -> None:
+    """
+    This method performs profiling on ras data and write the resulting profile dictionary based on a configuration dictionary.
+
+    :param config: a dictionary with all configuration settings.
+    :type config: dict
+    :return: None.
+    :rtype: None
+
+    """
+    input_path = config['input']['path']
+    input_ras_file = config['input']['ras_file']
+    input_rhd_file = config['input']['rhd_file']
+    output_dir_path = config['output']['path']
+    output_json_name = config['output']['json']
+
+    # Create input ras and rhd file paths
+    my_ras_file_path = ''
+    if input_ras_file == '':
+        print('No input ras file was found for vista profile!')
+        return None
+    else:
+        my_ras_file_path = os.path.abspath(os.path.join(input_path, input_ras_file))
+
+    my_rhd_file_path = ''
+    if input_rhd_file == '':
+        print('No input rhd file was found for vista profile!')
+        return None
+    else:
+        my_rhd_file_path = os.path.abspath(os.path.join(input_path, input_rhd_file))
+
+    # Create output file paths
+    output_dir_path = os.path.abspath(output_dir_path)
+    output_json_path = os.path.abspath(os.path.join(output_dir_path, output_json_name))
+
+    # Run raster profile
+    profile_dict = profile_vista_rasters(rhd_datapath=my_rhd_file_path, ras_datapath=my_ras_file_path)
+
+    # Write resulting profile dictionary
+    write_to_json(profile_dict, output_json_path)
+
+
+def profile_vista_rasters(rhd_datapath: str, ras_datapath: str):
+    """
+    This method performs profiling and generates a profiling dictionary for a given ras file
+    that exists in the given path using the contents of a rhd file that exists in the given path.
+
+    :param rhd_datapath: the path to a rhd file.
+    :type rhd_datapath: str
+    :param ras_datapath: the path to a ras file.
+    :type ras_datapath: str
+    :return: A dict which contains the results of the profiler for the ras.
+    :rtype: dict
+
+    """
+
+    def __read_image_rhd(rhd_datapath: str):
+        with open(rhd_datapath, 'r') as f:
+            lines = f.readlines()
+            vista_data_type = int(lines[0])
+            n_of_LAI = int(lines[1])
+            split_third_row = " ".join(lines[2].split()).split(' ')
+            columns = int(split_third_row[0])
+            rows = int(split_third_row[1])
+            split_fourth_row = " ".join(lines[3].split()).split(' ')
+            resolution = float(split_fourth_row[0])
+            upper_left_corner_x = float(split_fourth_row[1])
+            upper_left_corner_y = float(split_fourth_row[2])
+            UTM_x = float(split_fourth_row[3])
+            UTM_y = float(split_fourth_row[4])
+            UTM_zone = str(split_fourth_row[5])
+            LAI_images = {'vista_data_type': vista_data_type, 'resolution': resolution,
+                          'upper_left_corner_x': upper_left_corner_x, 'upper_left_corner_y': upper_left_corner_y,
+                          'rows': rows, 'columns': columns, 'UTM_x': UTM_x, 'UTM_y': UTM_y, 'UTM_zone': UTM_zone}
+            count_LAI_images = 0
+            LAI_images['images'] = {}
+            for value_LAI in range(5, n_of_LAI + 5):
+                ras_file_name = rhd_datapath.split('/')[-1].split('.')[0]
+                img_name = ras_file_name + '_' + str(count_LAI_images)
+                prev_img_name = ras_file_name + '_' + str(count_LAI_images - 1)
+                split_row = " ".join(lines[value_LAI].split()).split(' ')
+                LAI_images['images'][img_name] = {}
+                img_bytes = int(split_row[0])
+                LAI_images['images'][img_name]['bytes'] = img_bytes
+                LAI_images['images'][img_name]['date'] = datetime.strptime(
+                    split_row[3] + ' ' + split_row[2] + ' ' + split_row[1], '%d %m %Y').date()
+
+                record_length = img_bytes * columns
+                LAI_images['images'][img_name]['record_length_bytes'] = record_length
+                if count_LAI_images == 0:
+                    LAI_images['images'][img_name]['image_start_pos_bytes'] = 0
+                else:
+                    LAI_images['images'][img_name]['image_start_pos_bytes'] = LAI_images['images'][prev_img_name][
+                                                                                  'image_start_pos_bytes'] + ((
+                                                                                                                      record_length / img_bytes) * rows)
+                count_LAI_images += 1
+
+            return LAI_images
+
+    ras_dict = __read_image_rhd(rhd_datapath)
+
+    profile_dict = {
+        'analysis': {
+            'title': 'Profiling Report',
+            'date_start': '',
+            'date_end': '',
+            'duration': '',
+            'filenames': [rhd_datapath,
+                          ras_datapath]
+        },
+        'table': {
+            'profiler_type': 'Vista_Raster',
+            'byte_size': 0,
+            'n_of_imgs': len(ras_dict['images']),
+            'avg_width': 0,
+            'avg_height': 0,
+            'combined_bands': []
+        },
+        'variables': [], 'package': {
+            'pandas_profiling_version': 'v3.5.0',
+            'pandas_profiling_config': ''
+        }
+    }
+
+    # initialize .ras NODATA value counts
+    ras_zero_count = 0
+    ras_missing_count = 0
+    ras_forest_count = 0
+    ras_urban_count = 0
+    ras_water_count = 0
+    ras_snow_count = 0
+    ras_cloud_shadow_buffer_count = 0
+    ras_cloud_shadow_count = 0
+    ras_cloud_buffer_count = 0
+    ras_cirrus_clouds_count = 0
+    ras_clouds_count = 0
+
+    __lai_f = lambda x: float(str(x)) / 1000 if (x > 0) else x
+
+    # Start time
+    now = datetime.now()
+    start_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+    profile_dict['analysis']['date_start'] = start_string
+
+    img_names = []
+    imgs = []
+    lai_in_imgs = []
+    with open(ras_datapath, 'r+') as f:
+        ras_file_name = ras_datapath.split('/')[-1].split('.')[0]
+        if ras_dict['vista_data_type'] == 7:
+            ras_file_array = np.fromfile(f, dtype=np.int16).astype(float)
+            ras_file_array[np.where(ras_file_array > 0)] = list(
+                map(__lai_f, ras_file_array[np.where(ras_file_array > 0)]))
+            n_of_imgs = len(ras_dict['images'])
+
+            for n_img in range(0, n_of_imgs):
+
+                # Create image dictionary
+                img_dict = {
+                    'name': '',
+                    'type': 'Raster',
+                    'crs': '',
+                    'date': '',
+                    'spatial_coverage': '',
+                    'spatial_resolution': {
+                        'pixel_size_x': 0,
+                        'pixel_size_y': 0
+                    },
+                    'no_data_value': '',
+                    'format': ''
+                }
+
+                img_name = ras_file_name + '_' + str(n_img)
+                img_names.append(img_name)
+
+                # image name
+                img_dict['name'] = img_name
+
+                next_img_name = ras_file_name + '_' + str(n_img + 1)
+                if n_img == n_of_imgs - 1:
+                    start_pos = int(ras_dict['images'][img_name]['image_start_pos_bytes'])
+                    end_pos = len(ras_file_array)
+                else:
+                    start_pos = int(ras_dict['images'][img_name]['image_start_pos_bytes'])
+                    end_pos = int(ras_dict['images'][next_img_name]['image_start_pos_bytes'])
+
+                # data of the image
+                img_data = ras_file_array[start_pos:end_pos]
+                img_data = img_data.reshape((ras_dict['rows'], ras_dict['columns']))
+
+                # Find Image General Data
+                upper_left_corner_x = ras_dict['upper_left_corner_x']
+                upper_left_corner_y = ras_dict['upper_left_corner_y']
+                UTM_x = ras_dict['UTM_x']
+                UTM_y = ras_dict['UTM_y']
+                transform = from_origin(upper_left_corner_x, upper_left_corner_y, UTM_x, UTM_y)
+
+                # create in-memory rasterio image
+                mem_file = MemoryFile()
+
+                with mem_file.open(driver='GTiff', height=ras_dict['rows'],
+                                   width=ras_dict['columns'], count=1,
+                                   dtype=str(ras_file_array.dtype), crs='+proj=utm +zone=' + str(ras_dict['UTM_zone']),
+                                   transform=transform) as img:
+
+                    img.update_tags(date=ras_dict['images'][img_name]['date'])
+
+                    # image general metadata
+                    img_dict.update(img.meta)
+
+                    # image size
+                    profile_dict['table']['byte_size'] += img_dict['width'] * img_dict['height'] * 4
+
+                    # image date
+                    img_dict['date'] = ras_dict['images'][img_name]['date'].strftime("%d.%m.%Y")
+
+                    # making transform JSON-serializable
+                    img_dict['transform'] = list(img_dict['transform'])
+
+                    profile_dict['table']['avg_width'] += img_dict['width']
+                    profile_dict['table']['avg_height'] += img_dict['height']
+
+                    # change nodata and driver keys
+                    img_dict['no_data_value'] = img_dict['nodata']
+                    del img_dict['nodata']
+
+                    img_dict['format'] = img_dict['driver']
+                    del img_dict['driver']
+
+                    # change crs format
+                    if img.crs is not None:
+                        crs_list = CRS.from_string(str(img_dict['crs']))
+                        img_dict['crs'] = 'EPSG:' + str(crs_list.to_epsg())
+                    else:
+                        img_dict['crs'] = 'EPSG:4326'
+
+                    # calculate spatial resolution
+                    pixelSizeX, pixelSizeY = img.res
+                    img_dict['spatial_resolution']['pixel_size_x'] = pixelSizeX
+                    img_dict['spatial_resolution']['pixel_size_y'] = pixelSizeY
+
+                    # calculate spatial coverage
+                    # Bounding box (in the original CRS)
+                    bounds = img.bounds
+
+                    xmin, ymin, xmax, ymax = transform_bounds(CRS.from_string(img_dict['crs']), CRS.from_epsg(4326),
+                                                              *bounds)
+
+                    geom = box(xmin, ymin, xmax, ymax)
+
+                    img_dict['spatial_coverage'] = geom.wkt
+
+                    img.close()
+
+                # statistics for LAI band
+                img_dict['bands'] = []
+                s = pd.Series(img_data[np.where(img_data > 0)])
+                stats = s.describe(percentiles=[.10, .25, .75, .90])
+
+                band_uuid = str(uuid.uuid4())
+
+                band_dict = {
+                    'uuid': band_uuid,
+                    'name': 'LAI',
+                    'count': stats[0],
+                    'min': stats[3],
+                    'max': stats[9],
+                    'average': stats[1],
+                    'stddev': stats[2],
+                    'median': stats[6],
+                    'kurtosis': s.kurtosis(),
+                    'skewness': s.skew(),
+                    'variance': s.var(),
+                    'percentile10': stats[4],
+                    'percentile25': stats[5],
+                    'percentile75': stats[7],
+                    'percentile90': stats[8],
+                    'no_data_distribution': []
+                }
+
+                # percentages of no_data values
+                img_no_data = img_data[np.where(img_data < 0)]
+                width = img_dict['width']
+                height = img_dict['height']
+
+                missing_count = np.count_nonzero(img_no_data == -999)
+                forest_count = np.count_nonzero(img_no_data == -961)
+                urban_count = np.count_nonzero(img_no_data == -950)
+                water_count = np.count_nonzero(img_no_data == -940)
+                snow_count = np.count_nonzero(img_no_data == -930)
+                cloud_shadow_buffer_count = np.count_nonzero(img_no_data == -923)
+                cloud_shadow_count = np.count_nonzero(img_no_data == -920)
+                cloud_buffer_count = np.count_nonzero(img_no_data == -913)
+                cirrus_clouds_count = np.count_nonzero(img_no_data == -911)
+                clouds_count = np.count_nonzero(img_no_data == -910)
+
+                img_zeros = img_data[np.where(img_data == 0)]
+                zero_count = img_zeros.size
+
+                # add NODATA value counts to the .ras NODATA value counts
+                ras_missing_count += missing_count
+                ras_forest_count += forest_count
+                ras_urban_count += urban_count
+                ras_water_count += water_count
+                ras_snow_count += snow_count
+                ras_cloud_shadow_buffer_count += cloud_shadow_buffer_count
+                ras_cloud_shadow_count += cloud_shadow_count
+                ras_cloud_buffer_count += cloud_buffer_count
+                ras_cirrus_clouds_count += cirrus_clouds_count
+                ras_clouds_count += clouds_count
+
+                # add zero value counts to the .ras zero value counts
+                ras_zero_count += zero_count
+
+                no_data_dict = {
+                    'LAI': (band_dict['count'] / (width * height)) * 100,
+                    'missing': (missing_count / (width * height)) * 100,
+                    'forest': (forest_count / (width * height)) * 100,
+                    'urban': (urban_count / (width * height)) * 100,
+                    'water': (water_count / (width * height)) * 100,
+                    'snow': (snow_count / (width * height)) * 100,
+                    'cloud_shadow_buffer': (cloud_shadow_buffer_count / (width * height)) * 100,
+                    'cloud_shadow': (cloud_shadow_count / (width * height)) * 100,
+                    'cloud_buffer': (cloud_buffer_count / (width * height)) * 100,
+                    'cirrus_clouds': (cirrus_clouds_count / (width * height)) * 100,
+                    'clouds': (clouds_count / (width * height)) * 100,
+                    'zeros': (zero_count / (width * height)) * 100
+                }
+
+                for k, v in no_data_dict.items():
+                    band_dict['no_data_distribution'].append(
+                        {'uuid': band_uuid, 'value': k, 'percentage': v}
+                    )
+
+                    if k == 'LAI':
+                        imgs.append({'raster': img_dict['name'],
+                                     'date': img_dict['date'],
+                                     'percentage': no_data_dict['LAI']})
+
+                        lai_in_imgs.append(no_data_dict['LAI'])
+
+                img_dict['bands'].append(band_dict)
+
+                profile_dict['variables'].append(img_dict)
+
+            # calculate combined stats
+            combined_band_stats_dict = {
+                'name': 'LAI',
+                'n_of_imgs': profile_dict['table']['n_of_imgs'],
+                'img_names': img_names,
+                'imgs': imgs,
+                'count': 0,
+                'min': math.inf,
+                'average': 0,
+                'max': -math.inf,
+                'variance': 0,
+                'no_data_distribution': [],
+                'lai_distribution': {}
+            }
+
+            # calculate LAI numeric distribution for the images of the .ras
+            s = pd.Series(lai_in_imgs)
+            stats = s.describe(percentiles=[.10, .25, .75, .90])
+
+            lai_dict = {
+                'name': 'LAI',
+                'count': stats[0],
+                'min': stats[3],
+                'max': stats[9],
+                'average': stats[1],
+                'stddev': stats[2],
+                'median': stats[6],
+                'kurtosis': s.kurtosis(),
+                'skewness': s.skew(),
+                'variance': s.var(),
+                'percentile10': stats[4],
+                'percentile25': stats[5],
+                'percentile75': stats[7],
+                'percentile90': stats[8]
+            }
+
+            combined_band_stats_dict['lai_distribution'] = lai_dict
+
+            for image in profile_dict['variables']:
+                lai_band = image['bands'][0]
+                if lai_band['count'] != 0:
+                    combined_band_stats_dict['count'] += lai_band['count']
+                    combined_band_stats_dict['average'] += lai_band['average'] * lai_band['count']
+
+                    if lai_band['min'] < combined_band_stats_dict['min']:
+                        combined_band_stats_dict['min'] = lai_band['min']
+
+                    if lai_band['max'] > combined_band_stats_dict['max']:
+                        combined_band_stats_dict['max'] = lai_band['max']
+
+            combined_band_stats_dict['average'] = combined_band_stats_dict['average'] / combined_band_stats_dict[
+                'count']
+
+            # calculate combined_variance
+            # comb_var = (n*std1 + n*d_sqrt1 + m*std2 + m*d_sqrt2 + k*std3 + k*d_sqrt3)/ n + m + k
+            for image in profile_dict['variables']:
+                lai_band = image['bands'][0]
+                if lai_band['count'] != 0:
+                    count = lai_band['count']
+                    std = lai_band['stddev']
+                    mean = lai_band['average']
+                    comb_mean = combined_band_stats_dict['average']
+                    d_sqrt = (mean - comb_mean) * (mean - comb_mean)
+
+                    combined_band_stats_dict['variance'] += count * std + count * d_sqrt
+
+            combined_band_stats_dict['variance'] = combined_band_stats_dict['variance'] / combined_band_stats_dict[
+                'count']
+
+            # calculate no_data_distribution for LAI of the .ras
+            width_all = profile_dict['table']['avg_width']
+            height_all = profile_dict['table']['avg_height']
+
+            no_data_dict = {
+                'LAI': ((combined_band_stats_dict['count'] * n_of_imgs) / (width_all * height_all)) * 100,
+                'missing': ((ras_missing_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'forest': ((ras_forest_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'urban': ((ras_urban_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'water': ((ras_water_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'snow': ((ras_snow_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'cloud_shadow_buffer': ((ras_cloud_shadow_buffer_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'cloud_shadow': ((ras_cloud_shadow_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'cloud_buffer': ((ras_cloud_buffer_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'cirrus_clouds': ((ras_cirrus_clouds_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'clouds': ((ras_clouds_count * n_of_imgs) / (width_all * height_all)) * 100,
+                'zeros': ((ras_zero_count * n_of_imgs) / (width_all * height_all)) * 100
+            }
+
+            for k, v in no_data_dict.items():
+                combined_band_stats_dict['no_data_distribution'].append(
+                    {'name': 'LAI', 'value': k, 'percentage': v}
+                )
+
+            profile_dict['table']['combined_bands'].append(combined_band_stats_dict)
+
+            # calculate avg_width and avg_height of .ras file
+            profile_dict['table']['avg_width'] = profile_dict['table']['avg_width'] / profile_dict['table']['n_of_imgs']
+            profile_dict['table']['avg_height'] = profile_dict['table']['avg_height'] / profile_dict['table'][
+                'n_of_imgs']
+
+    # End time
+    now = datetime.now()
+    end_string = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+    profile_dict['analysis']['date_end'] = end_string
+
+    # Time Difference
+    profile_dict['analysis']['duration'] = str(
+        dateutil.parser.parse(profile_dict['analysis']['date_end']) - dateutil.parser.parse(
+            profile_dict['analysis']['date_start']))
+
+    return profile_dict
+
+
 # ---------- OTHER FUNCTIONS ---------#
 def read_config(json_file: str) -> dict:
     """
@@ -2527,6 +2994,7 @@ def read_config(json_file: str) -> dict:
             return config_dict
 
     return config_dict
+
 
 def write_to_json(output_dict: dict, output_file: Union[str, Path]) -> None:
     """
@@ -2560,7 +3028,7 @@ def write_to_json(output_dict: dict, output_file: Union[str, Path]) -> None:
                     elif isinstance(o, set):
                         return {encode_it(v) for v in o}
                     elif isinstance(o, (pd.DataFrame, pd.Series)):
-                        return encode_it(o.to_dict('records'))
+                        return encode_it(o.reset_index().to_dict("records"))
                     elif isinstance(o, np.ndarray):
                         return encode_it(o.tolist())
                     elif isinstance(o, np.generic):
@@ -2592,6 +3060,14 @@ def __profile_timeseries_main(my_file_path: str, time_column: str, header: int =
                               sep: str = ',', mode: str = "default", minimal: bool = True):
     df = __read_files(my_file_path, header, sep)
     df[time_column] = pd.to_datetime(df[time_column])
+
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            try:
+                df[col] = pd.to_datetime(df[col])
+            except Exception as e:
+                pass
+
     if minimal:
         config_file = get_config("config_minimal.yaml")
 
@@ -2681,17 +3157,103 @@ def __profile_timeseries_main(my_file_path: str, time_column: str, header: int =
         html_dict['table']['byte_size'] = os.path.getsize(my_file_path)
 
     texts_column_names = []
+    timeseries_columns = []
     for var_name, info in html_dict['variables'].items():
-        if info['type'] == 'Categorical' and info['p_unique'] > 0.6:
+        if info['type'] == 'Categorical' and info['p_unique'] > 0.4:
             texts_column_names.append(var_name)
+        if info['type'] == 'TimeSeries':
+            timeseries_columns.append(var_name)
+
+    if len(timeseries_columns) != 0:
+        df_ts = df[timeseries_columns]
+        html_dict = __calculate_gaps(html_dict, df_ts)
 
     if len(texts_column_names) != 0:
         df = df[texts_column_names]
         profile_dict = __create_profile_dict(html_dict, df)
+
+        html_dict = __extend_textual_html(profile_dict, html_dict)
     else:
         profile_dict = __create_profile_dict(html_dict)
 
     return profile_dict, config, html_dict, sample_timeseries
+
+
+def __calculate_gaps(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
+    column_gap_dict = {}
+    max_gap_all = -np.Inf
+    min_gap_all = np.Inf
+    average_gap_all = 0
+    count_gaps = 0
+
+    # Dictionary with gap size as key and count as value
+    gaps_dict = Counter()
+
+    for column in df:
+
+        gaps = list(df[column].isnull().astype(int).groupby(df[column].notnull().astype(int).cumsum()).sum())
+
+        true_gaps = [gap for gap in gaps if gap > 0]
+        if len(true_gaps) != 0:
+            # Calculate the statistics for the observed gap sizes
+            s = pd.Series(true_gaps)
+            stats = s.describe(percentiles=[.10, .25, .75, .90])
+
+            gaps_distribution = {
+                'name': column,
+                'count': stats[0],
+                'min': stats[3],
+                'max': stats[9],
+                'average': stats[1],
+                'stddev': stats[2],
+                'median': stats[6],
+                'kurtosis': s.kurtosis(),
+                'skewness': s.skew(),
+                'variance': s.var(),
+                'percentile10': stats[4],
+                'percentile25': stats[5],
+                'percentile75': stats[7],
+                'percentile90': stats[8],
+            }
+
+            html_dict['variables'][column]['gaps_distribution'] = gaps_distribution
+
+            # increase the global count for each gap size
+            gaps_dict = gaps_dict + Counter(true_gaps)
+
+            max_gap = max(true_gaps)
+            min_gap = min(true_gaps)
+
+            if min_gap < min_gap_all:
+                min_gap_all = min_gap
+
+            if max_gap > max_gap_all:
+                max_gap_all = max_gap
+
+            length_gaps = len(true_gaps)
+            sum_gaps = sum(true_gaps)
+            count_gaps += length_gaps
+            average_gap_all += sum_gaps
+            avg_gap = sum_gaps / length_gaps
+
+            column_gap_dict[column] = max_gap
+        else:
+            html_dict['variables'][column]['gaps_distribution'] = {}
+
+    if count_gaps != 0:
+        average_gap_all = round(average_gap_all / count_gaps)
+    else:
+        min_gap_all = 0
+        max_gap_all = 0
+    if len(gaps_dict) != 0:
+        gaps_dict = dict(gaps_dict)
+
+    html_dict['table']['ts_min_gap'] = min_gap_all
+    html_dict['table']['ts_max_gap'] = max_gap_all
+    html_dict['table']['ts_avg_gap'] = average_gap_all
+    html_dict['table']['ts_gaps_frequency_distribution'] = gaps_dict
+
+    return html_dict
 
 
 def __create_sample_df(df, time_column):
@@ -2720,7 +3282,11 @@ def __new_numeric_summary(config: Settings, series: pd.Series, summary: dict = N
     return config, series, summary
 
 
+# TODO: Add language distribution
 def __extend_textual_attributes(texts_list: list, var_name: str, info: dict):
+    # Used in language detection
+    DetectorFactory.seed = 2023
+
     var_dict = {
         'name': var_name,
         'type': 'Textual',
@@ -2731,7 +3297,13 @@ def __extend_textual_attributes(texts_list: list, var_name: str, info: dict):
         'ratio_digits': 0,
         'ratio_special_characters': 0,
         'num_chars_distribution': {},
-        'num_words_distribution': {}
+        'num_words_distribution': {},
+        'language_distribution': [],
+        'n_distinct': info['n_distinct'],
+        'p_distinct': info['p_distinct'],
+        'p_missing': info['p_missing'],
+        'memory_size': info['memory_size'],
+        'n_unique': info['n_unique']
     }
 
     num_chars = 0
@@ -2740,6 +3312,7 @@ def __extend_textual_attributes(texts_list: list, var_name: str, info: dict):
     ratio_special_characters = 0
     num_chars_list = []
     num_words_list = []
+    corpus_languages = dict()
 
     for text in texts_list:
         if not pd.isnull(text):
@@ -2758,6 +3331,52 @@ def __extend_textual_attributes(texts_list: list, var_name: str, info: dict):
             words_count = 0
             for word in words:
                 num_words_list.append(len(word))
+
+            # Find number of sentences
+            sentences = nltk.sent_tokenize(text)
+            sentences_count = 0
+            for sentence in sentences:
+                sentences_count += 1
+
+            # Find languages
+            try:
+                languages = detect_langs(text)
+
+                for language in languages:
+                    if pycountry.languages.get(alpha_2=language.lang) is not None:
+                        lang = pycountry.languages.get(alpha_2=language.lang).name.lower()
+                    else:
+                        lang = 'english'
+
+                    if lang not in corpus_languages:
+                        corpus_languages[lang] = language.prob
+                    else:
+                        corpus_languages[lang] += language.prob
+
+            except:
+                language = detect(text)
+
+                if pycountry.languages.get(alpha_2=language['lang']) is not None:
+                    lang = pycountry.languages.get(alpha_2=language['lang']).name.lower()
+                else:
+                    lang = 'english'
+
+                if lang not in corpus_languages:
+                    corpus_languages[lang] = language['score']
+                else:
+                    corpus_languages[lang] += language['score']
+
+    # Calculate language distribution in the corpus
+
+    corpus_languages = {k: v / var_dict['count'] for k, v in corpus_languages.items()}
+    total = sum(corpus_languages.values(), float(0)) * 100
+    if total < 100:
+        corpus_languages['unknown'] = (100 - total) / 100
+
+    corpus_languages = dict(sorted(corpus_languages.items(), key=lambda item: item[1], reverse=True))
+
+    for k, v in corpus_languages.items():
+        var_dict['language_distribution'].append({'language': k, "percentage": v * 100})
 
     if num_chars != 0:
         var_dict['ratio_uppercase'] = ratio_uppercase / num_chars
@@ -2819,8 +3438,12 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
         'table': {
             'profiler_type': '',
             'byte_size': 0,
+            'memory_size': 0,
+            'record_size': 0,
             'num_rows': 0,
             'num_attributes': 0,
+            'n_cells_missing': 0,
+            'p_cells_missing': 0.0,
             'types': []
         },
         'variables': [],
@@ -2843,8 +3466,24 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
     profile_dict['table']['byte_size'] = html_dict['table']['byte_size']
     profile_dict['table']['num_rows'] = html_dict['table']['n']
     profile_dict['table']['num_attributes'] = html_dict['table']['n_var']
+    profile_dict['table']['n_cells_missing'] = html_dict['table']['n_cells_missing']
+    profile_dict['table']['p_cells_missing'] = html_dict['table']['p_cells_missing']
+    profile_dict['table']['memory_size'] = html_dict['table']['memory_size']
+    profile_dict['table']['record_size'] = html_dict['table']['record_size']
 
     profile_types = {}
+
+    # Pass gaps in timeseries profile
+    if profile_dict['table']['profiler_type'] == 'TimeSeries':
+        profile_dict['table']['ts_min_gap'] = html_dict['table']['ts_min_gap']
+        profile_dict['table']['ts_max_gap'] = html_dict['table']['ts_max_gap']
+        profile_dict['table']['ts_avg_gap'] = html_dict['table']['ts_avg_gap']
+
+        profile_dict['table']['ts_gaps_frequency_distribution'] = []
+        gaps_freq_distr = []
+        for gap, count in html_dict['table']['ts_gaps_frequency_distribution'].items():
+            profile_dict['table']['ts_gaps_frequency_distribution'].append({'gap_size': gap,
+                                                                            "count": count})
 
     # Fill variables
     for var_name, info in html_dict['variables'].items():
@@ -2859,11 +3498,17 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
                 'name': var_name,
                 'type': 'DateTime',
                 'count': info['count'],
+                'n_distinct': info['n_distinct'],
+                'p_distinct': info['p_distinct'],
                 'num_missing': info['n_missing'],
                 'uniqueness': info['p_unique'],
+                'p_missing': info['p_missing'],
+                'memory_size': info['memory_size'],
                 'start': str(info['min']),
                 'end': str(info['max']),
-                'date_range': str(info['range'])
+                'date_range': str(info['range']),
+                'histogram_counts': info['histogram'][0],
+                'histogram_bins': info['histogram'][1]
             }
 
             profile_dict['variables'].append(var_dict)
@@ -2900,8 +3545,40 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
                 'abs_sum_changes': info['tsfresh_features']['absolute sum of changes'],
                 'len_above_mean': info['tsfresh_features']['count above mean'],
                 'len_below_mean': info['tsfresh_features']['count below mean'],
-                'num_peaks': info['tsfresh_features']['number cwt peaks  n 10']
+                'num_peaks': info['tsfresh_features']['number cwt peaks  n 10'],
+                'n_distinct': info['n_distinct'],
+                'p_distinct': info['p_distinct'],
+                'p_missing': info['p_missing'],
+                'memory_size': info['memory_size'],
+                'n_unique': info['n_unique'],
+                'n_infinite': info['n_infinite'],
+                'p_infinite': info['p_infinite'],
+                'n_zeros': info['n_zeros'],
+                'p_zeros': info['p_zeros'],
+                'n_negative': info['n_negative'],
+                'p_negative': info['p_negative'],
+                'monotonic': info['monotonic'],
+                'range': info['range'],
+                'iqr': info['iqr'],
+                'cv': info['cv'],
+                'mad': info['mad'],
+                'sum': info['sum'],
+                'gaps_distribution': info['gaps_distribution'],
+                'histogram_counts': info['histogram'][0],
+                'histogram_bins': info['histogram'][1],
+                'value_counts_without_nan': [],
+                'value_counts_index_sorted': [],
+                'series': []
             }
+
+            for value, count in info['value_counts_without_nan'].items():
+                var_dict['value_counts_without_nan'].append({'value': value, "count": count})
+
+            for value, count in info['value_counts_index_sorted'].items():
+                var_dict['value_counts_index_sorted'].append({'value': value, "count": count})
+
+            for key, value in info['series'].items():
+                var_dict['series'].append({'key': key, "value": value})
 
             profile_dict['variables'].append(var_dict)
         elif info['type'] == 'Numeric':
@@ -2929,12 +3606,39 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
                 'percentile25': info['25%'],
                 'percentile75': info['75%'],
                 'percentile90': info['90%'],
-                'percentile95': info['95%']
+                'percentile95': info['95%'],
+                'n_distinct': info['n_distinct'],
+                'p_distinct': info['p_distinct'],
+                'p_missing': info['p_missing'],
+                'memory_size': info['memory_size'],
+                'n_unique': info['n_unique'],
+                'n_infinite': info['n_infinite'],
+                'p_infinite': info['p_infinite'],
+                'n_zeros': info['n_zeros'],
+                'p_zeros': info['p_zeros'],
+                'n_negative': info['n_negative'],
+                'p_negative': info['p_negative'],
+                'monotonic': info['monotonic'],
+                'range': info['range'],
+                'iqr': info['iqr'],
+                'cv': info['cv'],
+                'mad': info['mad'],
+                'sum': info['sum'],
+                'histogram_counts': info['histogram'][0],
+                'histogram_bins': info['histogram'][1],
+                'value_counts_without_nan': [],
+                'value_counts_index_sorted': []
             }
+
+            for value, count in info['value_counts_without_nan'].items():
+                var_dict['value_counts_without_nan'].append({'value': value, "count": count})
+
+            for value, count in info['value_counts_index_sorted'].items():
+                var_dict['value_counts_index_sorted'].append({'value': value, "count": count})
 
             profile_dict['variables'].append(var_dict)
         elif info['type'] == 'Categorical':
-            if info['p_unique'] > 0.6:
+            if info['p_unique'] > 0.4:
                 if 'Textual' in profile_types:
                     profile_types['Textual'] += 1
                 else:
@@ -2954,8 +3658,17 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
                     'count': info['count'],
                     'num_missing': info['n_missing'],
                     'uniqueness': info['p_unique'],
-                    'frequency_distribution': []
+                    'frequency_distribution': [],
+                    'n_distinct': info['n_distinct'],
+                    'p_distinct': info['p_distinct'],
+                    'p_missing': info['p_missing'],
+                    'memory_size': info['memory_size'],
+                    'n_unique': info['n_unique'],
+                    'samples': []
                 }
+
+                for cat, count in info['first_rows'].items():
+                    var_dict['samples'].append({'row': cat, "cat": count})
 
                 for cat, count in info['value_counts_without_nan'].items():
                     var_dict['frequency_distribution'].append({'name': var_name, 'type': cat, 'count': count})
@@ -2976,14 +3689,53 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
                 'mbr': info['mbr'],
                 'centroid': info['centroid'],
                 'crs': info['crs'],
+                'union_convex_hull': info['union_convex_hull'],
                 'length_distribution': info['length_distribution'],
                 'area_distribution': info['area_distribution'],
-                'geom_type_distribution': []
+                'geom_type_distribution': [],
+                'value_counts_without_nan': [],
+                'n_distinct': info['n_distinct'],
+                'p_distinct': info['p_distinct'],
+                'p_missing': info['p_missing'],
+                'memory_size': info['memory_size'],
+                'n_unique': info['n_unique'],
+                'samples': [],
+                'heatmap': info['heatmap']
 
             }
 
             for geom_type, frequency in info['geom_types'].items():
                 var_dict['geom_type_distribution'].append({'name': var_name, 'type': geom_type, 'count': frequency})
+
+            for value, count in info['value_counts_without_nan'].items():
+                var_dict['value_counts_without_nan'].append({'name': var_name, 'value': value, 'count': count})
+
+            for row, value in info['first_rows'].items():
+                var_dict['samples'].append({'row': row, "value": value})
+
+            profile_dict['variables'].append(var_dict)
+        elif info['type'] == 'Boolean':
+            if info['type'] in profile_types:
+                profile_types[info['type']] += 1
+            else:
+                profile_types[info['type']] = 1
+
+            var_dict = {
+                'name': var_name,
+                'type': 'Boolean',
+                'count': info['count'],
+                'num_missing': info['n_missing'],
+                'uniqueness': info['p_unique'],
+                'value_counts_without_nan': [],
+                'n_distinct': info['n_distinct'],
+                'p_distinct': info['p_distinct'],
+                'p_missing': info['p_missing'],
+                'memory_size': info['memory_size'],
+                'n_unique': info['n_unique'],
+            }
+
+            for value, count in info['value_counts_without_nan'].items():
+                var_dict['value_counts_without_nan'].append({'name': var_name, 'value': value, 'count': count})
 
             profile_dict['variables'].append(var_dict)
         else:
@@ -2998,6 +3750,8 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
                 'count': info['count'],
                 'num_missing': info['n_missing'],
                 'uniqueness': info['p_unique'],
+                'p_missing': info['p_missing'],
+                'memory_size': info['memory_size']
             }
 
             profile_dict['variables'].append(var_dict)
@@ -3006,6 +3760,35 @@ def __create_profile_dict(html_dict: dict, df: pd.DataFrame = pd.DataFrame()):
         profile_dict['table']['types'].append({'type': k, 'count': v})
 
     return profile_dict
+
+
+def __extend_textual_html(profile_dict: dict, html_dict: dict):
+    for variable in profile_dict['variables']:
+        if variable['type'] == 'Textual':
+            var_dict = {
+                'type': variable['type'],
+                'count': variable['count'],
+                'num_missing': variable['num_missing'],
+                'uniqueness': variable['uniqueness'],
+                'ratio_uppercase': variable['ratio_uppercase'],
+                'ratio_digits': variable['ratio_digits'],
+                'ratio_special_characters': variable['ratio_special_characters'],
+                'num_chars_distribution': variable['num_chars_distribution'],
+                'num_words_distribution': variable['num_words_distribution'],
+                'language_distribution': {language['language']: language['percentage']
+                                          for language in variable['language_distribution']}
+            }
+
+            html_dict['variables'][variable['name']].update(var_dict)
+
+            if not html_dict['table']['types'].__contains__('Textual'):
+                html_dict['table']['types']['Categorical'] -= 1
+                html_dict['table']['types']['Textual'] = 1
+            else:
+                html_dict['table']['types']['Categorical'] -= 1
+                html_dict['table']['types']['Textual'] += 1
+
+    return html_dict
 
 
 def __profile_tabular_main(my_file_path: str, header: int = 0, sep: str = ',', crs: str = "EPSG:4326",
@@ -3018,6 +3801,13 @@ def __profile_tabular_main(my_file_path: str, header: int = 0, sep: str = ',', c
         df.geometry = df.geometry.astype(str)
     else:
         df = __read_files(my_file_path, header, sep)
+
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            try:
+                df[col] = pd.to_datetime(df[col])
+            except Exception as e:
+                pass
 
     if minimal:
         config_file = get_config("config_minimal.yaml")
@@ -3213,12 +4003,14 @@ def __profile_tabular_main(my_file_path: str, header: int = 0, sep: str = ',', c
 
     texts_column_names = []
     for var_name, info in html_dict['variables'].items():
-        if info['type'] == 'Categorical' and info['p_unique'] > 0.6:
+        if info['type'] == 'Categorical' and info['p_unique'] > 0.4:
             texts_column_names.append(var_name)
 
     if len(texts_column_names) != 0:
         df = df[texts_column_names]
         profile_dict = __create_profile_dict(html_dict, df)
+
+        html_dict = __extend_textual_html(profile_dict, html_dict)
     else:
         profile_dict = __create_profile_dict(html_dict)
 

@@ -32,14 +32,37 @@ After you install the data-profile as a local library you can import it in your 
 import stelardataprofiler
 ```
 
+#### How to run the app
+
+After you install the data-profile as a local library you can run the app 
+either by executing the stelardataprofilerapp script or by executing streamlit run inside 
+the streamlitapp folder.
+
+```sh
+$ stelardataprofilerapp run -- <absolute-folder-path-for-app-outputs>
+
+or
+
+$ cd data-profiler/streamlitapp
+$ streamlit run app.py -- <absolute-folder-path-for-app-outputs>
+```
+> **_NOTE:_**  The default <absolute-folder-path-for-app-outputs> is '.' which means 
+> that in the first case the folder will be created inside the python package 
+> while in the second case the folder will be created inside the 
+> data-profiler/streamlitapp folder. <br />
+> In the first case we can run the app from anywhere.<br /> 
+> Additionally, in both options we can make use of streamlit flags. For example:
+> * stelardataprofilerapp run --server.port 9040 -- <absolute-path-for-app-outputs>
+> * streamlit run app.py --server.port 9040 -- <absolute-path-to-output-folder>
+
 ### Configuration
 Change the [config_template](https://github.com/stelar-eu/data-profiler/blob/main/config_template.json) according to the requirements of each profiler and execute [main.py](https://github.com/stelar-eu/data-profiler/blob/main/stelardataprofiler/main.py) to create the mapping.ttl file.
 
 ### Execute profiler-mappings script (after local library installation)
 
 ```sh
-cd data-profiler
-profiler-mappings config_template.json
+$ cd data-profiler
+$ profiler-mappings config_template.json
 ```
 > **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config_template.json and change the 'path' parameters of the config_template.json to correctly take the input and write the output.
 

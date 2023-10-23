@@ -12,16 +12,16 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-sys.path.insert(0, os.path.abspath('..'))
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'stelardataprofiler'
-copyright = '2023, Panos Betchavas'
-author = 'Panos Betchavas'
+copyright = '2023, Panagiotis Betchavas'
+author = 'Panagiotis Betchavas'
 
 # The short X.Y version
 version = ''
@@ -132,7 +132,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'stelardataprofiler.tex', 'stelardataprofiler Documentation',
-     'Panos Betchavas', 'manual'),
+     'Panagiotis Betchavas', 'manual'),
 ]
 
 

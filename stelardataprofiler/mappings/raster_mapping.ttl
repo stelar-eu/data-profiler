@@ -229,6 +229,17 @@
   ];
 
   rr:predicateObjectMap [
+    rr:predicate klms:noDataDistribution;
+    rr:objectMap [
+      rr:parentTriplesMap <NoDataValueDistribution>;
+      rr:joinCondition [
+        rr:child "uuid";
+        rr:parent "uuid";
+      ];
+    ]
+  ];
+
+  rr:predicateObjectMap [
     rr:predicate klms:valueDistribution;
     rr:objectMap [
       rr:parentTriplesMap <NumericalValueDistribution>;
@@ -236,6 +247,109 @@
         rr:child "uuid";
         rr:parent "uuid";
       ];
+    ]
+  ].
+
+
+<NoDataValueDistribution>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*].bands[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "categorical_distribution/" ] # 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:CategoricalDistribution ;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate klms:contains;
+    rr:objectMap [
+      rr:parentTriplesMap <NoDataValues>;
+      rr:joinCondition [
+        rr:child "uuid";
+        rr:parent "uuid";
+      ];
+    ]
+  ].
+
+
+
+<NoDataValues>
+  rml:logicalSource [
+    rml:source "./out/profile.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.variables[*].bands[*].no_data_distribution[*]";
+  ];
+
+  rr:subjectMap [
+    fnml:functionValue [
+        rr:predicateObjectMap [
+            rr:predicate fno:executes ;
+            rr:objectMap [ rr:constant grel:array_join ] 
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [ rr:constant "category/" ]   # kv_pair
+        ];
+        rr:predicateObjectMap [
+            rr:predicate grel:p_array_a ;
+            rr:objectMap [
+                fnml:functionValue [
+                    rr:predicateObjectMap [
+                        rr:predicate fno:executes ;
+                        rr:objectMap [ rr:constant idlab-fn:random ]  # The random function is nested in the `grel:array_join` function
+                    ]
+		]
+            ]
+        ];
+    ] ;
+    rr:class klms:Category;
+#    rr:termType rr:BlankNode; # If BlankNode should be assigned 
+  ] ;
+
+   rr:predicateObjectMap [
+    rr:predicate klms:name ;
+    rr:objectMap [
+      rml:reference "value";
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:count;
+    rr:objectMap [
+      rml:reference "count";
+      rr:datatype xsd:nonNegativeInteger;
+    ]
+  ];
+
+   rr:predicateObjectMap [
+    rr:predicate klms:percentage;
+    rr:objectMap [
+      rml:reference "percentage";
+      rr:datatype xsd:decimal;
     ]
   ].
 
@@ -355,4 +469,3 @@
       rr:datatype xsd:decimal;
     ]
   ].
-

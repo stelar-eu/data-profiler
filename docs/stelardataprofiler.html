@@ -350,6 +350,49 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="stelardataprofiler.profile_vista_rasters">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_vista_rasters</code><span class="sig-paren">(</span><em>rhd_datapath: str</em>, <em>ras_datapath: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_vista_rasters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_vista_rasters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for a given ras file
+that exists in the given path using the contents of a rhd file that exists in the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rhd_datapath</strong> (<em>str</em>) – the path to a rhd file.</li>
+<li><strong>ras_datapath</strong> (<em>str</em>) – the path to a ras file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the ras.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stelardataprofiler.profile_vista_rasters_with_config">
+<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_vista_rasters_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_vista_rasters_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_vista_rasters_with_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs profiling on ras data and write the resulting profile dictionary based on a configuration dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="stelardataprofiler.prepare_mapping">
 <code class="descclassname">stelardataprofiler.</code><code class="descname">prepare_mapping</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#prepare_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.prepare_mapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method prepares the suitable mapping for subsequent generation of the RDF graph, if “rdf” and “serialization” options are specified in config.</p>
@@ -505,7 +548,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Panos Betchavas.</p>
+    <p>&#169; Copyright 2023, Panagiotis Betchavas.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

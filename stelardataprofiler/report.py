@@ -31,6 +31,7 @@ from pandas_profiling.report.presentation.core import Sample, ToggleButton, Vari
 from typing import Any, Callable, Dict, List, Union
 from stelardataprofiler.variables.render_timeseries import __render_timeseries
 from stelardataprofiler.variables.render_geospatial import __render_geospatial
+from stelardataprofiler.variables.render_textual import __render_textual
 
 from pathlib import Path
 from pandas_profiling.report.presentation.flavours.html.templates import (
@@ -405,7 +406,8 @@ def __get_render_map() -> Dict[str, Callable]:
         "Image": render_algorithms.render_image,
         "Unsupported": render_algorithms.render_generic,
         "TimeSeries": __render_timeseries,
-        "Geometry": __render_geospatial
+        "Geometry": __render_geospatial,
+        "Textual": __render_textual
     }
 
     return render_map

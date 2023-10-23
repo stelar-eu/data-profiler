@@ -111,7 +111,11 @@
 <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;wordnet&#39;</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;vader_lexicon&#39;</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
-<span class="kn">from</span> <span class="nn">spacy_language_detection</span> <span class="kn">import</span> <span class="n">LanguageDetector</span>
+<span class="kn">from</span> <span class="nn">spacy_language_detection</span> <span class="kn">import</span> <span class="n">LanguageDetector</span><span class="p">,</span> <span class="n">detect_langs</span><span class="p">,</span> <span class="n">DetectorFactory</span>
+<span class="kn">from</span> <span class="nn">ftlangdetect</span> <span class="kn">import</span> <span class="n">detect</span>
+<span class="kn">import</span> <span class="nn">fasttext</span>
+
+<span class="n">fasttext</span><span class="o">.</span><span class="n">FastText</span><span class="o">.</span><span class="n">eprint</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span>
 <span class="kn">import</span> <span class="nn">spacy</span>
 <span class="kn">from</span> <span class="nn">spacy.language</span> <span class="kn">import</span> <span class="n">Language</span>
 <span class="kn">import</span> <span class="nn">string</span>
@@ -131,6 +135,8 @@
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">rasterio.warp</span> <span class="kn">import</span> <span class="n">transform_bounds</span>
+<span class="kn">from</span> <span class="nn">rasterio.transform</span> <span class="kn">import</span> <span class="n">from_origin</span>
+<span class="kn">from</span> <span class="nn">rasterio.io</span> <span class="kn">import</span> <span class="n">MemoryFile</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;run_profile&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_timeseries&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_timeseries_with_config&#39;</span><span class="p">,</span>
            <span class="s1">&#39;profile_tabular&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_tabular_with_config&#39;</span><span class="p">,</span>
@@ -138,7 +144,8 @@
            <span class="s1">&#39;profile_text&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_text_with_config&#39;</span><span class="p">,</span>
            <span class="s1">&#39;profile_hierarchical&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_hierarchical_with_config&#39;</span><span class="p">,</span>
            <span class="s1">&#39;profile_rdfGraph&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_rdfGraph_with_config&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;prepare_mapping&#39;</span><span class="p">,</span>  <span class="s1">&#39;profile_single_raster&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;profile_vista_rasters&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_vista_rasters_with_config&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;prepare_mapping&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_single_raster&#39;</span><span class="p">,</span>
            <span class="s1">&#39;profile_multiple_rasters&#39;</span><span class="p">,</span> <span class="s1">&#39;profile_single_text&#39;</span><span class="p">,</span>
            <span class="s1">&#39;profile_multiple_texts&#39;</span><span class="p">,</span> <span class="s1">&#39;write_to_json&#39;</span><span class="p">,</span> <span class="s1">&#39;read_config&#39;</span>
            <span class="p">]</span>
@@ -173,10 +180,12 @@
         <span class="n">profile_hierarchical_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">profile_type</span> <span class="o">==</span> <span class="s1">&#39;rdfgraph&#39;</span><span class="p">:</span>
         <span class="n">profile_rdfGraph_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">profile_type</span> <span class="o">==</span> <span class="s1">&#39;vista&#39;</span><span class="p">:</span>
+        <span class="n">profile_vista_rasters_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The profile type is not available!</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="s1">&#39;Please use one of the following types:</span><span class="se">\n</span><span class="s1">&#39;</span>
-              <span class="s2">&quot;&#39;timeseries&#39;, &#39;tabular&#39;, &#39;vector&#39;, &#39;raster&#39;, &#39;text&#39;, &#39;hierarchical&#39;, &#39;rdfGraph&#39;&quot;</span><span class="p">)</span></div>
+              <span class="s2">&quot;&#39;timeseries&#39;, &#39;tabular&#39;, &#39;vector&#39;, &#39;raster&#39;, &#39;text&#39;, &#39;hierarchical&#39;, &#39;rdfGraph&#39;, &#39;vista&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="prepare_mapping"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.prepare_mapping">[docs]</a><span class="k">def</span> <span class="nf">prepare_mapping</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -201,6 +210,10 @@
     <span class="c1"># Handle special cases (timeseries, vector) of tabular profile</span>
     <span class="k">if</span> <span class="n">profile_type</span> <span class="o">==</span> <span class="s1">&#39;vector&#39;</span> <span class="ow">or</span> <span class="n">profile_type</span> <span class="o">==</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">:</span>
         <span class="n">profile_type</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
+
+    <span class="c1"># Handle special cases (raster, vista) of raster profile</span>
+    <span class="k">if</span> <span class="n">profile_type</span> <span class="o">==</span> <span class="s1">&#39;raster&#39;</span> <span class="ow">or</span> <span class="n">profile_type</span> <span class="o">==</span> <span class="s1">&#39;vista&#39;</span><span class="p">:</span>
+        <span class="n">profile_type</span> <span class="o">=</span> <span class="s1">&#39;raster&#39;</span>
 
     <span class="c1"># Concatenate path and file names</span>
     <span class="n">in_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">json_file</span><span class="p">)</span>
@@ -902,6 +915,7 @@
     <span class="c1"># Write resulting profile dictionary</span>
     <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="profile_raster"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_raster">[docs]</a><span class="k">def</span> <span class="nf">profile_raster</span><span class="p">(</span><span class="n">my_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method performs profiling and generates a profiling dictionary for either a single image or many images.</span>
@@ -1335,14 +1349,13 @@
         <span class="n">dic</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
         <span class="n">bow_corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">corpus</span><span class="p">]</span>
 
-        <span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaMulticore</span><span class="p">(</span><span class="n">bow_corpus</span><span class="p">,</span>
-                                               <span class="n">num_topics</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                               <span class="n">id2word</span><span class="o">=</span><span class="n">dic</span><span class="p">,</span>
-                                               <span class="n">passes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                                               <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                                               <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span>
-                                               <span class="n">workers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                                               <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;asymmetric&#39;</span><span class="p">)</span>
+        <span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">(</span><span class="n">bow_corpus</span><span class="p">,</span>
+                                           <span class="n">num_topics</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                           <span class="n">id2word</span><span class="o">=</span><span class="n">dic</span><span class="p">,</span>
+                                           <span class="n">passes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                           <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                           <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span>
+                                           <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;asymmetric&#39;</span><span class="p">)</span>
 
         <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;topics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">10</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
@@ -1877,14 +1890,13 @@
                     <span class="n">dic</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
                     <span class="n">bow_corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">corpus</span><span class="p">]</span>
 
-                    <span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaMulticore</span><span class="p">(</span><span class="n">bow_corpus</span><span class="p">,</span>
-                                                           <span class="n">num_topics</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                                           <span class="n">id2word</span><span class="o">=</span><span class="n">dic</span><span class="p">,</span>
-                                                           <span class="n">passes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                                                           <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                                                           <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span>
-                                                           <span class="n">workers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                                                           <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;asymmetric&#39;</span><span class="p">)</span>
+                    <span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">(</span><span class="n">bow_corpus</span><span class="p">,</span>
+                                                       <span class="n">num_topics</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                       <span class="n">id2word</span><span class="o">=</span><span class="n">dic</span><span class="p">,</span>
+                                                       <span class="n">passes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                                       <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                                       <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span>
+                                                       <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;asymmetric&#39;</span><span class="p">)</span>
 
                     <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;topics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
                         <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">10</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
@@ -2577,6 +2589,414 @@
     <span class="k">return</span> <span class="n">profile_dict</span></div>
 
 
+<span class="c1"># ------ VISTA (RHD, RAS FILES) ------#</span>
+<div class="viewcode-block" id="profile_vista_rasters_with_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_vista_rasters_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_vista_rasters_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling on ras data and write the resulting profile dictionary based on a configuration dictionary.</span>
+
+<span class="sd">    :param config: a dictionary with all configuration settings.</span>
+<span class="sd">    :type config: dict</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_ras_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;ras_path&#39;</span><span class="p">]</span>
+    <span class="n">input_ras_file</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;ras_file&#39;</span><span class="p">]</span>
+    <span class="n">input_rhd_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;rhd_path&#39;</span><span class="p">]</span>
+    <span class="n">input_rhd_file</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;rhd_file&#39;</span><span class="p">]</span>
+    <span class="n">output_dir_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+    <span class="n">output_json_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;json&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Create input ras and rhd file paths</span>
+    <span class="n">my_ras_file_path</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">input_ras_file</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No input ras file was found for vista profile!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">my_ras_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_ras_path</span><span class="p">,</span> <span class="n">input_ras_file</span><span class="p">))</span>
+
+    <span class="n">my_rhd_file_path</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">input_rhd_file</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No input rhd file was found for vista profile!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">my_rhd_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_rhd_path</span><span class="p">,</span> <span class="n">input_rhd_file</span><span class="p">))</span>
+
+    <span class="c1"># Create output file paths</span>
+    <span class="n">output_dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">output_dir_path</span><span class="p">)</span>
+    <span class="n">output_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir_path</span><span class="p">,</span> <span class="n">output_json_name</span><span class="p">))</span>
+
+    <span class="c1"># Run raster profile</span>
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">profile_vista_rasters</span><span class="p">(</span><span class="n">rhd_datapath</span><span class="o">=</span><span class="n">my_rhd_file_path</span><span class="p">,</span> <span class="n">ras_datapath</span><span class="o">=</span><span class="n">my_ras_file_path</span><span class="p">)</span>
+
+    <span class="c1"># Write resulting profile dictionary</span>
+    <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="profile_vista_rasters"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.profile_vista_rasters">[docs]</a><span class="k">def</span> <span class="nf">profile_vista_rasters</span><span class="p">(</span><span class="n">rhd_datapath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ras_datapath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling and generates a profiling dictionary for a given ras file</span>
+<span class="sd">    that exists in the given path using the contents of a rhd file that exists in the given path.</span>
+
+<span class="sd">    :param rhd_datapath: the path to a rhd file.</span>
+<span class="sd">    :type rhd_datapath: str</span>
+<span class="sd">    :param ras_datapath: the path to a ras file.</span>
+<span class="sd">    :type ras_datapath: str</span>
+<span class="sd">    :return: A dict which contains the results of the profiler for the ras.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__read_image_rhd</span><span class="p">(</span><span class="n">rhd_datapath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rhd_datapath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="n">vista_data_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">n_of_LAI</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">split_third_row</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split_third_row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split_third_row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">split_fourth_row</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">resolution</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">split_fourth_row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">upper_left_corner_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">split_fourth_row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">upper_left_corner_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">split_fourth_row</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">UTM_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">split_fourth_row</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">UTM_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">split_fourth_row</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">UTM_zone</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">split_fourth_row</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+            <span class="n">LAI_images</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vista_data_type&#39;</span><span class="p">:</span> <span class="n">vista_data_type</span><span class="p">,</span> <span class="s1">&#39;resolution&#39;</span><span class="p">:</span> <span class="n">resolution</span><span class="p">,</span>
+                          <span class="s1">&#39;upper_left_corner_x&#39;</span><span class="p">:</span> <span class="n">upper_left_corner_x</span><span class="p">,</span> <span class="s1">&#39;upper_left_corner_y&#39;</span><span class="p">:</span> <span class="n">upper_left_corner_y</span><span class="p">,</span>
+                          <span class="s1">&#39;rows&#39;</span><span class="p">:</span> <span class="n">rows</span><span class="p">,</span> <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="n">columns</span><span class="p">,</span> <span class="s1">&#39;UTM_x&#39;</span><span class="p">:</span> <span class="n">UTM_x</span><span class="p">,</span> <span class="s1">&#39;UTM_y&#39;</span><span class="p">:</span> <span class="n">UTM_y</span><span class="p">,</span> <span class="s1">&#39;UTM_zone&#39;</span><span class="p">:</span> <span class="n">UTM_zone</span><span class="p">}</span>
+            <span class="n">count_LAI_images</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">value_LAI</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_of_LAI</span> <span class="o">+</span> <span class="mi">5</span><span class="p">):</span>
+                <span class="n">ras_file_name</span> <span class="o">=</span> <span class="n">rhd_datapath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">img_name</span> <span class="o">=</span> <span class="n">ras_file_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">count_LAI_images</span><span class="p">)</span>
+                <span class="n">prev_img_name</span> <span class="o">=</span> <span class="n">ras_file_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">count_LAI_images</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">split_row</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">value_LAI</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">img_bytes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split_row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;bytes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_bytes</span>
+                <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                    <span class="n">split_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">split_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">split_row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> %m %Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+                <span class="n">record_length</span> <span class="o">=</span> <span class="n">img_bytes</span> <span class="o">*</span> <span class="n">columns</span>
+                <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;record_length_bytes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">record_length</span>
+                <span class="k">if</span> <span class="n">count_LAI_images</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;image_start_pos_bytes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;image_start_pos_bytes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LAI_images</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">prev_img_name</span><span class="p">][</span>
+                                                                                  <span class="s1">&#39;image_start_pos_bytes&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span>
+                                                                                                                      <span class="n">record_length</span> <span class="o">/</span> <span class="n">img_bytes</span><span class="p">)</span> <span class="o">*</span> <span class="n">rows</span><span class="p">)</span>
+                <span class="n">count_LAI_images</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">return</span> <span class="n">LAI_images</span>
+
+    <span class="n">ras_dict</span> <span class="o">=</span> <span class="n">__read_image_rhd</span><span class="p">(</span><span class="n">rhd_datapath</span><span class="p">)</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;analysis&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Profiling Report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_start&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_end&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filenames&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">rhd_datapath</span><span class="p">,</span>
+                          <span class="n">ras_datapath</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;profiler_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Vista_Raster&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;byte_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;n_of_imgs&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;avg_width&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;avg_height&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;combined_bands&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;variables&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;pandas_profiling_version&#39;</span><span class="p">:</span> <span class="s1">&#39;v3.5.0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pandas_profiling_config&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1"># initialize .ras NODATA value counts</span>
+    <span class="n">ras_missing_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_forest_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_urban_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_water_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_snow_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_cloud_shadow_buffer_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_cloud_shadow_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_cloud_buffer_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_cirrus_clouds_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ras_clouds_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">__lai_f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="mf">40.0</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">99</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="n">x</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">999</span><span class="p">)</span>
+
+    <span class="c1"># Start time</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">start_string</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_string</span>
+
+    <span class="n">img_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ras_datapath</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">ras_file_name</span> <span class="o">=</span> <span class="n">ras_datapath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;vista_data_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">ras_file_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">ras_file_array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ras_file_array</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span><span class="n">__lai_f</span><span class="p">,</span> <span class="n">ras_file_array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ras_file_array</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]))</span>
+            <span class="n">n_of_imgs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">n_img</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_of_imgs</span><span class="p">):</span>
+
+                <span class="c1"># Create image dictionary</span>
+                <span class="n">img_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Raster&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;crs&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;spatial_coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;spatial_resolution&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;pixel_size_x&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s1">&#39;pixel_size_y&#39;</span><span class="p">:</span> <span class="mi">0</span>
+                    <span class="p">},</span>
+                    <span class="s1">&#39;no_data_value&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+                <span class="p">}</span>
+
+                <span class="n">img_name</span> <span class="o">=</span> <span class="n">ras_file_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_img</span><span class="p">)</span>
+                <span class="n">img_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_name</span><span class="p">)</span>
+
+                <span class="c1"># image name</span>
+                <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_name</span>
+
+                <span class="n">next_img_name</span> <span class="o">=</span> <span class="n">ras_file_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_img</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">n_img</span> <span class="o">==</span> <span class="n">n_of_imgs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">start_pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;image_start_pos_bytes&#39;</span><span class="p">])</span>
+                    <span class="n">end_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ras_file_array</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">start_pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;image_start_pos_bytes&#39;</span><span class="p">])</span>
+                    <span class="n">end_pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">next_img_name</span><span class="p">][</span><span class="s1">&#39;image_start_pos_bytes&#39;</span><span class="p">])</span>
+
+                <span class="c1"># data of the image</span>
+                <span class="n">img_data</span> <span class="o">=</span> <span class="n">ras_file_array</span><span class="p">[</span><span class="n">start_pos</span><span class="p">:</span><span class="n">end_pos</span><span class="p">]</span>
+                <span class="n">img_data</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;rows&#39;</span><span class="p">],</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]))</span>
+
+                <span class="c1"># Find Image General Data</span>
+                <span class="n">upper_left_corner_x</span> <span class="o">=</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;upper_left_corner_x&#39;</span><span class="p">]</span>
+                <span class="n">upper_left_corner_y</span> <span class="o">=</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;upper_left_corner_y&#39;</span><span class="p">]</span>
+                <span class="n">UTM_x</span> <span class="o">=</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;UTM_x&#39;</span><span class="p">]</span>
+                <span class="n">UTM_y</span> <span class="o">=</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;UTM_y&#39;</span><span class="p">]</span>
+                <span class="n">transform</span> <span class="o">=</span> <span class="n">from_origin</span><span class="p">(</span><span class="n">upper_left_corner_x</span><span class="p">,</span> <span class="n">upper_left_corner_y</span><span class="p">,</span> <span class="n">UTM_x</span><span class="p">,</span> <span class="n">UTM_y</span><span class="p">)</span>
+
+                <span class="c1"># create in-memory rasterio image</span>
+                <span class="n">mem_file</span> <span class="o">=</span> <span class="n">MemoryFile</span><span class="p">()</span>
+
+                <span class="k">with</span> <span class="n">mem_file</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">driver</span><span class="o">=</span><span class="s1">&#39;GTiff&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;rows&#39;</span><span class="p">],</span>
+                                   <span class="n">width</span><span class="o">=</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">],</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ras_file_array</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">crs</span><span class="o">=</span><span class="s1">&#39;+proj=utm +zone=32&#39;</span><span class="p">,</span>
+                                   <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+
+                    <span class="n">img</span><span class="o">.</span><span class="n">update_tags</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+
+                    <span class="c1"># image general metadata</span>
+                    <span class="n">img_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+
+
+                    <span class="c1"># image size</span>
+                    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;byte_size&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span>
+
+                    <span class="c1"># image date</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ras_dict</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="n">img_name</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># making transform JSON-serializable</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">])</span>
+
+                    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_width&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
+                    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_height&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
+
+                    <span class="c1"># change nodata and driver keys</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;no_data_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span>
+                    <span class="k">del</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span>
+
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;driver&#39;</span><span class="p">]</span>
+                    <span class="k">del</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;driver&#39;</span><span class="p">]</span>
+
+                    <span class="c1"># change crs format</span>
+                    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">crs_list</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;crs&#39;</span><span class="p">]))</span>
+                        <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;crs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EPSG:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">crs_list</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;crs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EPSG:4326&#39;</span>
+
+                    <span class="c1"># calculate spatial resolution</span>
+                    <span class="n">pixelSizeX</span><span class="p">,</span> <span class="n">pixelSizeY</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">res</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;spatial_resolution&#39;</span><span class="p">][</span><span class="s1">&#39;pixel_size_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pixelSizeX</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;spatial_resolution&#39;</span><span class="p">][</span><span class="s1">&#39;pixel_size_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pixelSizeY</span>
+
+                    <span class="c1"># calculate spatial coverage</span>
+                    <span class="c1"># Bounding box (in the original CRS)</span>
+                    <span class="n">bounds</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">bounds</span>
+
+                    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">transform_bounds</span><span class="p">(</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;crs&#39;</span><span class="p">]),</span> <span class="n">CRS</span><span class="o">.</span><span class="n">from_epsg</span><span class="p">(</span><span class="mi">4326</span><span class="p">),</span>
+                                                              <span class="o">*</span><span class="n">bounds</span><span class="p">)</span>
+
+                    <span class="n">geom</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;spatial_coverage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">wkt</span>
+
+                    <span class="n">img</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+                <span class="c1"># statistics for LAI band</span>
+                <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;bands&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">img_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">img_data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)])</span>
+                <span class="n">stats</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.10</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mf">.90</span><span class="p">])</span>
+
+                <span class="n">band_uuid</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+                <span class="n">band_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;uuid&#39;</span><span class="p">:</span> <span class="n">band_uuid</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;LAI&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+                    <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s1">&#39;stddev&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                    <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(),</span>
+                    <span class="s1">&#39;skewness&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+                    <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">var</span><span class="p">(),</span>
+                    <span class="s1">&#39;percentile10&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+                    <span class="s1">&#39;no_data_distribution&#39;</span><span class="p">:</span> <span class="p">[]</span>
+                <span class="p">}</span>
+
+                <span class="c1"># percentages of no_data values</span>
+                <span class="n">img_no_data</span> <span class="o">=</span> <span class="n">img_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">img_data</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)]</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
+                <span class="n">height</span> <span class="o">=</span> <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
+
+                <span class="n">missing_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">999</span><span class="p">)</span>
+                <span class="n">forest_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">961</span><span class="p">)</span>
+                <span class="n">urban_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">950</span><span class="p">)</span>
+                <span class="n">water_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">940</span><span class="p">)</span>
+                <span class="n">snow_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">930</span><span class="p">)</span>
+                <span class="n">cloud_shadow_buffer_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">923</span><span class="p">)</span>
+                <span class="n">cloud_shadow_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">920</span><span class="p">)</span>
+                <span class="n">cloud_buffer_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">913</span><span class="p">)</span>
+                <span class="n">cirrus_clouds_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">911</span><span class="p">)</span>
+                <span class="n">clouds_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">img_no_data</span> <span class="o">==</span> <span class="o">-</span><span class="mi">910</span><span class="p">)</span>
+
+                <span class="c1"># add NODATA value counts to the .ras NODATA value counts</span>
+                <span class="n">ras_missing_count</span> <span class="o">+=</span> <span class="n">missing_count</span>
+                <span class="n">ras_forest_count</span> <span class="o">+=</span> <span class="n">forest_count</span>
+                <span class="n">ras_urban_count</span> <span class="o">+=</span> <span class="n">urban_count</span>
+                <span class="n">ras_water_count</span> <span class="o">+=</span> <span class="n">water_count</span>
+                <span class="n">ras_snow_count</span> <span class="o">+=</span> <span class="n">snow_count</span>
+                <span class="n">ras_cloud_shadow_buffer_count</span> <span class="o">+=</span> <span class="n">cloud_shadow_buffer_count</span>
+                <span class="n">ras_cloud_shadow_count</span> <span class="o">+=</span> <span class="n">cloud_shadow_count</span>
+                <span class="n">ras_cloud_buffer_count</span> <span class="o">+=</span> <span class="n">cloud_buffer_count</span>
+                <span class="n">ras_cirrus_clouds_count</span> <span class="o">+=</span> <span class="n">cirrus_clouds_count</span>
+                <span class="n">ras_clouds_count</span> <span class="o">+=</span> <span class="n">clouds_count</span>
+
+                <span class="n">no_data_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;missing&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">missing_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;forest&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">forest_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;urban&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">urban_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">water_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;snow&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">snow_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;cloud_shadow_buffer&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cloud_shadow_buffer_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;cloud_shadow&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cloud_shadow_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;cloud_buffer&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cloud_buffer_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;cirrus_clouds&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cirrus_clouds_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;clouds&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">clouds_count</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+                <span class="p">}</span>
+
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">no_data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">band_dict</span><span class="p">[</span><span class="s1">&#39;no_data_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span><span class="s1">&#39;uuid&#39;</span><span class="p">:</span> <span class="n">band_uuid</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;percentage&#39;</span><span class="p">:</span> <span class="n">v</span><span class="p">}</span>
+                    <span class="p">)</span>
+
+                <span class="n">img_dict</span><span class="p">[</span><span class="s1">&#39;bands&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">band_dict</span><span class="p">)</span>
+
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_dict</span><span class="p">)</span>
+
+    <span class="c1"># calculate combined stats</span>
+    <span class="n">combined_band_stats_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;LAI&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;n_of_imgs&#39;</span><span class="p">:</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n_of_imgs&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;img_names&#39;</span><span class="p">:</span> <span class="n">img_names</span><span class="p">,</span>
+        <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;no_data_distribution&#39;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]:</span>
+        <span class="n">lai_band</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="s1">&#39;bands&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+        <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]:</span>
+            <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]:</span>
+            <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span>
+
+    <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+
+    <span class="c1"># calculate combined_variance</span>
+    <span class="c1"># comb_var = (n*std1 + n*d_sqrt1 + m*std2 + m*d_sqrt2 + k*std3 + k*d_sqrt3)/ n + m + k</span>
+    <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]:</span>
+        <span class="n">lai_band</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="s1">&#39;bands&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;stddev&#39;</span><span class="p">]</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">lai_band</span><span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span>
+        <span class="n">comb_mean</span> <span class="o">=</span> <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span>
+        <span class="n">d_sqrt</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">comb_mean</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">comb_mean</span><span class="p">)</span>
+
+        <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">count</span> <span class="o">*</span> <span class="n">std</span> <span class="o">+</span> <span class="n">count</span> <span class="o">*</span> <span class="n">d_sqrt</span>
+
+    <span class="c1"># calculate no_data_distribution for LAI of the .ras</span>
+    <span class="n">width_all</span> <span class="o">=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_width&#39;</span><span class="p">]</span>
+    <span class="n">height_all</span> <span class="o">=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_height&#39;</span><span class="p">]</span>
+
+    <span class="n">no_data_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;missing&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_missing_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;forest&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_forest_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;urban&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_urban_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_water_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;snow&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_snow_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;cloud_shadow_buffer&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_cloud_shadow_buffer_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;cloud_shadow&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_cloud_shadow_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;cloud_buffer&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_cloud_buffer_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;cirrus_clouds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_cirrus_clouds_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s1">&#39;clouds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">ras_clouds_count</span> <span class="o">*</span> <span class="n">n_of_imgs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">width_all</span> <span class="o">*</span> <span class="n">height_all</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">no_data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">combined_band_stats_dict</span><span class="p">[</span><span class="s1">&#39;no_data_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;LAI&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;percentage&#39;</span><span class="p">:</span> <span class="n">v</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;combined_bands&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combined_band_stats_dict</span><span class="p">)</span>
+
+    <span class="c1"># calculate avg_width and avg_height of .ras file</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_width&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n_of_imgs&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;avg_height&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n_of_imgs&#39;</span><span class="p">]</span>
+
+    <span class="c1"># End time</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">end_string</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_string</span>
+
+    <span class="c1"># Time Difference</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">profile_dict</span></div>
+
+
 <span class="c1"># ---------- OTHER FUNCTIONS ---------#</span>
 <div class="viewcode-block" id="read_config"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.read_config">[docs]</a><span class="k">def</span> <span class="nf">read_config</span><span class="p">(</span><span class="n">json_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2596,6 +3016,7 @@
             <span class="k">return</span> <span class="n">config_dict</span>
 
     <span class="k">return</span> <span class="n">config_dict</span></div>
+
 
 <div class="viewcode-block" id="write_to_json"><a class="viewcode-back" href="../../stelardataprofiler.html#stelardataprofiler.write_to_json">[docs]</a><span class="k">def</span> <span class="nf">write_to_json</span><span class="p">(</span><span class="n">output_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2757,6 +3178,8 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts_column_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">texts_column_names</span><span class="p">]</span>
         <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">__create_profile_dict</span><span class="p">(</span><span class="n">html_dict</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+        <span class="n">html_dict</span> <span class="o">=</span> <span class="n">__extend_textual_html</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">html_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">__create_profile_dict</span><span class="p">(</span><span class="n">html_dict</span><span class="p">)</span>
 
@@ -2789,7 +3212,11 @@
     <span class="k">return</span> <span class="n">config</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">summary</span>
 
 
+<span class="c1"># TODO: Add language distribution</span>
 <span class="k">def</span> <span class="nf">__extend_textual_attributes</span><span class="p">(</span><span class="n">texts_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">var_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="c1"># Used in language detection</span>
+    <span class="n">DetectorFactory</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="mi">2023</span>
+
     <span class="n">var_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span>
         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Textual&#39;</span><span class="p">,</span>
@@ -2800,7 +3227,13 @@
         <span class="s1">&#39;ratio_digits&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s1">&#39;num_chars_distribution&#39;</span><span class="p">:</span> <span class="p">{},</span>
-        <span class="s1">&#39;num_words_distribution&#39;</span><span class="p">:</span> <span class="p">{}</span>
+        <span class="s1">&#39;num_words_distribution&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;language_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;n_unique&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_unique&#39;</span><span class="p">]</span>
     <span class="p">}</span>
 
     <span class="n">num_chars</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2809,6 +3242,7 @@
     <span class="n">ratio_special_characters</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">num_chars_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">num_words_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">corpus_languages</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts_list</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -2827,6 +3261,52 @@
             <span class="n">words_count</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
                 <span class="n">num_words_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+
+            <span class="c1"># Find number of sentences</span>
+            <span class="n">sentences</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">sent_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">sentences_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+                <span class="n">sentences_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Find languages</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">languages</span> <span class="o">=</span> <span class="n">detect_langs</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">language</span><span class="o">.</span><span class="n">lang</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">lang</span> <span class="o">=</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">language</span><span class="o">.</span><span class="n">lang</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">lang</span> <span class="o">=</span> <span class="s1">&#39;english&#39;</span>
+
+                    <span class="k">if</span> <span class="n">lang</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">corpus_languages</span><span class="p">:</span>
+                        <span class="n">corpus_languages</span><span class="p">[</span><span class="n">lang</span><span class="p">]</span> <span class="o">=</span> <span class="n">language</span><span class="o">.</span><span class="n">prob</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">corpus_languages</span><span class="p">[</span><span class="n">lang</span><span class="p">]</span> <span class="o">+=</span> <span class="n">language</span><span class="o">.</span><span class="n">prob</span>
+
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">language</span> <span class="o">=</span> <span class="n">detect</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;lang&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">lang</span> <span class="o">=</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;lang&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lang</span> <span class="o">=</span> <span class="s1">&#39;english&#39;</span>
+
+                <span class="k">if</span> <span class="n">lang</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">corpus_languages</span><span class="p">:</span>
+                    <span class="n">corpus_languages</span><span class="p">[</span><span class="n">lang</span><span class="p">]</span> <span class="o">=</span> <span class="n">language</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">corpus_languages</span><span class="p">[</span><span class="n">lang</span><span class="p">]</span> <span class="o">+=</span> <span class="n">language</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Calculate language distribution in the corpus</span>
+
+    <span class="n">corpus_languages</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">/</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">corpus_languages</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">corpus_languages</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">if</span> <span class="n">total</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">corpus_languages</span><span class="p">[</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">total</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+
+    <span class="n">corpus_languages</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">corpus_languages</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">corpus_languages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">100</span><span class="p">})</span>
 
     <span class="k">if</span> <span class="n">num_chars</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratio_uppercase</span> <span class="o">/</span> <span class="n">num_chars</span>
@@ -2888,8 +3368,12 @@
         <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s1">&#39;profiler_type&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="s1">&#39;byte_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;record_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s1">&#39;num_rows&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s1">&#39;num_attributes&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;n_cells_missing&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;p_cells_missing&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
             <span class="s1">&#39;types&#39;</span><span class="p">:</span> <span class="p">[]</span>
         <span class="p">},</span>
         <span class="s1">&#39;variables&#39;</span><span class="p">:</span> <span class="p">[],</span>
@@ -2912,6 +3396,10 @@
     <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;byte_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;byte_size&#39;</span><span class="p">]</span>
     <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_rows&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
     <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_attributes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n_var&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n_cells_missing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;n_cells_missing&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;p_cells_missing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;p_cells_missing&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;memory_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;memory_size&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;record_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;record_size&#39;</span><span class="p">]</span>
 
     <span class="n">profile_types</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -2928,11 +3416,17 @@
                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span>
                 <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;DateTime&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;num_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_missing&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;uniqueness&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_unique&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]),</span>
                 <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]),</span>
-                <span class="s1">&#39;date_range&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">])</span>
+                <span class="s1">&#39;date_range&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]),</span>
+                <span class="s1">&#39;histogram_counts&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s1">&#39;histogram_bins&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
             <span class="p">}</span>
 
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
@@ -2969,8 +3463,39 @@
                 <span class="s1">&#39;abs_sum_changes&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tsfresh_features&#39;</span><span class="p">][</span><span class="s1">&#39;absolute sum of changes&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;len_above_mean&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tsfresh_features&#39;</span><span class="p">][</span><span class="s1">&#39;count above mean&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;len_below_mean&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tsfresh_features&#39;</span><span class="p">][</span><span class="s1">&#39;count below mean&#39;</span><span class="p">],</span>
-                <span class="s1">&#39;num_peaks&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tsfresh_features&#39;</span><span class="p">][</span><span class="s1">&#39;number cwt peaks  n 10&#39;</span><span class="p">]</span>
+                <span class="s1">&#39;num_peaks&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tsfresh_features&#39;</span><span class="p">][</span><span class="s1">&#39;number cwt peaks  n 10&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_unique&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_unique&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_infinite&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_infinite&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_infinite&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_infinite&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_zeros&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_zeros&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_zeros&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_zeros&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_negative&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_negative&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_negative&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_negative&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;monotonic&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;monotonic&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;range&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;iqr&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;iqr&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;cv&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;cv&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;mad&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;mad&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;sum&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;histogram_counts&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s1">&#39;histogram_bins&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;value_counts_index_sorted&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;series&#39;</span><span class="p">:</span> <span class="p">[]</span>
             <span class="p">}</span>
+
+            <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
+
+            <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;value_counts_index_sorted&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;value_counts_index_sorted&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;series&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;series&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
 
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Numeric&#39;</span><span class="p">:</span>
@@ -2998,8 +3523,35 @@
                 <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;25%&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;75%&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;90%&#39;</span><span class="p">],</span>
-                <span class="s1">&#39;percentile95&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;95%&#39;</span><span class="p">]</span>
+                <span class="s1">&#39;percentile95&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;95%&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_unique&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_unique&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_infinite&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_infinite&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_infinite&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_infinite&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_zeros&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_zeros&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_zeros&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_zeros&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_negative&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_negative&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_negative&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_negative&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;monotonic&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;monotonic&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;range&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;iqr&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;iqr&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;cv&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;cv&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;mad&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;mad&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;sum&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;histogram_counts&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s1">&#39;histogram_bins&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;histogram&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;value_counts_index_sorted&#39;</span><span class="p">:</span> <span class="p">[]</span>
             <span class="p">}</span>
+
+            <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
+
+            <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;value_counts_index_sorted&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;value_counts_index_sorted&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
 
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Categorical&#39;</span><span class="p">:</span>
@@ -3023,8 +3575,17 @@
                     <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],</span>
                     <span class="s1">&#39;num_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_missing&#39;</span><span class="p">],</span>
                     <span class="s1">&#39;uniqueness&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_unique&#39;</span><span class="p">],</span>
-                    <span class="s1">&#39;frequency_distribution&#39;</span><span class="p">:</span> <span class="p">[]</span>
+                    <span class="s1">&#39;frequency_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;n_unique&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_unique&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[]</span>
                 <span class="p">}</span>
+
+                <span class="k">for</span> <span class="n">cat</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;first_rows&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;row&#39;</span><span class="p">:</span> <span class="n">cat</span><span class="p">,</span> <span class="s2">&quot;cat&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
 
                 <span class="k">for</span> <span class="n">cat</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;frequency_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">cat</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
@@ -3045,14 +3606,29 @@
                 <span class="s1">&#39;mbr&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;mbr&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;centroid&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;centroid&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;crs&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;crs&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;union_convex_hull&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;union_convex_hull&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;length_distribution&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;length_distribution&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;area_distribution&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;area_distribution&#39;</span><span class="p">],</span>
-                <span class="s1">&#39;geom_type_distribution&#39;</span><span class="p">:</span> <span class="p">[]</span>
+                <span class="s1">&#39;geom_type_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n_unique&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_unique&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;heatmap&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;heatmap&#39;</span><span class="p">]</span>
 
             <span class="p">}</span>
 
             <span class="k">for</span> <span class="n">geom_type</span><span class="p">,</span> <span class="n">frequency</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;geom_types&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;geom_type_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">geom_type</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">frequency</span><span class="p">})</span>
+
+            <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;value_counts_without_nan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
+
+            <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;first_rows&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;row&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
 
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -3067,6 +3643,8 @@
                 <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;num_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_missing&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;uniqueness&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_unique&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">]</span>
             <span class="p">}</span>
 
             <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
@@ -3075,6 +3653,35 @@
         <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
 
     <span class="k">return</span> <span class="n">profile_dict</span>
+
+
+<span class="k">def</span> <span class="nf">__extend_textual_html</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">html_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Textual&#39;</span><span class="p">:</span>
+            <span class="n">var_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;num_missing&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;num_missing&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;uniqueness&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;uniqueness&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ratio_digits&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;num_chars_distribution&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;num_chars_distribution&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;num_words_distribution&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;num_words_distribution&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;language_distribution&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]:</span> <span class="n">language</span><span class="p">[</span><span class="s1">&#39;percentage&#39;</span><span class="p">]</span>
+                                          <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">variable</span><span class="p">[</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]}</span>
+            <span class="p">}</span>
+
+            <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">][</span><span class="n">variable</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;Textual&#39;</span><span class="p">):</span>
+                <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">][</span><span class="s1">&#39;Categorical&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">][</span><span class="s1">&#39;Textual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">][</span><span class="s1">&#39;Categorical&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">html_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">][</span><span class="s1">&#39;Textual&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">html_dict</span>
 
 
 <span class="k">def</span> <span class="nf">__profile_tabular_main</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">crs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
@@ -3288,6 +3895,8 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts_column_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">texts_column_names</span><span class="p">]</span>
         <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">__create_profile_dict</span><span class="p">(</span><span class="n">html_dict</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+        <span class="n">html_dict</span> <span class="o">=</span> <span class="n">__extend_textual_html</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">html_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">__create_profile_dict</span><span class="p">(</span><span class="n">html_dict</span><span class="p">)</span>
 
@@ -3403,7 +4012,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Panos Betchavas.</p>
+    <p>&#169; Copyright 2023, Panagiotis Betchavas.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
