@@ -2710,9 +2710,9 @@ def profile_vista_rasters(rhd_datapath: str, ras_datapath: str):
                 # Find Image General Data
                 upper_left_corner_x = ras_dict['upper_left_corner_x']
                 upper_left_corner_y = ras_dict['upper_left_corner_y']
-                UTM_x = ras_dict['UTM_x']
-                UTM_y = ras_dict['UTM_y']
-                transform = from_origin(upper_left_corner_x, upper_left_corner_y, UTM_x, UTM_y)
+                x_res = ras_dict['resolution']
+                y_res = ras_dict['resolution']
+                transform = from_origin(upper_left_corner_x, upper_left_corner_y, x_res, y_res)
 
                 # create in-memory rasterio image
                 mem_file = MemoryFile()
