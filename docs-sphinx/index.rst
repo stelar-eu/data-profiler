@@ -1,5 +1,5 @@
 .. stelardataprofiler documentation master file, created by
-   sphinx-quickstart on Wed Jul 16 15:38:55 2025.
+   sphinx-quickstart on Fri Jul 18 17:49:45 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
