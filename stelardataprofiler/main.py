@@ -2,11 +2,8 @@ import sys
 import os
 import json
 import shutil
-from stelardataprofiler import (
-    read_config,
-    run_profile,
-    prepare_mapping
-)
+from .profiler import run_profile, prepare_mapping
+from .utils import read_config
 
 def main():
     # Read configuration to a dictionary

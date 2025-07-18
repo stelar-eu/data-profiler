@@ -1,74 +1,115 @@
 
-## data-profiler
+# stelardataprofiler
 
-### Overview
+## Overview
 
-data-profiler is a Python library providing various functions for profiling different types of data and files.
+stelardataprofiler is a Python library providing various functions for profiling different types of data and files.
 
-### Quick start
+## Quick start
 
 Please see the provided [notebooks](https://github.com/stelar-eu/data-profiler/tree/main/notebooks).
 
-### Documentation
+## Documentation
 
 Please see [here](https://stelar-eu.github.io/data-profiler/).
 
-### Installation
-data-profiler needs python version >=3.8 and < 4.0.
+## Type Detection - Customize the profiler
 
-#### Python Module - Local library
+In tabular and timeseries, the profiler automatically analyzes each column in the 
+input data and assigns one of the following eight supported data types. 
+The result can be stored in either on a dictionary or a JSON file, which the user 
+can review and modify if needed. The user may provide the modified dictionary or 
+JSON file and execute an enhanced (more user-controlled) profiling task.
 
-data-profiler, after it is downloaded from [here](https://github.com/stelar-eu/data-profiler) can be installed with:
+### Automatically Detected Data Types
+
+| Data Type       | Description                                                  | Required Parameters   |
+|-----------------|--------------------------------------------------------------|-----------------------|
+| **Unsupported** | Type is not currently supported                              | None                  |
+| **Datetime**    | Date or time-related values                                  | None                  |
+| **Geometry**    | Geospatial data (points, shapes)                             | `crs`, `eps_distance` |
+| **Categorical** | Discrete, labeled values                                     | None                  |
+| **Textual**     | Free-form text data                                          | None                  |
+| **Numeric**     | Numerical values (int/float)                                 | `max_freq_distr`      |
+| **TimeSeries**  | Numerical values (int/float) based on time-indexed sequences | `max_freq_distr`      |
+| **Boolean**     | True/False values (can also be 0 and 1 integers)             | None                  |
+
+> ℹ️ **Note:** All required parameters have sensible default values and do not need to be explicitly set unless custom behavior is desired.
+
+### Type Overrides
+
+After detection, users can manually override the detected data types **as long as the change is semantically compatible**. This allows greater flexibility in how columns are processed during profiling.
+
+#### ✅ Allowed Type Conversions
+
+| From → To       | Compatible Changes (conversions with * may cause issues depending on the data) |
+|-----------------|--------------------------------------------------------------------------------|
+| **Numeric**     | Categorical, Textual, TimeSeries, Unsupported                                  |
+| **TimeSeries**  | Categorical, Textual, Numeric, Unsupported                                     |
+| **Categorical** | Textual, Numeric*, Unsupported                                                 |
+| **Textual**     | Categorical, Unsupported                                                       |
+| **Boolean**     | Numeric*, Categorical, Textual, Unsupported                                    |
+| **Geometry**    | Categorical, Textual, Unsupported                                              |
+| **Datetime**    | Categorical, Textual, Unsupported                                              |
+
+> 🚫 Incompatible conversions (e.g., Boolean → Geometry, Categorical → Numeric 
+> if we do not only have numeric data or Boolean → Numeric if we have true or false values 
+> and not numeric data) are not allowed and may lead to errors or invalid outputs.
+
+### Parameter Reference
+
+| Parameter        | Used By             | Description                                                       |
+|------------------|---------------------|-------------------------------------------------------------------|
+| `max_freq_distr` | Numeric, TimeSeries | Maximum number of bins for frequency distribution visualizations  |
+| `eps_distance`   | Geometry            | Distance tolerance for spatial clustering in geometry heatmaps    |
+| `crs`            | Geometry            | Coordinate Reference System used for interpreting geospatial data |
+
+
+## Installation
+stelardataprofiler needs python version >=3.8 and < 3.13, also python version 
+must not be 3.9.7.
+
+### Python Module - Local library
+
+stelardataprofiler can be installed with:
 
 ```sh
-$ cd data-profiler
-$ pip install .
+$ pip install stelardataprofiler
 ```
-#### How to import local library
+### How to import local library
 
-After you install the data-profile as a local library you can import it in your python:
+After you install the stelardataprofiler as a local library you can import 
+it in your python:
 
 ```python
 import stelardataprofiler
 ```
 
-#### How to run the app
+### How to run the app
 
-After you install the data-profile as a local library you can run the app 
-either by executing the stelardataprofilerapp script or by executing streamlit run inside 
-the streamlitapp folder.
+After you install the stelardataprofiler as a local library you can run the app 
+by executing streamlit run inside the streamlitapp folder.
 
 ```sh
-$ stelardataprofilerapp run -- <absolute-folder-path-for-app-outputs>
-
-or
-
 $ cd data-profiler/streamlitapp
-$ streamlit run app.py -- <absolute-folder-path-for-app-outputs>
+$ streamlit run app.py
 ```
-> **_NOTE:_**  The default <absolute-folder-path-for-app-outputs> is '.' which means 
-> that in the first case the folder will be created inside the python package 
-> while in the second case the folder will be created inside the 
-> data-profiler/streamlitapp folder. <br />
-> In the first case we can run the app from anywhere.<br /> 
-> Additionally, in both options we can make use of streamlit flags. For example:
-> * stelardataprofilerapp run --server.port 9040 -- absolute-path-for-app-outputs
-> * streamlit run app.py --server.port 9040 -- absolute-path-to-output-folder
 
-### Configuration
-Change the [config_template](https://github.com/stelar-eu/data-profiler/blob/main/config_template.json) according to the requirements of each profiler and execute [main.py](https://github.com/stelar-eu/data-profiler/blob/main/stelardataprofiler/main.py) to create the mapping.ttl file.
+## Configuration
+Change the [config_template](https://github.com/stelar-eu/data-profiler/blob/main/config_template.json) according to the requirements of each profiler 
+and execute [main.py](https://github.com/stelar-eu/data-profiler/blob/main/stelardataprofiler/main.py) to create the mapping.ttl file.
 
-### Execute profiler-mappings script (after local library installation)
+## Execute profiler-mappings script 
 
 ```sh
-$ cd data-profiler
-$ profiler-mappings config_template.json
+profiler-mappings <absolute-folder-path>\config_template.json
 ```
 > **_NOTE:_**  We can execute profile-mappings from anywhere as it is a console script, but we must have the correct path to the config_template.json and change the 'path' parameters of the config_template.json to correctly take the input and write the output.
 
-### Output
-#### JSON
-All profiling functions output the results in a JSON and an HTML file. A brief example of the JSON output of the raster profiler given two images as input is as follows.
+## Output
+### JSON
+All profiling functions output the results in a JSON file. 
+A brief example of the JSON output of the raster profiler given two images as input is as follows.
 
 ```
 {
@@ -92,11 +133,7 @@ In short, the ```analysis``` field contains some metadata regarding the profilin
 
 A complete JSON output example can be found [here](https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.json).
 
-#### HTML
-The HTML file contains various plots that visualize the profiling results. Examples of such HTML visualizations of profiles can be found [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_profile.html), [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/tabular_vector_profile.html) and [here](https://htmlpreview.github.io/?https://github.com/stelar-eu/data-profiler/blob/main/examples/output/timeseries_profile.html).
-
-
-### Apply mappings to generate RDF graph
+## Apply mappings to generate RDF graph
 
 Predefined [mappings](https://github.com/stelar-eu/data-profiler/tree/main/stelardataprofiler/mappings) for profiles of the various types of datasets are available and can be used to generate an RDF graph with the profiling information. Once the profiling process completes, an automatically configured ```mapping.ttl``` file is available in the same folder as the output JSON.
 All such customized mappings are expressed in the RDF Mapping language (RML) and can be used to transform the JSON profile into various serializations in RDF, as specified by the user in a configuration.
@@ -106,11 +143,15 @@ To apply such mappings, you need to download the latest release of [RML Mapper](
 java -jar <path-to-RML_Mapper.JAR> -m <output-path>/mapping.ttl -d -s <RDF-serialization> -o <path-to-output-RDF-file>
 ```
 
-File ```mapping.ttl``` required for this step has been created in the same folder as the JSON output produced by the data-profiler, as specified in the user's configuration. 
+File ```mapping.ttl``` required for this step has been created in the same folder as the JSON output produced by the stelardataprofiler, as specified in the user's configuration. 
 Options for the ```<RDF-serialization>``` include: ```nquads``` (__default__), ```turtle```, ```ntriples```, ```trig```, ```trix```, ```jsonld```, ```hdt```. If the path to the output RDF file is ommitted, then the RDF triples will be listed in standard output.
 
 > **_NOTE:_**  Executing this operation with the RML Mapper requires Java 11 or later.
 
-### License
+## License
 
 The contents of this project are licensed under the [Apache License 2.0](https://github.com/stelar-eu/data-profiler/blob/main/LICENSE).
+
+## Acknowledgements
+
+This work was partially funded by the EU Horizon Europe projects STELAR (GA. 101070122)

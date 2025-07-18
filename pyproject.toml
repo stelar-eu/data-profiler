@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stelardataprofiler"
+version = "1.0.0"
+description = "dataprofiler is a component providing functionalities for profiling different types of files and data."
+readme = "README.md"
+authors = [
+    { name = "Panagiotis Betchavas", email = "pbetchavas@athenarc.gr" }
+]
+requires-python = ">=3.8, <3.13, !=3.9.7"
+license = { file = "LICENSE" }
+dependencies = [
+    "jupyter==1.0.0",
+    "DataProfiler==0.8.9",
+    "panel==0.12.4",
+    "numpy==1.23.5",
+    "notebook==6.4.5",
+    "Jinja2==3.0.1",
+    "tqdm==4.64.1",
+    "Flask==2.0.3",
+    "scikit-learn==1.0.2",
+    "statsmodels==0.14.1",
+    "matplotlib==3.6.3",
+    "requests==2.28.2",
+    "scipy==1.9.3",
+    "pandas==1.5.3",
+    "PyYAML==6.0",
+    "shapely==2.0.1",
+    "tsfresh==0.20.1",
+    "rasterio==1.2.10",
+    "spacy==3.7.4",
+    "nltk==3.8.1",
+    "pycountry==22.3.5",
+    "simplemma==0.9.1",
+    "fasttext-langdetect==1.0.5",
+    "streamlit==1.40.1",
+    "streamlit-option-menu==0.3.6",
+    "protobuf==3.20.0",
+    "plotly==5.15.0",
+    "minio==7.1.15",
+    "streamlit-folium==0.22.1",
+    "python-dateutil==2.8.2",
+    "IPython==8.12.2",
+    "gensim==4.0.1",
+    "rdflib==6.3.2",
+    "pyproj==3.4.0",
+    "geopandas==0.12.1",
+    "fiona==1.9.6",
+    "folium==0.14.0",
+    "spacy-language-detection==0.2.1",
+    "python-Levenshtein==0.20.9",
+    "numba==0.58.1",
+    "typing_extensions==4.12.2",
+    "param==1.13.0"
+]
+
+classifiers = [
+	"License :: OSI Approved :: Apache Software License",
+	"Programming Language :: Python"
+]
+
+[project.urls]
+Homepage = "https://github.com/stelar-eu/data-profiler"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["stelardataprofiler*", "streamlitapp*"]
+
+[tool.setuptools.package-data]
+"stelardataprofiler" = [
+    "json_files/*.json",
+    "mappings/*.ttl"
+]
+"streamlitapp" = [
+    "icons/*.jpg",
+    ".streamlit/config.toml"
+]
+
+[project.scripts]
+profiler-mappings = "stelardataprofiler.main:main"

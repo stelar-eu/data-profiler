@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stelardataprofiler.tabular_timeseries.profiler &mdash; stelardataprofiler 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            stelardataprofiler
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">stelardataprofiler</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">stelardataprofiler</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">stelardataprofiler.tabular_timeseries.profiler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for stelardataprofiler.tabular_timeseries.profiler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">.variables</span> <span class="kn">import</span> <span class="p">(</span><span class="n">describe_datetime</span><span class="p">,</span> <span class="n">describe_boolean</span><span class="p">,</span>
+                        <span class="n">describe_numeric</span><span class="p">,</span> <span class="n">describe_timeseries</span><span class="p">,</span>
+                        <span class="n">describe_categorical</span><span class="p">,</span> <span class="n">describe_textual</span><span class="p">,</span>
+                        <span class="n">describe_geometry</span><span class="p">,</span> <span class="n">read_tabular_timeseries</span><span class="p">,</span>
+                        <span class="n">calculate_generic_df</span><span class="p">,</span> <span class="n">calculate_table_stats</span><span class="p">,</span>
+                        <span class="n">find_types</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">read_config</span><span class="p">,</span> <span class="n">write_to_json</span>
+
+
+<div class="viewcode-block" id="profile_tabular"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.profile_tabular">[docs]</a><span class="k">def</span> <span class="nf">profile_tabular</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">],</span>
+                    <span class="n">header</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                    <span class="n">light_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">crs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span>
+                    <span class="n">num_cat_perc_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">max_freq_distr</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                    <span class="n">eps_distance</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">extra_geometry_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">types_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profiles a tabular DataFrame (or file path) and returns a profiling report as a dictionary.</span>
+
+<span class="sd">    :param input_path: Path to input file or a DataFrame/GeoDataFrame to profile.</span>
+<span class="sd">    :type input_path: str or pandas.DataFrame or geopandas.GeoDataFrame</span>
+<span class="sd">    :param header: Row to use as column names (passed to pandas.read).</span>
+<span class="sd">    :type header: int or str</span>
+<span class="sd">    :param sep: Separator to use for reading CSV files.</span>
+<span class="sd">    :type sep: str</span>
+<span class="sd">    :param light_mode: If True, skip expensive computations.</span>
+<span class="sd">    :type light_mode: bool</span>
+<span class="sd">    :param crs: Coordinate reference system for geometry data.</span>
+<span class="sd">    :type crs: str</span>
+<span class="sd">    :param num_cat_perc_threshold: Threshold for treating numeric as categorical.</span>
+<span class="sd">    :type num_cat_perc_threshold: float</span>
+<span class="sd">    :param max_freq_distr: Max number of frequency distribution bins.</span>
+<span class="sd">    :type max_freq_distr: int</span>
+<span class="sd">    :param eps_distance: Distance tolerance for geometry heatmap calculations.</span>
+<span class="sd">    :type eps_distance: int</span>
+<span class="sd">    :param extra_geometry_columns: Additional geometry columns to consider.</span>
+<span class="sd">    :type extra_geometry_columns: list</span>
+<span class="sd">    :param types_dict: Pre-computed types dictionary to use instead of detecting.</span>
+<span class="sd">    :type types_dict: dict or None</span>
+<span class="sd">    :return: Profiling report dictionary.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;input_path&#39;</span><span class="p">:</span> <span class="n">input_path</span><span class="p">,</span>
+            <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">header</span><span class="p">,</span>
+            <span class="s1">&#39;sep&#39;</span><span class="p">:</span> <span class="n">sep</span><span class="p">,</span>
+            <span class="s1">&#39;light_mode&#39;</span><span class="p">:</span> <span class="n">light_mode</span><span class="p">,</span>
+            <span class="s1">&#39;num_cat_perc_threshold&#39;</span><span class="p">:</span> <span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+            <span class="s1">&#39;max_freq_distr&#39;</span><span class="p">:</span> <span class="n">max_freq_distr</span><span class="p">,</span>
+            <span class="s1">&#39;ts_mode&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;extra_geometry_columns&#39;</span><span class="p">:</span> <span class="n">extra_geometry_columns</span><span class="p">,</span>
+            <span class="s1">&#39;crs&#39;</span><span class="p">:</span> <span class="n">crs</span><span class="p">,</span>
+            <span class="s1">&#39;eps_distance&#39;</span><span class="p">:</span> <span class="n">eps_distance</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">__profiler_tabular_timeseries</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="profile_tabular_with_config"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.profile_tabular_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_tabular_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling on tabular and/or vector data and write the resulting profile dictionary based on a configuration dictionary.</span>
+
+<span class="sd">    :param config: a dictionary with all configuration settings.</span>
+<span class="sd">    :type config: dict</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">output_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">types_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">types_dict</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected one or two file paths in &#39;files&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
+        <span class="n">types_dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid input path format.&quot;</span><span class="p">)</span>
+
+    <span class="n">output_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">output_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Extract parameters explicitly</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sep&quot;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">light_mode</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;light_mode&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">crs</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crs&quot;</span><span class="p">,</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">)</span>
+    <span class="n">num_cat_perc_threshold</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_cat_perc_threshold&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">max_freq_distr</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_freq_distr&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">eps_distance</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eps_distance&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">extra_geometry_columns</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra_geometry_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">profile_tabular</span><span class="p">(</span>
+        <span class="n">input_path</span><span class="o">=</span><span class="n">my_file_path</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span>
+        <span class="n">light_mode</span><span class="o">=</span><span class="n">light_mode</span><span class="p">,</span>
+        <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+        <span class="n">num_cat_perc_threshold</span><span class="o">=</span><span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+        <span class="n">max_freq_distr</span><span class="o">=</span><span class="n">max_freq_distr</span><span class="p">,</span>
+        <span class="n">eps_distance</span><span class="o">=</span><span class="n">eps_distance</span><span class="p">,</span>
+        <span class="n">extra_geometry_columns</span><span class="o">=</span><span class="n">extra_geometry_columns</span><span class="p">,</span>
+        <span class="n">types_dict</span><span class="o">=</span><span class="n">types_dict</span>
+    <span class="p">)</span>
+
+    <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="profile_timeseries"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.profile_timeseries">[docs]</a><span class="k">def</span> <span class="nf">profile_timeseries</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+                       <span class="n">ts_mode_datetime_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span>
+                       <span class="n">header</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                       <span class="n">light_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                       <span class="n">num_cat_perc_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">max_freq_distr</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                       <span class="n">types_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Profiles a timeseries DataFrame or file and returns a profiling report dictionary.</span>
+
+<span class="sd">       :param input_path: Path to input file or DataFrame to profile.</span>
+<span class="sd">       :type input_path: str or pandas.DataFrame</span>
+<span class="sd">       :param ts_mode_datetime_col: Column name for datetime index.</span>
+<span class="sd">       :type ts_mode_datetime_col: str</span>
+<span class="sd">       :param header: Row to use as column names.</span>
+<span class="sd">       :type header: int or str</span>
+<span class="sd">       :param sep: Field separator for CSV.</span>
+<span class="sd">       :type sep: str</span>
+<span class="sd">       :param light_mode: If True, skip expensive computations.</span>
+<span class="sd">       :type light_mode: bool</span>
+<span class="sd">       :param num_cat_perc_threshold: Threshold for treating numeric as categorical.</span>
+<span class="sd">       :type num_cat_perc_threshold: float</span>
+<span class="sd">       :param max_freq_distr: Maximum bins for frequency distribution.</span>
+<span class="sd">       :type max_freq_distr: int</span>
+<span class="sd">       :param types_dict: Pre-computed types dictionary to use instead of detecting.</span>
+<span class="sd">       :type types_dict: dict or None</span>
+<span class="sd">       :return: Profiling report dictionary.</span>
+<span class="sd">       :rtype: dict</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;input_path&#39;</span><span class="p">:</span> <span class="n">input_path</span><span class="p">,</span>
+        <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">header</span><span class="p">,</span>
+        <span class="s1">&#39;sep&#39;</span><span class="p">:</span> <span class="n">sep</span><span class="p">,</span>
+        <span class="s1">&#39;light_mode&#39;</span><span class="p">:</span> <span class="n">light_mode</span><span class="p">,</span>
+        <span class="s1">&#39;num_cat_perc_threshold&#39;</span><span class="p">:</span> <span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+        <span class="s1">&#39;max_freq_distr&#39;</span><span class="p">:</span> <span class="n">max_freq_distr</span><span class="p">,</span>
+        <span class="s1">&#39;ts_mode&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;ts_mode_datetime_col&#39;</span><span class="p">:</span> <span class="n">ts_mode_datetime_col</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">__profiler_tabular_timeseries</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="profile_timeseries_with_config"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.profile_timeseries_with_config">[docs]</a><span class="k">def</span> <span class="nf">profile_timeseries_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling on timeseries data and writes the resulting profile dictionary based on a configuration dictionary.</span>
+
+<span class="sd">    :param config: a dictionary with all configuration settings.</span>
+<span class="sd">    :type config: dict</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">output_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">types_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">types_dict</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected one or two file paths in &#39;files&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
+        <span class="n">types_dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid input path format.&quot;</span><span class="p">)</span>
+
+    <span class="n">output_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">output_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Extract parameters explicitly</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sep&quot;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">light_mode</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;light_mode&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">ts_mode_datetime_col</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ts_mode_datetime_col&quot;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">)</span>
+    <span class="n">num_cat_perc_threshold</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_cat_perc_threshold&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">max_freq_distr</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_freq_distr&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">profile_timeseries</span><span class="p">(</span>
+        <span class="n">input_path</span><span class="o">=</span><span class="n">my_file_path</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span>
+        <span class="n">light_mode</span><span class="o">=</span><span class="n">light_mode</span><span class="p">,</span>
+        <span class="n">ts_mode_datetime_col</span><span class="o">=</span><span class="n">ts_mode_datetime_col</span><span class="p">,</span>
+        <span class="n">num_cat_perc_threshold</span><span class="o">=</span><span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+        <span class="n">max_freq_distr</span><span class="o">=</span><span class="n">max_freq_distr</span><span class="p">,</span>
+        <span class="n">types_dict</span><span class="o">=</span><span class="n">types_dict</span>
+    <span class="p">)</span>
+
+    <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="type_detection"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.type_detection">[docs]</a><span class="k">def</span> <span class="nf">type_detection</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">],</span>
+                   <span class="n">header</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                   <span class="n">ts_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ts_mode_datetime_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span>
+                   <span class="n">crs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span> <span class="n">num_cat_perc_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                   <span class="n">max_freq_distr</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">eps_distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+                   <span class="n">extra_geometry_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">   Detects data types for each column in tabular or timeseries data.</span>
+
+<span class="sd">   :param input_path: Path or DataFrame/GeoDataFrame to inspect.</span>
+<span class="sd">   :type input_path: str or pandas.DataFrame or geopandas.GeoDataFrame</span>
+<span class="sd">   :param header: Header row index or name.</span>
+<span class="sd">   :type header: int or str</span>
+<span class="sd">   :param sep: Separator character.</span>
+<span class="sd">   :type sep: str</span>
+<span class="sd">   :param ts_mode: Whether to treat data as timeseries.</span>
+<span class="sd">   :type ts_mode: bool</span>
+<span class="sd">   :param ts_mode_datetime_col: Datetime column for timeseries.</span>
+<span class="sd">   :type ts_mode_datetime_col: str</span>
+<span class="sd">   :param crs: Coordinate reference system for geometry data.</span>
+<span class="sd">   :type crs: str</span>
+<span class="sd">   :param num_cat_perc_threshold: Threshold for treating numeric as categorical.</span>
+<span class="sd">   :type num_cat_perc_threshold: float</span>
+<span class="sd">   :param max_freq_distr: Max number of frequency distribution bins.</span>
+<span class="sd">   :type max_freq_distr: int</span>
+<span class="sd">   :param eps_distance: Distance tolerance for geometry heatmap calculations.</span>
+<span class="sd">   :type eps_distance: int</span>
+<span class="sd">   :param extra_geometry_columns: Additional geometry columns to consider.</span>
+<span class="sd">   :type extra_geometry_columns: list</span>
+<span class="sd">   :return: Types dictionary mapping column to detected type info.</span>
+<span class="sd">   :rtype: dict</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+
+    <span class="n">df</span><span class="p">,</span> <span class="n">crs</span> <span class="o">=</span> <span class="n">read_tabular_timeseries</span><span class="p">(</span><span class="n">input_path</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+                                      <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+                                      <span class="n">ts_mode_datetime_col</span><span class="o">=</span><span class="n">ts_mode_datetime_col</span><span class="p">,</span>
+                                      <span class="n">extra_geometry_columns</span><span class="o">=</span><span class="n">extra_geometry_columns</span><span class="p">)</span>
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;input_path&#39;</span><span class="p">:</span> <span class="n">input_path</span><span class="p">,</span>
+        <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">header</span><span class="p">,</span>
+        <span class="s1">&#39;sep&#39;</span><span class="p">:</span> <span class="n">sep</span><span class="p">,</span>
+        <span class="s1">&#39;num_cat_perc_threshold&#39;</span><span class="p">:</span> <span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+        <span class="s1">&#39;max_freq_distr&#39;</span><span class="p">:</span> <span class="n">max_freq_distr</span><span class="p">,</span>
+        <span class="s1">&#39;ts_mode&#39;</span><span class="p">:</span> <span class="n">ts_mode</span><span class="p">,</span>
+        <span class="s1">&#39;ts_mode_datetime_col&#39;</span><span class="p">:</span> <span class="n">ts_mode_datetime_col</span><span class="p">,</span>
+        <span class="s1">&#39;crs&#39;</span><span class="p">:</span> <span class="n">crs</span><span class="p">,</span>
+        <span class="s1">&#39;extra_geometry_columns&#39;</span><span class="p">:</span> <span class="n">extra_geometry_columns</span><span class="p">,</span>
+        <span class="s1">&#39;eps_distance&#39;</span><span class="p">:</span> <span class="n">eps_distance</span><span class="p">}</span>
+
+    <span class="n">types_dict</span> <span class="o">=</span> <span class="n">find_types</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">input_dict</span><span class="o">=</span><span class="n">input_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">types_dict</span></div>
+
+
+<div class="viewcode-block" id="type_detection_with_config"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.type_detection_with_config">[docs]</a><span class="k">def</span> <span class="nf">type_detection_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs type detection on tabular or timeseries data and writes the resulting type detection dictionary based on a configuration dictionary.</span>
+
+<span class="sd">    :param config: a dictionary with all configuration settings.</span>
+<span class="sd">    :type config: dict</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">output_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: </span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2"> must be a valid file path or list with one file path&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)):</span>
+        <span class="n">my_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: </span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2"> must be a valid file path or list of file paths&quot;</span><span class="p">)</span>
+
+    <span class="n">output_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">output_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Extract parameters with defaults if not provided</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sep&quot;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">ts_mode</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ts_mode&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">ts_mode_datetime_col</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ts_mode_datetime_col&quot;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">)</span>
+    <span class="n">crs</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crs&quot;</span><span class="p">,</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">)</span>
+    <span class="n">num_cat_perc_threshold</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_cat_perc_threshold&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">max_freq_distr</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_freq_distr&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">eps_distance</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eps_distance&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">extra_geometry_columns</span> <span class="o">=</span> <span class="n">input_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra_geometry_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">type_detection</span><span class="p">(</span>
+        <span class="n">input_path</span><span class="o">=</span><span class="n">my_file_path</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span>
+        <span class="n">ts_mode</span><span class="o">=</span><span class="n">ts_mode</span><span class="p">,</span>
+        <span class="n">ts_mode_datetime_col</span><span class="o">=</span><span class="n">ts_mode_datetime_col</span><span class="p">,</span>
+        <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+        <span class="n">num_cat_perc_threshold</span><span class="o">=</span><span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+        <span class="n">max_freq_distr</span><span class="o">=</span><span class="n">max_freq_distr</span><span class="p">,</span>
+        <span class="n">eps_distance</span><span class="o">=</span><span class="n">eps_distance</span><span class="p">,</span>
+        <span class="n">extra_geometry_columns</span><span class="o">=</span><span class="n">extra_geometry_columns</span>
+    <span class="p">)</span>
+
+    <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">__profiler_tabular_timeseries</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">types_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">crs</span> <span class="o">=</span> <span class="n">read_tabular_timeseries</span><span class="p">(</span><span class="o">**</span><span class="n">input_dict</span><span class="p">)</span>
+
+    <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;crs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crs</span>
+
+    <span class="n">filename_df</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;input_path&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">filename_df</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">types_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">types_dict</span> <span class="o">=</span> <span class="n">find_types</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">input_dict</span><span class="p">)</span>
+
+    <span class="n">generic_dict</span> <span class="o">=</span> <span class="n">calculate_generic_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;analysis&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Profiling Report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_start&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span>
+            <span class="s1">&#39;date_end&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span>
+            <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;profiler_type&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;light_mode&#39;</span><span class="p">:</span> <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;light_mode&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;record_size&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_rows&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_attributes&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;n_cells_missing&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;p_cells_missing&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s1">&#39;types&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;variables&#39;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">filename_df</span><span class="p">:</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;filenames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;input_path&#39;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;filenames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Profiler was not given a path&#39;</span><span class="p">]</span>
+
+    <span class="c1"># calculate table stats</span>
+    <span class="k">if</span> <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;ts_mode&#39;</span><span class="p">]:</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;profiler_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TimeSeries&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;profiler_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Tabular&#39;</span>
+
+    <span class="n">tables_stats</span> <span class="o">=</span> <span class="n">calculate_table_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">,</span> <span class="n">generic_dict</span><span class="p">)</span>
+    <span class="n">common_keys</span> <span class="o">=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">tables_stats</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c1"># Get common keys</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">tables_stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">common_keys</span><span class="p">})</span>
+
+    <span class="c1"># if timeseries add gap stats</span>
+    <span class="k">if</span> <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;ts_mode&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;light_mode&#39;</span><span class="p">]:</span>
+        <span class="n">all_gaps_dict</span> <span class="o">=</span> <span class="n">__calculate_gaps</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">)</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_min_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gaps_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_min_gap&#39;</span><span class="p">]</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_max_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gaps_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_max_gap&#39;</span><span class="p">]</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_avg_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gaps_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_avg_gap&#39;</span><span class="p">]</span>
+
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_gaps_frequency_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">gaps_freq_distr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">gap</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">all_gaps_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_gaps_frequency_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_gaps_frequency_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;gap_size&#39;</span><span class="p">:</span> <span class="n">gap</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span>
+        <span class="c1"># calculate variable stats + time series gap statistics</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">__calculate_variable_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">,</span> <span class="n">generic_dict</span><span class="p">,</span> <span class="n">all_gaps_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">],</span>
+                                                               <span class="n">light_mode</span><span class="o">=</span><span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;light_mode&#39;</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># calculate variable stats</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">__calculate_variable_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">,</span> <span class="n">generic_dict</span><span class="p">,</span>
+                                                               <span class="n">light_mode</span><span class="o">=</span><span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;light_mode&#39;</span><span class="p">])</span>
+
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">profile_dict</span>
+
+
+<span class="c1"># calculate variables statistics</span>
+<span class="k">def</span> <span class="nf">__calculate_variable_stats</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">generic_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">gaps_variable_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">light_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">all_var_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+        <span class="n">var_general</span> <span class="o">=</span> <span class="n">generic_dict</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+
+        <span class="n">var_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">column</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;num_missing&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;n_missing&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;uniqueness&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;p_unique&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;p_missing&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;p_missing&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;memory_size&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;memory_size&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;n_unique&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;n_unique&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;n_distinct&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;n_distinct&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;p_distinct&#39;</span><span class="p">:</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;p_distinct&#39;</span><span class="p">],</span>
+
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;hashable&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">light_mode</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DateTime&#39;</span><span class="p">:</span>
+                <span class="n">describe_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Boolean&#39;</span><span class="p">:</span>
+                <span class="n">describe_boolean</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Numeric&#39;</span><span class="p">:</span>
+                <span class="n">describe_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;max_freq_distr&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TimeSeries&#39;</span><span class="p">:</span>
+                <span class="n">describe_timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;max_freq_distr&#39;</span><span class="p">],</span>
+                                    <span class="n">gaps_variable_dict</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Categorical&#39;</span><span class="p">:</span>
+                <span class="n">describe_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Textual&#39;</span><span class="p">:</span>
+                <span class="n">describe_textual</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Geometry&#39;</span><span class="p">:</span>
+                <span class="n">describe_geometry</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;crs&#39;</span><span class="p">],</span>
+                                  <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;eps_distance&#39;</span><span class="p">])</span>
+
+        <span class="n">all_var_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">all_var_list</span>
+
+
+<span class="k">def</span> <span class="nf">__calculate_gaps</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">all_gap_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;variables&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+    <span class="n">max_gap_all</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+    <span class="n">min_gap_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+    <span class="n">average_gap_all</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count_gaps</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Dictionary with gap size as key and count as value</span>
+    <span class="n">gaps_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TimeSeries&#39;</span><span class="p">:</span>
+            <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">gaps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+            <span class="n">true_gaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">gap</span> <span class="k">for</span> <span class="n">gap</span> <span class="ow">in</span> <span class="n">gaps</span> <span class="k">if</span> <span class="n">gap</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Calculate the statistics for the observed gap sizes</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span>
+                <span class="n">stats</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.10</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mf">.90</span><span class="p">])</span>
+
+                <span class="n">gaps_distribution</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">column</span><span class="p">,</span>
+                    <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+                    <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s1">&#39;stddev&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                    <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(),</span>
+                    <span class="s1">&#39;skewness&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+                    <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">var</span><span class="p">(),</span>
+                    <span class="s1">&#39;percentile10&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+                <span class="p">}</span>
+
+                <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">][</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;gaps_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gaps_distribution</span>
+
+                <span class="c1"># increase the global count for each gap size</span>
+                <span class="n">gaps_dict</span> <span class="o">=</span> <span class="n">gaps_dict</span> <span class="o">+</span> <span class="n">Counter</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span>
+
+                <span class="n">max_gap</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span>
+                <span class="n">min_gap</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">min_gap</span> <span class="o">&lt;</span> <span class="n">min_gap_all</span><span class="p">:</span>
+                    <span class="n">min_gap_all</span> <span class="o">=</span> <span class="n">min_gap</span>
+
+                <span class="k">if</span> <span class="n">max_gap</span> <span class="o">&gt;</span> <span class="n">max_gap_all</span><span class="p">:</span>
+                    <span class="n">max_gap_all</span> <span class="o">=</span> <span class="n">max_gap</span>
+
+                <span class="n">length_gaps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span>
+                <span class="n">sum_gaps</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">true_gaps</span><span class="p">)</span>
+                <span class="n">count_gaps</span> <span class="o">+=</span> <span class="n">length_gaps</span>
+                <span class="n">average_gap_all</span> <span class="o">+=</span> <span class="n">sum_gaps</span>
+                <span class="n">avg_gap</span> <span class="o">=</span> <span class="n">sum_gaps</span> <span class="o">/</span> <span class="n">length_gaps</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">][</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;gaps_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">count_gaps</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">average_gap_all</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">average_gap_all</span> <span class="o">/</span> <span class="n">count_gaps</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">min_gap_all</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_gap_all</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gaps_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">gaps_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">gaps_dict</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gaps_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_min_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_gap_all</span>
+    <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_max_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_gap_all</span>
+    <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_avg_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">average_gap_all</span>
+    <span class="n">all_gap_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ts_gaps_frequency_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gaps_dict</span>
+
+    <span class="k">return</span> <span class="n">all_gap_dict</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Panagiotis Betchavas.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

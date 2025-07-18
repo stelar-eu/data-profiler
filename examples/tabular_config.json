@@ -1,21 +1,22 @@
 {
 	"input": {
-		"path": "../datasets",
-		"file": "tabular_vector_example.csv",
-		"format": ".csv",
-		"separator": "|",
+		"files": "../datasets/tabular_vector_example.csv",
+		"sep": "|",
 		"header": 0,
-		"columns" : {	
+		"extra_geometry_columns" : [{
 			"longitude": "lon",
-			"latitude": "lat",
-			"wkt": "wkt" 
-		}
+			"latitude": "lat"
+		}],
+		"_comment": "Optional parameters",
+		"light_mode": false,
+		"crs": "EPSG:4326",
+		"num_cat_perc_threshold": 0.5,
+		"max_freq_distr": 10,
+		"eps_distance": 1000
 	},
 	"output": {
-		"path": "./output",
-		"json": "tabular_vector_profile.json",
-		"html": "tabular_vector_profile.html",
-		"rdf": "tabular_vector_results.rdf",
+		"json": "./output/tabular_vector_profile.json",
+		"rdf": "./output/tabular_vector_results.rdf",
 		"serialization" : "nquads"
 	},
 	"profile": {

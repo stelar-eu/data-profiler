@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stelardataprofiler.text.profiler &mdash; stelardataprofiler 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            stelardataprofiler
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">stelardataprofiler</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">stelardataprofiler</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">stelardataprofiler.text.profiler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for stelardataprofiler.text.profiler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">gensim</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">dateutil.parser</span>
+<span class="kn">import</span> <span class="nn">nltk</span>
+
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;punkt&#39;</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;stopwords&#39;</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;wordnet&#39;</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;vader_lexicon&#39;</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
+<span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="kn">import</span> <span class="n">SnowballStemmer</span>
+<span class="kn">from</span> <span class="nn">nltk.sentiment.vader</span> <span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+<span class="kn">from</span> <span class="nn">simplemma</span> <span class="kn">import</span> <span class="n">lemmatize</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">from</span> <span class="nn">spacy.language</span> <span class="kn">import</span> <span class="n">Language</span>
+<span class="kn">from</span> <span class="nn">spacy_language_detection</span> <span class="kn">import</span> <span class="n">LanguageDetector</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">pycountry</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">write_to_json</span>
+
+
+<span class="k">def</span> <span class="nf">profile_single_text</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling and generates a profiling dictionary for a text file that exists in the given path.</span>
+
+<span class="sd">    :param my_file_path: the path to a text file.</span>
+<span class="sd">    :type my_file_path: str</span>
+<span class="sd">    :return: A dict which contains the results of the profiler for the text.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Used in language detection</span>
+    <span class="k">def</span> <span class="nf">__get_lang_detector</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LanguageDetector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">2023</span><span class="p">)</span>
+
+    <span class="c1"># Calculate TermFrequency and generate a matrix</span>
+    <span class="k">def</span> <span class="nf">__create_tf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">):</span>
+        <span class="n">tf_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">freq_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">tf_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">count_words_in_sentence</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f_table</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">tf_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">count_words_in_sentence</span>
+
+            <span class="n">tf_matrix</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf_table</span>
+
+        <span class="k">return</span> <span class="n">tf_matrix</span>
+
+    <span class="c1"># Create a table for documents per words</span>
+    <span class="k">def</span> <span class="nf">__create_documents_per_words</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">):</span>
+        <span class="n">word_per_doc_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">freq_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_per_doc_table</span><span class="p">:</span>
+                    <span class="n">word_per_doc_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">word_per_doc_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">word_per_doc_table</span>
+
+    <span class="c1"># Calculate IDF and generate a matrix</span>
+    <span class="k">def</span> <span class="nf">__create_idf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">,</span> <span class="n">count_doc_per_words</span><span class="p">,</span> <span class="n">total_documents</span><span class="p">):</span>
+        <span class="n">idf_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">freq_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">idf_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">idf_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">total_documents</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">count_doc_per_words</span><span class="p">[</span><span class="n">word</span><span class="p">]))</span>
+
+            <span class="n">idf_matrix</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="n">idf_table</span>
+
+        <span class="k">return</span> <span class="n">idf_matrix</span>
+
+    <span class="c1"># Calculate TF-IDF and generate a matrix</span>
+    <span class="k">def</span> <span class="nf">__create_tf_idf_matrix</span><span class="p">(</span><span class="n">tf_matrix</span><span class="p">,</span> <span class="n">idf_matrix</span><span class="p">):</span>
+        <span class="n">tf_idf_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">sent1</span><span class="p">,</span> <span class="n">f_table1</span><span class="p">),</span> <span class="p">(</span><span class="n">sent2</span><span class="p">,</span> <span class="n">f_table2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tf_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">idf_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+
+            <span class="n">tf_idf_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">word1</span><span class="p">,</span> <span class="n">value1</span><span class="p">),</span> <span class="p">(</span><span class="n">word2</span><span class="p">,</span> <span class="n">value2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">f_table1</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+                                                        <span class="n">f_table2</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>  <span class="c1"># here, keys are the same in both the table</span>
+                <span class="n">tf_idf_table</span><span class="p">[</span><span class="n">word1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value1</span> <span class="o">*</span> <span class="n">value2</span><span class="p">)</span>
+
+            <span class="n">tf_idf_matrix</span><span class="p">[</span><span class="n">sent1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf_idf_table</span>
+
+        <span class="k">return</span> <span class="n">tf_idf_matrix</span>
+
+    <span class="c1"># Important Algorithm: score the sentences</span>
+    <span class="k">def</span> <span class="nf">__score_sentences</span><span class="p">(</span><span class="n">tf_idf_matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        score a sentence by its word&#39;s TF</span>
+<span class="sd">        Basic algorithm: adding the TF frequency of every non-stop word in a sentence divided by total no of words in a sentence.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sentenceValue</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">tf_idf_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">total_score_per_sentence</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">count_words_in_sentence</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f_table</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">total_score_per_sentence</span> <span class="o">+=</span> <span class="n">score</span>
+
+            <span class="k">if</span> <span class="n">count_words_in_sentence</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sentenceValue</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_score_per_sentence</span> <span class="o">/</span> <span class="n">count_words_in_sentence</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sentenceValue</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">sentenceValue</span>
+
+    <span class="c1"># Find the threshold</span>
+    <span class="k">def</span> <span class="nf">__find_average_score</span><span class="p">(</span><span class="n">sentenceValue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the average score from the sentence value dictionary</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sumValues</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sentenceValue</span><span class="p">:</span>
+            <span class="n">sumValues</span> <span class="o">+=</span> <span class="n">sentenceValue</span><span class="p">[</span><span class="n">entry</span><span class="p">]</span>
+
+        <span class="c1"># Average value of a sentence from original summary_text</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="p">(</span><span class="n">sumValues</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentenceValue</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">average</span>
+
+    <span class="c1"># Important Algorithm: Generate the summary</span>
+    <span class="k">def</span> <span class="nf">__generate_summary</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">sentenceValue</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+        <span class="n">sentence_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sentence</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span> <span class="ow">in</span> <span class="n">sentenceValue</span> <span class="ow">and</span> <span class="n">sentenceValue</span><span class="p">[</span><span class="n">sentence</span><span class="p">[:</span><span class="mi">15</span><span class="p">]]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">sentence</span>
+                <span class="n">sentence_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">summary</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The input is not a file!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">get_filename</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">)</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;analysis&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Profiling Report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_start&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_end&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filenames&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">filename</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;profiler_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Textual&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;num_texts&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;num_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_sentences&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_distinct_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_digits&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;language_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;named_entities&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;term_frequency&#39;</span><span class="p">:</span> <span class="p">[]</span>
+
+        <span class="p">},</span>
+        <span class="s1">&#39;variables&#39;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">start_string</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_string</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">text</span><span class="p">:</span>
+        <span class="n">text_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Text&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;num_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_sentences&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_distinct_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_digits&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;language_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;topics&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;named_entities&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;term_frequency&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;special_characters_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;sentence_length_distribution&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+            <span class="s1">&#39;word_length_distribution&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="c1"># key is a special character and how many times is has been found in the text</span>
+        <span class="n">special_chars</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># add the length of each word in the list to be used in the calculation of word_length_distribution</span>
+        <span class="n">word_length_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># add the length of each sentence in the list to be used in the calculation of sentence_length_distribution</span>
+        <span class="n">sentence_length_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_filename</span><span class="p">(</span><span class="n">my_file_path</span><span class="p">)</span>
+
+        <span class="n">file_contents</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file_contents</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_contents</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">string_encode</span> <span class="o">=</span> <span class="n">file_contents</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">file_contents</span> <span class="o">=</span> <span class="n">string_encode</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="c1"># Find number of words</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">file_contents</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="n">words_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="n">words_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">word_length_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">words_count</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">words_count</span>
+
+        <span class="c1"># Find number of sentences</span>
+        <span class="n">sentences</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">sent_tokenize</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span>
+        <span class="n">sentences_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+            <span class="n">sentences_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">sentence_length_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">))</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_sentences&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sentences_count</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_sentences&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sentences_count</span>
+
+        <span class="c1"># Find Distinct/Unique words</span>
+        <span class="n">unique_words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+        <span class="n">unique_words_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_words</span><span class="p">)</span>
+        <span class="c1"># set_of_unique_words.update(unique_words)</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_distinct_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_words_count</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_distinct_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_words_count</span>
+
+        <span class="c1"># Find number of characters</span>
+        <span class="n">numCharacters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numCharacters</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numCharacters</span>
+
+        <span class="c1"># ratio_uppercase, ratio_digits, ratio_special_characters</span>
+        <span class="n">ratioUppercase</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ratioDigits</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ratioSpecialChars</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">file_contents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                <span class="n">ratioUppercase</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">ratioDigits</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
+                <span class="n">ratioSpecialChars</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">special_chars</span><span class="p">:</span>
+                    <span class="n">special_chars</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">special_chars</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratioUppercase</span> <span class="o">/</span> <span class="n">numCharacters</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratioDigits</span> <span class="o">/</span> <span class="n">numCharacters</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratioSpecialChars</span> <span class="o">/</span> <span class="n">numCharacters</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">]</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Find languages</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Downloading language model for the spaCy POS tagger</span><span class="se">\n</span><span class="s1">&#39;</span>
+                  <span class="s2">&quot;(don&#39;t worry, this will only happen once)&quot;</span><span class="p">)</span>
+            <span class="kn">from</span> <span class="nn">spacy.cli</span> <span class="kn">import</span> <span class="n">download</span>
+            <span class="n">download</span><span class="p">(</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+            <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Language</span><span class="o">.</span><span class="n">has_factory</span><span class="p">(</span><span class="s2">&quot;language_detector&quot;</span><span class="p">):</span>
+            <span class="n">Language</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="s2">&quot;language_detector&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">__get_lang_detector</span><span class="p">)</span>
+        <span class="n">nlp</span><span class="o">.</span><span class="n">add_pipe</span><span class="p">(</span><span class="s1">&#39;language_detector&#39;</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span>
+
+        <span class="n">languages</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="n">lemma_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="n">freq_matrix</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">sent</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="n">sentence</span> <span class="o">=</span> <span class="n">sent</span><span class="o">.</span><span class="n">text</span>
+                <span class="k">if</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">language</span> <span class="o">=</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">language</span> <span class="o">=</span> <span class="s1">&#39;english&#39;</span>
+                <span class="n">length_sent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">language</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+                    <span class="n">languages</span><span class="p">[</span><span class="n">language</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span>
+                                                    <span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">length_sent</span> <span class="o">/</span> <span class="n">sentences_count</span> <span class="o">*</span> <span class="n">numCharacters</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">languages</span><span class="p">[</span><span class="n">language</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span>
+                                                     <span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">length_sent</span> <span class="o">/</span> <span class="n">sentences_count</span> <span class="o">*</span> <span class="n">numCharacters</span><span class="p">)</span>
+
+                <span class="c1"># Clean the sentence using the detecting language</span>
+                <span class="c1"># Punctuation Removal</span>
+                <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                            <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="n">words</span> <span class="o">=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+                <span class="c1"># Stopword Removal</span>
+                <span class="k">if</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">fileids</span><span class="p">():</span>
+                    <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="n">language</span><span class="p">))</span>
+                    <span class="n">cleaned_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cleaned_words</span> <span class="o">=</span> <span class="n">words</span>
+
+                <span class="c1"># Stemming</span>
+                <span class="n">stemmed_words</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">language</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">SnowballStemmer</span><span class="o">.</span><span class="n">languages</span><span class="p">):</span>
+                    <span class="n">stemmer</span> <span class="o">=</span> <span class="n">SnowballStemmer</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">cleaned_words</span><span class="p">:</span>
+                        <span class="n">word</span> <span class="o">=</span> <span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                        <span class="n">stemmed_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">stemmed_words</span> <span class="o">=</span> <span class="n">cleaned_words</span>
+
+                <span class="c1"># Lemma</span>
+                <span class="n">lemmatized_words</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">language</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">cleaned_words</span><span class="p">:</span>
+                        <span class="n">word</span> <span class="o">=</span> <span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">language</span><span class="p">)</span><span class="o">.</span><span class="n">alpha_2</span><span class="p">)</span>
+                        <span class="n">lemmatized_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lemmatized_words</span> <span class="o">=</span> <span class="n">cleaned_words</span>
+
+                <span class="c1"># freq_matrix will be used in summary extraction</span>
+                <span class="n">freq_matrix</span><span class="p">[</span><span class="n">sentence</span><span class="p">[:</span><span class="mi">15</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">stemmed_words</span><span class="p">))</span>
+
+                <span class="c1"># add stemmed sentence to the cleaned_text</span>
+                <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stemmed_words</span><span class="p">)</span>
+                <span class="n">cleaned_text</span> <span class="o">+=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">cleaned_text</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+                <span class="c1"># lemmatized text will be used in topic extraction</span>
+                <span class="n">lemmatized_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lemmatized_words</span><span class="p">)</span>
+                <span class="n">lemma_text</span> <span class="o">+=</span> <span class="n">lemmatized_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">lemma_text</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+        <span class="c1"># Normalize language percentages</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">languages</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">n_languages</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">total</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">languages</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">languages</span> <span class="o">=</span> <span class="n">n_languages</span>
+        <span class="c1"># Find language most used in the text</span>
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">languages</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span>
+
+        <span class="c1"># calculate language_distribution where all languages have percentages based on the sentences each language was detected</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">languages</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">unknown_language_perc</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">languages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">:</span>
+                <span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">total</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">new_v</span><span class="p">})</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">new_v</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+                <span class="n">unknown_language_perc</span> <span class="o">-=</span> <span class="n">v</span>
+
+        <span class="c1"># Summary Extraction</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_contents</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Term frequency (TF) is how often a word appears in a document, divided by how many words are there in a document.</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            <span class="c1"># Calculate TermFrequency and generate a matrix</span>
+            <span class="n">tf_matrix</span> <span class="o">=</span> <span class="n">__create_tf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">)</span>
+            <span class="c1"># creating table for documents per words</span>
+            <span class="n">count_doc_per_words</span> <span class="o">=</span> <span class="n">__create_documents_per_words</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Inverse document frequency (IDF) is how unique or rare a word is.</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            <span class="c1"># Calculate IDF and generate a matrix</span>
+            <span class="n">idf_matrix</span> <span class="o">=</span> <span class="n">__create_idf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">,</span> <span class="n">count_doc_per_words</span><span class="p">,</span> <span class="n">sentences_count</span><span class="p">)</span>
+
+            <span class="c1"># Calculate TF-IDF and generate a matrix</span>
+            <span class="n">tf_idf_matrix</span> <span class="o">=</span> <span class="n">__create_tf_idf_matrix</span><span class="p">(</span><span class="n">tf_matrix</span><span class="p">,</span> <span class="n">idf_matrix</span><span class="p">)</span>
+
+            <span class="c1"># Important Algorithm: score the sentences</span>
+            <span class="n">sentence_scores</span> <span class="o">=</span> <span class="n">__score_sentences</span><span class="p">(</span><span class="n">tf_idf_matrix</span><span class="p">)</span>
+
+            <span class="c1"># Find the threshold</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">__find_average_score</span><span class="p">(</span><span class="n">sentence_scores</span><span class="p">)</span>
+
+            <span class="c1"># Important Algorithm: Generate the summary</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="n">__generate_summary</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">sentence_scores</span><span class="p">,</span> <span class="mf">1.8</span> <span class="o">*</span> <span class="n">threshold</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">summary</span><span class="p">:</span>
+                <span class="n">summary</span> <span class="o">=</span> <span class="n">__generate_summary</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">sentence_scores</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_contents</span>
+
+        <span class="c1"># Topic Extraction</span>
+        <span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">lemma_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
+
+        <span class="n">dic</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+        <span class="n">bow_corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">corpus</span><span class="p">]</span>
+
+        <span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">(</span><span class="n">bow_corpus</span><span class="p">,</span>
+                                           <span class="n">num_topics</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                           <span class="n">id2word</span><span class="o">=</span><span class="n">dic</span><span class="p">,</span>
+                                           <span class="n">passes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                           <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                           <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span>
+                                           <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;asymmetric&#39;</span><span class="p">)</span>
+
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;topics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">10</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+            <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Sentiment Analysis</span>
+        <span class="n">sia</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+        <span class="n">compound_score</span> <span class="o">=</span> <span class="n">sia</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)[</span><span class="s1">&#39;compound&#39;</span><span class="p">]</span>
+
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compound_score</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compound_score</span>
+
+        <span class="c1"># Named Entity Extraction</span>
+        <span class="n">named_entities</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+            <span class="n">sentence</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                        <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">sentence</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentence</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">named_entities</span><span class="p">[</span><span class="n">sentence</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">label_</span>
+
+        <span class="k">for</span> <span class="n">ne</span><span class="p">,</span> <span class="n">neType</span> <span class="ow">in</span> <span class="n">named_entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;named_entities&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;named_entity&#39;</span><span class="p">:</span> <span class="n">ne</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">neType</span><span class="p">})</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;named_entities&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;named_entity&#39;</span><span class="p">:</span> <span class="n">ne</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">neType</span><span class="p">})</span>
+
+        <span class="c1"># Term Frequency</span>
+        <span class="n">data_analysis</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">nltk</span><span class="o">.</span><span class="n">FreqDist</span><span class="p">(</span><span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_analysis</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;term_frequency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;term_frequency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+
+        <span class="c1"># text_dict[&#39;term_frequency&#39;] = data_analysis</span>
+        <span class="c1"># profile_dict[&#39;table&#39;][&#39;term_frequency&#39;] = data_analysis</span>
+
+        <span class="c1"># calculate special_characters_distribution (FrequencyDistr)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">special_chars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;special_characters_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+
+        <span class="c1"># calculate sentence_length_distribution</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">sentence_length_list</span><span class="p">)</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.10</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mf">.90</span><span class="p">])</span>
+
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;sentence_length_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+            <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+            <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;stddev&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+            <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(),</span>
+            <span class="s1">&#39;skewness&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+            <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">var</span><span class="p">(),</span>
+            <span class="s1">&#39;percentile10&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+            <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+            <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+            <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="c1"># calculate word_length_distribution</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">word_length_list</span><span class="p">)</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.10</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mf">.90</span><span class="p">])</span>
+
+        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;word_length_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+            <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+            <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;stddev&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+            <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(),</span>
+            <span class="s1">&#39;skewness&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+            <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">var</span><span class="p">(),</span>
+            <span class="s1">&#39;percentile10&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+            <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+            <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+            <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text_dict</span><span class="p">)</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">end_string</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_string</span>
+
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">profile_dict</span>
+
+
+<span class="c1"># ----------- MULTIPLE TEXTS -----------#</span>
+<span class="k">def</span> <span class="nf">profile_multiple_texts</span><span class="p">(</span><span class="n">my_file_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling and generates a profiling dictionary for the text files that exist in the given paths.</span>
+
+<span class="sd">    :param my_file_paths: a list of paths leading to text files.</span>
+<span class="sd">    :type my_file_paths: List[str]</span>
+<span class="sd">    :return: A dict which contains the results of the profiler for the texts.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Used in language detection</span>
+    <span class="k">def</span> <span class="nf">__get_lang_detector</span><span class="p">(</span><span class="n">nlp</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LanguageDetector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">2023</span><span class="p">)</span>
+
+    <span class="c1"># Calculate TermFrequency and generate a matrix</span>
+    <span class="k">def</span> <span class="nf">__create_tf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">):</span>
+        <span class="n">tf_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">freq_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">tf_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">count_words_in_sentence</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f_table</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">tf_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">count_words_in_sentence</span>
+
+            <span class="n">tf_matrix</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf_table</span>
+
+        <span class="k">return</span> <span class="n">tf_matrix</span>
+
+    <span class="c1"># Create a table for documents per words</span>
+    <span class="k">def</span> <span class="nf">__create_documents_per_words</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">):</span>
+        <span class="n">word_per_doc_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">freq_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_per_doc_table</span><span class="p">:</span>
+                    <span class="n">word_per_doc_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">word_per_doc_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">word_per_doc_table</span>
+
+    <span class="c1"># Calculate IDF and generate a matrix</span>
+    <span class="k">def</span> <span class="nf">__create_idf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">,</span> <span class="n">count_doc_per_words</span><span class="p">,</span> <span class="n">total_documents</span><span class="p">):</span>
+        <span class="n">idf_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">freq_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">idf_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">idf_table</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">total_documents</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">count_doc_per_words</span><span class="p">[</span><span class="n">word</span><span class="p">]))</span>
+
+            <span class="n">idf_matrix</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="n">idf_table</span>
+
+        <span class="k">return</span> <span class="n">idf_matrix</span>
+
+    <span class="c1"># Calculate TF-IDF and generate a matrix</span>
+    <span class="k">def</span> <span class="nf">__create_tf_idf_matrix</span><span class="p">(</span><span class="n">tf_matrix</span><span class="p">,</span> <span class="n">idf_matrix</span><span class="p">):</span>
+        <span class="n">tf_idf_matrix</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">sent1</span><span class="p">,</span> <span class="n">f_table1</span><span class="p">),</span> <span class="p">(</span><span class="n">sent2</span><span class="p">,</span> <span class="n">f_table2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tf_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">idf_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+
+            <span class="n">tf_idf_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">word1</span><span class="p">,</span> <span class="n">value1</span><span class="p">),</span> <span class="p">(</span><span class="n">word2</span><span class="p">,</span> <span class="n">value2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">f_table1</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+                                                        <span class="n">f_table2</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>  <span class="c1"># here, keys are the same in both the table</span>
+                <span class="n">tf_idf_table</span><span class="p">[</span><span class="n">word1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value1</span> <span class="o">*</span> <span class="n">value2</span><span class="p">)</span>
+
+            <span class="n">tf_idf_matrix</span><span class="p">[</span><span class="n">sent1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf_idf_table</span>
+
+        <span class="k">return</span> <span class="n">tf_idf_matrix</span>
+
+    <span class="c1"># Important Algorithm: score the sentences</span>
+    <span class="k">def</span> <span class="nf">__score_sentences</span><span class="p">(</span><span class="n">tf_idf_matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        score a sentence by its word&#39;s TF</span>
+<span class="sd">        Basic algorithm: adding the TF frequency of every non-stop word in a sentence divided by total no of words in a sentence.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sentenceValue</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">f_table</span> <span class="ow">in</span> <span class="n">tf_idf_matrix</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">total_score_per_sentence</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">count_words_in_sentence</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f_table</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">f_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">total_score_per_sentence</span> <span class="o">+=</span> <span class="n">score</span>
+
+            <span class="k">if</span> <span class="n">count_words_in_sentence</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sentenceValue</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_score_per_sentence</span> <span class="o">/</span> <span class="n">count_words_in_sentence</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sentenceValue</span><span class="p">[</span><span class="n">sent</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">sentenceValue</span>
+
+    <span class="c1"># Find the threshold</span>
+    <span class="k">def</span> <span class="nf">__find_average_score</span><span class="p">(</span><span class="n">sentenceValue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the average score from the sentence value dictionary</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sumValues</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sentenceValue</span><span class="p">:</span>
+            <span class="n">sumValues</span> <span class="o">+=</span> <span class="n">sentenceValue</span><span class="p">[</span><span class="n">entry</span><span class="p">]</span>
+
+        <span class="c1"># Average value of a sentence from original summary_text</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="p">(</span><span class="n">sumValues</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentenceValue</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">average</span>
+
+    <span class="c1"># Important Algorithm: Generate the summary</span>
+    <span class="k">def</span> <span class="nf">__generate_summary</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">sentenceValue</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+        <span class="n">sentence_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sentence</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span> <span class="ow">in</span> <span class="n">sentenceValue</span> <span class="ow">and</span> <span class="n">sentenceValue</span><span class="p">[</span><span class="n">sentence</span><span class="p">[:</span><span class="mi">15</span><span class="p">]]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">sentence</span>
+                <span class="n">sentence_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">summary</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;analysis&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Profiling Report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_start&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date_end&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filenames&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;profiler_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Textual&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;num_texts&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_sentences&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_distinct_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;num_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_digits&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;language_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;sentiment_analysis&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;compound_mean&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s1">&#39;compound_levels&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;(-1, -0.5)&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;(-0.5, 0)&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;(0, 0.5)&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;(0.5, 1)&#39;</span><span class="p">:</span> <span class="mi">0</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;term_frequency&#39;</span><span class="p">:</span> <span class="p">[]</span>
+
+        <span class="p">},</span>
+        <span class="s1">&#39;variables&#39;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">start_string</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_string</span>
+
+    <span class="n">corpus_languages</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">set_of_unique_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">dict_term_freq</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">compound_scores</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;(-1, -0.5)&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;(-0.5, 0)&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;(0, 0.5)&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;(0.5, 1)&#39;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">text_file</span> <span class="ow">in</span> <span class="n">my_file_paths</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">get_filename</span><span class="p">(</span><span class="n">text_file</span><span class="p">)</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;filenames&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">text_file</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">text_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Text&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;num_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;num_sentences&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;num_distinct_words&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;num_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;ratio_digits&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;language_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;topics&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;named_entities&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;term_frequency&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;special_characters_distribution&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s1">&#39;sentence_length_distribution&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+                <span class="s1">&#39;word_length_distribution&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+            <span class="p">}</span>
+
+            <span class="c1"># key is a special character and how many times is has been found in the text</span>
+            <span class="n">special_chars</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="c1"># add the length of each word in the list to be used in the calculation of word_length_distribution</span>
+            <span class="n">word_length_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># add the length of each sentence in the list to be used in the calculation of sentence_length_distribution</span>
+            <span class="n">sentence_length_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">file_contents</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">file_contents</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_contents</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="n">string_encode</span> <span class="o">=</span> <span class="n">file_contents</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="n">file_contents</span> <span class="o">=</span> <span class="n">string_encode</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">file_contents</span><span class="p">:</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_texts&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Find number of words</span>
+                <span class="n">words</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">file_contents</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+                <span class="n">words_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+                    <span class="n">words_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">word_length_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_words&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">words_count</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">words_count</span>
+
+                <span class="c1"># Find number of sentences</span>
+                <span class="n">sentences</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">sent_tokenize</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span>
+                <span class="n">sentences_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+                    <span class="n">sentences_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">sentence_length_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">))</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_sentences&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sentences_count</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_sentences&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sentences_count</span>
+
+                <span class="c1"># Find Distinct/Unique words</span>
+                <span class="n">unique_words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+                <span class="n">unique_words_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_words</span><span class="p">)</span>
+                <span class="n">set_of_unique_words</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">unique_words</span><span class="p">)</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_distinct_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_words_count</span>
+
+                <span class="c1"># Find number of characters</span>
+                <span class="n">numCharacters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numCharacters</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">numCharacters</span>
+
+                <span class="c1"># ratio_uppercase, ratio_digits, ratio_special_characters</span>
+                <span class="n">ratioUppercase</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">ratioDigits</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">ratioSpecialChars</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">file_contents</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                        <span class="n">ratioUppercase</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                        <span class="n">ratioDigits</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
+                        <span class="n">ratioSpecialChars</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">special_chars</span><span class="p">:</span>
+                            <span class="n">special_chars</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">special_chars</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratioUppercase</span> <span class="o">/</span> <span class="n">numCharacters</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratioDigits</span> <span class="o">/</span> <span class="n">numCharacters</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratioSpecialChars</span> <span class="o">/</span> <span class="n">numCharacters</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ratioUppercase</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ratioDigits</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ratioSpecialChars</span>
+
+                <span class="c1"># Find languages</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Downloading language model for the spaCy POS tagger</span><span class="se">\n</span><span class="s1">&#39;</span>
+                          <span class="s2">&quot;(don&#39;t worry, this will only happen once)&quot;</span><span class="p">)</span>
+                    <span class="kn">from</span> <span class="nn">spacy.cli</span> <span class="kn">import</span> <span class="n">download</span>
+                    <span class="n">download</span><span class="p">(</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
+                    <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">Language</span><span class="o">.</span><span class="n">has_factory</span><span class="p">(</span><span class="s2">&quot;language_detector&quot;</span><span class="p">):</span>
+                    <span class="n">Language</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="s2">&quot;language_detector&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">__get_lang_detector</span><span class="p">)</span>
+                <span class="n">nlp</span><span class="o">.</span><span class="n">add_pipe</span><span class="p">(</span><span class="s1">&#39;language_detector&#39;</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)</span>
+
+                <span class="n">languages</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">cleaned_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">lemma_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">freq_matrix</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">sents</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">sent</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                        <span class="n">sentence</span> <span class="o">=</span> <span class="n">sent</span><span class="o">.</span><span class="n">text</span>
+                        <span class="k">if</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">language</span> <span class="o">=</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha_2</span><span class="o">=</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">language</span> <span class="o">=</span> <span class="s1">&#39;english&#39;</span>
+                        <span class="n">length_sent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">language</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+                            <span class="n">languages</span><span class="p">[</span><span class="n">language</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span>
+                                                            <span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">length_sent</span> <span class="o">/</span> <span class="n">sentences_count</span> <span class="o">*</span> <span class="n">numCharacters</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">languages</span><span class="p">[</span><span class="n">language</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">language</span><span class="p">[</span>
+                                                             <span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">length_sent</span> <span class="o">/</span> <span class="n">sentences_count</span> <span class="o">*</span> <span class="n">numCharacters</span><span class="p">)</span>
+
+                        <span class="c1"># Clean the sentence using the detecting language</span>
+                        <span class="c1"># Punctuation Removal</span>
+                        <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                                    <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                        <span class="n">words</span> <span class="o">=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+                        <span class="c1"># Stopword Removal</span>
+                        <span class="k">if</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">fileids</span><span class="p">():</span>
+                            <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="n">language</span><span class="p">))</span>
+                            <span class="n">cleaned_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">cleaned_words</span> <span class="o">=</span> <span class="n">words</span>
+
+                        <span class="c1"># Stemming</span>
+                        <span class="n">stemmed_words</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">if</span> <span class="n">language</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">SnowballStemmer</span><span class="o">.</span><span class="n">languages</span><span class="p">):</span>
+                            <span class="n">stemmer</span> <span class="o">=</span> <span class="n">SnowballStemmer</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">cleaned_words</span><span class="p">:</span>
+                                <span class="n">word</span> <span class="o">=</span> <span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                                <span class="n">stemmed_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">stemmed_words</span> <span class="o">=</span> <span class="n">cleaned_words</span>
+
+                        <span class="c1"># Lemma</span>
+                        <span class="n">lemmatized_words</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">if</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">language</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">cleaned_words</span><span class="p">:</span>
+                                <span class="n">word</span> <span class="o">=</span> <span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">language</span><span class="p">)</span><span class="o">.</span><span class="n">alpha_2</span><span class="p">)</span>
+                                <span class="n">lemmatized_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">lemmatized_words</span> <span class="o">=</span> <span class="n">cleaned_words</span>
+
+                        <span class="c1"># freq_matrix will be used in summary extraction</span>
+                        <span class="n">freq_matrix</span><span class="p">[</span><span class="n">sentence</span><span class="p">[:</span><span class="mi">15</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">stemmed_words</span><span class="p">))</span>
+
+                        <span class="c1"># add stemmed sentence to the cleaned_text</span>
+                        <span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stemmed_words</span><span class="p">)</span>
+                        <span class="n">cleaned_text</span> <span class="o">+=</span> <span class="n">cleaned_sentence</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="n">cleaned_text</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+                        <span class="c1"># lemmatized text will be used in topic extraction</span>
+                        <span class="n">lemmatized_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lemmatized_words</span><span class="p">)</span>
+                        <span class="n">lemma_text</span> <span class="o">+=</span> <span class="n">lemmatized_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="n">lemma_text</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+                <span class="c1"># Normalize language percentages</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">languages</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">n_languages</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">total</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">languages</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">languages</span> <span class="o">=</span> <span class="n">n_languages</span>
+
+                <span class="c1"># Add languages dictionary to the corpus dictionary</span>
+                <span class="k">if</span> <span class="n">corpus_languages</span> <span class="ow">is</span> <span class="ow">not</span> <span class="p">{}:</span>
+                    <span class="n">corpus_languages</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">corpus_languages</span><span class="p">)</span> <span class="o">+</span> <span class="n">Counter</span><span class="p">(</span><span class="n">languages</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">corpus_languages</span> <span class="o">=</span> <span class="n">languages</span>
+
+                <span class="c1"># Find language most used in the text</span>
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">languages</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">languages</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+
+                <span class="c1"># calculate language_distribution where all languages have percentages based on the sentences each language was detected</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">languages</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">unknown_language_perc</span> <span class="o">=</span> <span class="mi">100</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">languages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">:</span>
+                        <span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">total</span>
+                        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">new_v</span><span class="p">})</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+                        <span class="n">unknown_language_perc</span> <span class="o">-=</span> <span class="n">v</span>
+
+                <span class="c1"># Summary Extraction</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_contents</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
+<span class="w">                    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                    Term frequency (TF) is how often a word appears in a document, divided by how many words are there in a document.</span>
+<span class="sd">                    &#39;&#39;&#39;</span>
+                    <span class="c1"># Calculate TermFrequency and generate a matrix</span>
+                    <span class="n">tf_matrix</span> <span class="o">=</span> <span class="n">__create_tf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">)</span>
+                    <span class="c1"># creating table for documents per words</span>
+                    <span class="n">count_doc_per_words</span> <span class="o">=</span> <span class="n">__create_documents_per_words</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">)</span>
+
+<span class="w">                    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                    Inverse document frequency (IDF) is how unique or rare a word is.</span>
+<span class="sd">                    &#39;&#39;&#39;</span>
+                    <span class="c1"># Calculate IDF and generate a matrix</span>
+                    <span class="n">idf_matrix</span> <span class="o">=</span> <span class="n">__create_idf_matrix</span><span class="p">(</span><span class="n">freq_matrix</span><span class="p">,</span> <span class="n">count_doc_per_words</span><span class="p">,</span> <span class="n">sentences_count</span><span class="p">)</span>
+
+                    <span class="c1"># Calculate TF-IDF and generate a matrix</span>
+                    <span class="n">tf_idf_matrix</span> <span class="o">=</span> <span class="n">__create_tf_idf_matrix</span><span class="p">(</span><span class="n">tf_matrix</span><span class="p">,</span> <span class="n">idf_matrix</span><span class="p">)</span>
+
+                    <span class="c1"># Important Algorithm: score the sentences</span>
+                    <span class="n">sentence_scores</span> <span class="o">=</span> <span class="n">__score_sentences</span><span class="p">(</span><span class="n">tf_idf_matrix</span><span class="p">)</span>
+
+                    <span class="c1"># Find the threshold</span>
+                    <span class="n">threshold</span> <span class="o">=</span> <span class="n">__find_average_score</span><span class="p">(</span><span class="n">sentence_scores</span><span class="p">)</span>
+
+                    <span class="c1"># Important Algorithm: Generate the summary</span>
+                    <span class="n">summary</span> <span class="o">=</span> <span class="n">__generate_summary</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">sentence_scores</span><span class="p">,</span> <span class="mf">1.8</span> <span class="o">*</span> <span class="n">threshold</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">summary</span><span class="p">:</span>
+                        <span class="n">summary</span> <span class="o">=</span> <span class="n">__generate_summary</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">sentence_scores</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+                        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_contents</span>
+
+                <span class="c1"># Topic Extraction</span>
+                <span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">lemma_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
+
+                <span class="n">dic</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+                <span class="n">bow_corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">corpus</span><span class="p">]</span>
+
+                <span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">(</span><span class="n">bow_corpus</span><span class="p">,</span>
+                                                   <span class="n">num_topics</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                   <span class="n">id2word</span><span class="o">=</span><span class="n">dic</span><span class="p">,</span>
+                                                   <span class="n">passes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                                   <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                                   <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span>
+                                                   <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;asymmetric&#39;</span><span class="p">)</span>
+
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;topics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">10</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># Sentiment Analysis</span>
+                <span class="n">sia</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+                <span class="n">compound_score</span> <span class="o">=</span> <span class="n">sia</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">file_contents</span><span class="p">)[</span><span class="s1">&#39;compound&#39;</span><span class="p">]</span>
+
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compound_score</span>
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">compound_score</span>
+
+                <span class="k">if</span> <span class="n">compound_score</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">compound_score</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+                        <span class="n">compound_scores</span><span class="p">[</span><span class="s1">&#39;(0.5, 1)&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">compound_scores</span><span class="p">[</span><span class="s1">&#39;(0, 0.5)&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">compound_score</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">compound_score</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">:</span>
+                        <span class="n">compound_scores</span><span class="p">[</span><span class="s1">&#39;(-1, -0.5)&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">compound_scores</span><span class="p">[</span><span class="s1">&#39;(-0.5, 0)&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;sentiment_analysis&#39;</span><span class="p">][</span><span class="s1">&#39;compound_mean&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">compound_score</span>
+
+                <span class="c1"># Named Entity Extraction</span>
+                <span class="n">named_entities</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+                    <span class="n">sentence</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">text</span>
+                    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">val</span> <span class="ow">in</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                                <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">sentence</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentence</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                    <span class="n">named_entities</span><span class="p">[</span><span class="n">sentence</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">label_</span>
+
+                <span class="k">for</span> <span class="n">ne</span><span class="p">,</span> <span class="n">neType</span> <span class="ow">in</span> <span class="n">named_entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;named_entities&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;named_entity&#39;</span><span class="p">:</span> <span class="n">ne</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">neType</span><span class="p">})</span>
+
+                <span class="c1"># Term Frequency</span>
+                <span class="n">data_analysis</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="nb">sorted</span><span class="p">(</span><span class="n">nltk</span><span class="o">.</span><span class="n">FreqDist</span><span class="p">(</span><span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+                <span class="n">dict_term_freq</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">dict_term_freq</span><span class="p">)</span> <span class="o">+</span> <span class="n">Counter</span><span class="p">(</span><span class="n">data_analysis</span><span class="p">))</span>
+
+                <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_analysis</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;term_frequency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+
+                <span class="c1"># calculate special_characters_distribution (FrequencyDistr)</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">special_chars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;special_characters_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+
+                <span class="c1"># calculate sentence_length_distribution</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">sentence_length_list</span><span class="p">)</span>
+                <span class="n">stats</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.10</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mf">.90</span><span class="p">])</span>
+
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;sentence_length_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+                    <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s1">&#39;stddev&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                    <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(),</span>
+                    <span class="s1">&#39;skewness&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+                    <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">var</span><span class="p">(),</span>
+                    <span class="s1">&#39;percentile10&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+                <span class="p">}</span>
+
+                <span class="c1"># calculate word_length_distribution</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">word_length_list</span><span class="p">)</span>
+                <span class="n">stats</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.10</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mf">.90</span><span class="p">])</span>
+
+                <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;word_length_distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">text_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+                    <span class="s1">&#39;average&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s1">&#39;stddev&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                    <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(),</span>
+                    <span class="s1">&#39;skewness&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+                    <span class="s1">&#39;variance&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">var</span><span class="p">(),</span>
+                    <span class="s1">&#39;percentile10&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile25&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile75&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                    <span class="s1">&#39;percentile90&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+                <span class="p">}</span>
+
+                <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text_dict</span><span class="p">)</span>
+
+    <span class="c1"># Calculate number of distinct words in the corpus</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_distinct_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">set_of_unique_words</span><span class="p">)</span>
+
+    <span class="c1"># Calculate ratio_uppercase, ratio_digits, ratio_special_characters in the corpus</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_uppercase&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_digits&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;ratio_special_characters&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_characters&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Calculate language distribution in the corpus</span>
+    <span class="n">languages</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">/</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_texts&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">corpus_languages</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">languages</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">unknown_language_perc</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">languages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">total</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">new_v</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+            <span class="n">unknown_language_perc</span> <span class="o">-=</span> <span class="n">v</span>
+
+    <span class="k">if</span> <span class="n">total</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;language_distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;language&#39;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="n">unknown_language_perc</span><span class="p">})</span>
+
+    <span class="c1"># Calculate Sentiment analysis for the corpus</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_texts&#39;</span><span class="p">]</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;sentiment_analysis&#39;</span><span class="p">][</span><span class="s1">&#39;compound_levels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compound_scores</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;sentiment_analysis&#39;</span><span class="p">][</span><span class="s1">&#39;compound_mean&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;num_texts&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Calculate term frequency for the corpus</span>
+    <span class="n">data_analysis</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dict_term_freq</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_analysis</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">][</span><span class="s1">&#39;term_frequency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">end_string</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_string</span>
+
+    <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_end&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+            <span class="n">profile_dict</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">][</span><span class="s1">&#39;date_start&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">profile_dict</span>
+
+
+<span class="c1"># ----------- MAIN FUNCTION ----------#</span>
+<span class="k">def</span> <span class="nf">profile_text_with_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling on text data and writes the resulting profile dictionary based on a configuration dictionary.</span>
+
+<span class="sd">    :param config: a dictionary with all configuration settings.</span>
+<span class="sd">    :type config: dict</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    :rtype: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># input file path(s)</span>
+    <span class="n">input_file_paths</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;files&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">my_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">my_path</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">input_file_paths</span><span class="p">:</span>
+                <span class="n">my_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">)):</span>
+        <span class="n">my_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_paths</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: </span><span class="si">{</span><span class="n">input_file_paths</span><span class="si">}</span><span class="s2"> must be a valid file path or list of file paths&quot;</span><span class="p">)</span>
+
+    <span class="c1"># output file path</span>
+    <span class="n">output_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;json&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Run raster profile</span>
+    <span class="n">profile_dict</span> <span class="o">=</span> <span class="n">profile_text</span><span class="p">(</span><span class="n">my_path</span><span class="o">=</span><span class="n">my_path</span><span class="p">)</span>
+
+    <span class="c1"># Write resulting profile dictionary</span>
+    <span class="n">write_to_json</span><span class="p">(</span><span class="n">profile_dict</span><span class="p">,</span> <span class="n">output_json_path</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="profile_text"><a class="viewcode-back" href="../../../stelardataprofiler.html#stelardataprofiler.profile_text">[docs]</a><span class="k">def</span> <span class="nf">profile_text</span><span class="p">(</span><span class="n">my_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method performs profiling and generates a profiling dictionary for either a single text or many texts.</span>
+
+<span class="sd">    :param my_path: either the path to a text file or a list of paths to text files.</span>
+<span class="sd">    :type my_path: Union[str, List[str]]</span>
+<span class="sd">    :return: A dict which contains the results of the profiler for the text or texts.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">my_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="c1"># Handle list of paths</span>
+        <span class="k">return</span> <span class="n">profile_multiple_texts</span><span class="p">(</span><span class="n">my_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">my_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">my_path</span><span class="p">):</span>
+        <span class="c1"># Handle single file path</span>
+        <span class="k">return</span> <span class="n">profile_single_text</span><span class="p">(</span><span class="n">my_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: </span><span class="si">{</span><span class="n">my_path</span><span class="si">}</span><span class="s2"> must be a valid file path or list of file paths&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper to split filename and extension&quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Panagiotis Betchavas.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

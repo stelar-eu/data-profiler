@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html class="writer-html4" lang="en" >
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>stelardataprofiler package &mdash; stelardataprofiler 0.1.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>stelardataprofiler package &mdash; stelardataprofiler 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="data-profiler" href="modules.html" /> 
+    <link rel="prev" title="stelardataprofiler" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,10 +42,46 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">data-profiler</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">stelardataprofiler package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">stelardataprofiler</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">stelardataprofiler package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-stelardataprofiler.main">stelardataprofiler.main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-stelardataprofiler.profiler">stelardataprofiler.profiler module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profiler.prepare_mapping"><code class="docutils literal notranslate"><span class="pre">prepare_mapping()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profiler.run_profile"><code class="docutils literal notranslate"><span class="pre">run_profile()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-stelardataprofiler.utils">stelardataprofiler.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.utils.read_config"><code class="docutils literal notranslate"><span class="pre">read_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.utils.write_to_json"><code class="docutils literal notranslate"><span class="pre">write_to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-stelardataprofiler">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_hierarchical"><code class="docutils literal notranslate"><span class="pre">profile_hierarchical()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_hierarchical_with_config"><code class="docutils literal notranslate"><span class="pre">profile_hierarchical_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_raster"><code class="docutils literal notranslate"><span class="pre">profile_raster()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_raster_with_config"><code class="docutils literal notranslate"><span class="pre">profile_raster_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_rdfGraph"><code class="docutils literal notranslate"><span class="pre">profile_rdfGraph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_rdfGraph_with_config"><code class="docutils literal notranslate"><span class="pre">profile_rdfGraph_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_tabular"><code class="docutils literal notranslate"><span class="pre">profile_tabular()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_tabular_with_config"><code class="docutils literal notranslate"><span class="pre">profile_tabular_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_text"><code class="docutils literal notranslate"><span class="pre">profile_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_timeseries"><code class="docutils literal notranslate"><span class="pre">profile_timeseries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_timeseries_with_config"><code class="docutils literal notranslate"><span class="pre">profile_timeseries_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_vista_rasters"><code class="docutils literal notranslate"><span class="pre">profile_vista_rasters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.profile_vista_rasters_with_config"><code class="docutils literal notranslate"><span class="pre">profile_vista_rasters_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.type_detection"><code class="docutils literal notranslate"><span class="pre">type_detection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.type_detection_with_config"><code class="docutils literal notranslate"><span class="pre">type_detection_with_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stelardataprofiler.write_to_json"><code class="docutils literal notranslate"><span class="pre">write_to_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -60,7 +100,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">data-profiler</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">stelardataprofiler</a></li>
       <li class="breadcrumb-item active">stelardataprofiler package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/stelardataprofiler.rst.txt" rel="nofollow"> View page source</a>
@@ -71,484 +111,425 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-stelardataprofiler">
-<span id="stelardataprofiler-package"></span><h1>stelardataprofiler package<a class="headerlink" href="#module-stelardataprofiler" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="stelardataprofiler.run_profile">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">run_profile</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#run_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.run_profile" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method executes the specified profiler and writes the resulting profile dictionary, and HTML if specified, based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+  <section id="stelardataprofiler-package">
+<h1>stelardataprofiler package<a class="headerlink" href="#stelardataprofiler-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-stelardataprofiler.main">
+<span id="stelardataprofiler-main-module"></span><h2>stelardataprofiler.main module<a class="headerlink" href="#module-stelardataprofiler.main" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.main.main">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.main.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-stelardataprofiler.profiler">
+<span id="stelardataprofiler-profiler-module"></span><h2>stelardataprofiler.profiler module<a class="headerlink" href="#module-stelardataprofiler.profiler" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profiler.prepare_mapping">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.profiler.</span></span><span class="sig-name descname"><span class="pre">prepare_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#prepare_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profiler.prepare_mapping" title="Permalink to this definition"></a></dt>
+<dd><p>This method prepares the suitable mapping for subsequent generation of the RDF graph, if “rdf” and “serialization” options are specified in config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_timeseries">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_timeseries</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>time_column: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em>, <em>mode: str = 'verbose'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_timeseries" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for a given timeseries .csv file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_file_path</strong> (<em>str</em>) – the path to a .csv file containing a datetime columns and one/multiple timeseries columns.</li>
-<li><strong>time_column</strong> (<em>str</em>) – the name of the datetime column.</li>
-<li><strong>header</strong> (<em>str</em><em>, </em><em>optional</em>) – row to use to parse column labels. Defaults to the first row. Prior rows will be discarded.</li>
-<li><strong>sep</strong> (<em>str</em><em>, </em><em>optional</em>) – separator character to use for the csv.</li>
-<li><strong>html_path</strong> (<em>str</em><em>, </em><em>optional</em>) – the file path where the html file will be saved.</li>
-<li><strong>display_html</strong> (<em>bool</em><em>, </em><em>optional</em>) – a boolean that determines whether the html will be displayed in the output.</li>
-<li><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – ‘default’ -&gt; calculate tsfresh features for the timeseries and use them as variables (useful if many timeseries columns), ‘verbose’ -&gt; use the timeseries as variables.</li>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profiler.run_profile">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.profiler.</span></span><span class="sig-name descname"><span class="pre">run_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#run_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profiler.run_profile" title="Permalink to this definition"></a></dt>
+<dd><p>This method executes the specified profiler and writes the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-stelardataprofiler.utils">
+<span id="stelardataprofiler-utils-module"></span><h2>stelardataprofiler.utils module<a class="headerlink" href="#module-stelardataprofiler.utils" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.utils.read_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.utils.</span></span><span class="sig-name descname"><span class="pre">read_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/utils.html#read_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.utils.read_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method reads configuration settings from a json file. Configuration includes all parameters for input/output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_file</strong> (<em>str</em>) – path to .json file that contains the configuration parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.utils.write_to_json">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.utils.</span></span><span class="sig-name descname"><span class="pre">write_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/utils.html#write_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.utils.write_to_json" title="Permalink to this definition"></a></dt>
+<dd><p>Write the profile dictionary to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_dict</strong> (<em>dict</em>) – the profile dictionary that will writen.</p></li>
+<li><p><strong>output_file</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – The name or the path of the file to generate including the extension (.json).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the timeseries data.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a dict which contains the results of the profiler for the texts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_timeseries_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_timeseries_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_timeseries_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_timeseries_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on timeseries data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_tabular">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_tabular</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>header: int = 0</em>, <em>sep: str = '</em>, <em>'</em>, <em>crs: str = 'EPSG:4326'</em>, <em>longitude_column: str = None</em>, <em>latitude_column: str = None</em>, <em>wkt_column: str = None</em>, <em>html_path: str = ''</em>, <em>display_html: bool = False</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_tabular"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_tabular" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for a given tabular .csv or .shp file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_file_path</strong> (<em>str</em>) – the path to a .csv or .shp file containing different data types of columns.</li>
-<li><strong>header</strong> (<em>str</em><em>, </em><em>optional</em>) – row to use to parse column labels. Defaults to the first row. Prior rows will be discarded.</li>
-<li><strong>sep</strong> (<em>str</em><em>, </em><em>optional</em>) – separator character to use for the csv.</li>
-<li><strong>crs</strong> (<em>str</em><em>, </em><em>optional</em>) – the Coordinate Reference System (CRS) represented as an authority string (eg “EPSG:4326”).</li>
-<li><strong>longitude_column</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the longitude column.</li>
-<li><strong>latitude_column</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the latitude column.</li>
-<li><strong>wkt_column</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the column that has wkt geometries.</li>
-<li><strong>html_path</strong> (<em>str</em><em>, </em><em>optional</em>) – the file path where the html file will be saved.</li>
-<li><strong>display_html</strong> (<em>bool</em><em>, </em><em>optional</em>) – a boolean that determines whether the html will be displayed in the output.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the tabular data.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_tabular_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_tabular_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_tabular_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_tabular_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on tabular and/or vector data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_raster">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_raster</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_raster" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for either a single image or many images.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_path</strong> (<em>str</em>) – the path to either an image file or a folder that has image files.</li>
-<li><strong>image_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the images that exist in the folder if the given path is a folder path.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the image or images.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_raster_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_raster_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_raster_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_raster_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on raster data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_text">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_text</code><span class="sig-paren">(</span><em>my_path: str</em>, <em>text_format: str = '.txt'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for either a single text or many texts.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_path</strong> (<em>str</em>) – the path to either a text file or a folder that has text files.</li>
-<li><strong>text_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the texts that exist in the folder if the given path is a folder path.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the text or texts.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_text_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_text_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_text_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_text_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on text data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_hierarchical">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_hierarchical</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_hierarchical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_hierarchical" title="Permalink to this definition">¶</a></dt>
+</section>
+<section id="module-stelardataprofiler">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-stelardataprofiler" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_hierarchical">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_hierarchical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/hierarchical/profiler.html#profile_hierarchical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_hierarchical" title="Permalink to this definition"></a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given json file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>my_file_path</strong> (<em>str</em>) – the path to a json file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict which contains the results of the profiler for the json.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>my_file_path</strong> (<em>str</em>) – the path to a json file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict which contains the results of the profiler for the json.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_hierarchical_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_hierarchical_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_hierarchical_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_hierarchical_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on hierarchical data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_hierarchical_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_hierarchical_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/hierarchical/profiler.html#profile_hierarchical_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_hierarchical_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling on hierarchical data and writes the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_rdfGraph">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_rdfGraph</code><span class="sig-paren">(</span><em>my_file_path: str</em>, <em>parse_format: str = 'application/rdf+xml'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_rdfGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_raster">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/raster/profiler.html#profile_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_raster" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for either a single image or many images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>my_path</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – either the path to an image file or a list of paths to image files.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict which contains the results of the profiler for the image or images.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_raster_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_raster_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/raster/profiler.html#profile_raster_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_raster_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling on raster data and writes the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_rdfGraph">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_rdfGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'application/rdf+xml'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/rdfGraph/profiler.html#profile_rdfGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph" title="Permalink to this definition"></a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given rdf file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_file_path</strong> (<em>str</em>) – the path to a rdf file.</li>
-<li><strong>parse_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the format of the rdf file. (see rdflib package to find the available formats e.g. ‘turtle’, ‘application/rdf+xml’, ‘n3’, ‘nt’, etc.)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>my_file_path</strong> (<em>str</em>) – the path to a rdf file.</p></li>
+<li><p><strong>parse_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the format of the rdf file. (see rdflib package to find the available formats e.g. ‘turtle’, ‘application/rdf+xml’, ‘n3’, ‘nt’, etc.)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the rdf.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict which contains the results of the profiler for the rdf.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_rdfGraph_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_rdfGraph_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_rdfGraph_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on rdfGraph data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_rdfGraph_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_rdfGraph_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/rdfGraph/profiler.html#profile_rdfGraph_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_rdfGraph_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling on rdfGraph data and writes the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_vista_rasters">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_vista_rasters</code><span class="sig-paren">(</span><em>rhd_datapath: str</em>, <em>ras_datapath: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_vista_rasters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_vista_rasters" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_tabular">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_tabular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cat_perc_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq_distr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_geometry_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/tabular_timeseries/profiler.html#profile_tabular"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_tabular" title="Permalink to this definition"></a></dt>
+<dd><p>Profiles a tabular DataFrame (or file path) and returns a profiling report as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_path</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>geopandas.GeoDataFrame</em>) – Path to input file or a DataFrame/GeoDataFrame to profile.</p></li>
+<li><p><strong>header</strong> (<em>int</em><em> or </em><em>str</em>) – Row to use as column names (passed to pandas.read).</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator to use for reading CSV files.</p></li>
+<li><p><strong>light_mode</strong> (<em>bool</em>) – If True, skip expensive computations.</p></li>
+<li><p><strong>crs</strong> (<em>str</em>) – Coordinate reference system for geometry data.</p></li>
+<li><p><strong>num_cat_perc_threshold</strong> (<em>float</em>) – Threshold for treating numeric as categorical.</p></li>
+<li><p><strong>max_freq_distr</strong> (<em>int</em>) – Max number of frequency distribution bins.</p></li>
+<li><p><strong>eps_distance</strong> (<em>int</em>) – Distance tolerance for geometry heatmap calculations.</p></li>
+<li><p><strong>extra_geometry_columns</strong> (<em>list</em>) – Additional geometry columns to consider.</p></li>
+<li><p><strong>types_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – Pre-computed types dictionary to use instead of detecting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Profiling report dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_tabular_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_tabular_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/tabular_timeseries/profiler.html#profile_tabular_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_tabular_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling on tabular and/or vector data and write the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_text">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/text/profiler.html#profile_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_text" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling and generates a profiling dictionary for either a single text or many texts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>my_path</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – either the path to a text file or a list of paths to text files.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict which contains the results of the profiler for the text or texts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_timeseries">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_mode_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'date'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cat_perc_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq_distr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/tabular_timeseries/profiler.html#profile_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Profiles a timeseries DataFrame or file and returns a profiling report dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_path</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – Path to input file or DataFrame to profile.</p></li>
+<li><p><strong>ts_mode_datetime_col</strong> (<em>str</em>) – Column name for datetime index.</p></li>
+<li><p><strong>header</strong> (<em>int</em><em> or </em><em>str</em>) – Row to use as column names.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Field separator for CSV.</p></li>
+<li><p><strong>light_mode</strong> (<em>bool</em>) – If True, skip expensive computations.</p></li>
+<li><p><strong>num_cat_perc_threshold</strong> (<em>float</em>) – Threshold for treating numeric as categorical.</p></li>
+<li><p><strong>max_freq_distr</strong> (<em>int</em>) – Maximum bins for frequency distribution.</p></li>
+<li><p><strong>types_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – Pre-computed types dictionary to use instead of detecting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Profiling report dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_timeseries_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_timeseries_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/tabular_timeseries/profiler.html#profile_timeseries_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_timeseries_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling on timeseries data and writes the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_vista_rasters">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_vista_rasters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rhd_datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ras_datapath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/raster/profiler.html#profile_vista_rasters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_vista_rasters" title="Permalink to this definition"></a></dt>
 <dd><p>This method performs profiling and generates a profiling dictionary for a given ras file
 that exists in the given path using the contents of a rhd file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>rhd_datapath</strong> (<em>str</em>) – the path to a rhd file.</li>
-<li><strong>ras_datapath</strong> (<em>str</em>) – the path to a ras file.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rhd_datapath</strong> (<em>str</em>) – the path to a rhd file.</p></li>
+<li><p><strong>ras_datapath</strong> (<em>str</em>) – the path to a ras file.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the ras.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict which contains the results of the profiler for the ras.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_vista_rasters_with_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_vista_rasters_with_config</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_vista_rasters_with_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_vista_rasters_with_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling on ras data and write the resulting profile dictionary based on a configuration dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.profile_vista_rasters_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">profile_vista_rasters_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/raster/profiler.html#profile_vista_rasters_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.profile_vista_rasters_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs profiling on ras data and writes the resulting profile dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.prepare_mapping">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">prepare_mapping</code><span class="sig-paren">(</span><em>config: dict</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#prepare_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.prepare_mapping" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method prepares the suitable mapping for subsequent generation of the RDF graph, if “rdf” and “serialization” options are specified in config.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_single_raster">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_single_raster</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_single_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_single_raster" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for an image file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>my_file_path</strong> (<em>str</em>) – the path to an image file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict which contains the results of the profiler for the image.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.profile_multiple_rasters">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_multiple_rasters</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>image_format: str = '.tif'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_multiple_rasters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_multiple_rasters" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for the image files that exist in the given folder path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_folder_path</strong> (<em>str</em>) – the path to a folder that has image files.</li>
-<li><strong>image_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the images that exist in the given folder path.</li>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.type_detection">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">type_detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_mode_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'date'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cat_perc_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq_distr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_geometry_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/tabular_timeseries/profiler.html#type_detection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.type_detection" title="Permalink to this definition"></a></dt>
+<dd><p>Detects data types for each column in tabular or timeseries data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_path</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>geopandas.GeoDataFrame</em>) – Path or DataFrame/GeoDataFrame to inspect.</p></li>
+<li><p><strong>header</strong> (<em>int</em><em> or </em><em>str</em>) – Header row index or name.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator character.</p></li>
+<li><p><strong>ts_mode</strong> (<em>bool</em>) – Whether to treat data as timeseries.</p></li>
+<li><p><strong>ts_mode_datetime_col</strong> (<em>str</em>) – Datetime column for timeseries.</p></li>
+<li><p><strong>crs</strong> (<em>str</em>) – Coordinate reference system for geometry data.</p></li>
+<li><p><strong>num_cat_perc_threshold</strong> (<em>float</em>) – Threshold for treating numeric as categorical.</p></li>
+<li><p><strong>max_freq_distr</strong> (<em>int</em>) – Max number of frequency distribution bins.</p></li>
+<li><p><strong>eps_distance</strong> (<em>int</em>) – Distance tolerance for geometry heatmap calculations.</p></li>
+<li><p><strong>extra_geometry_columns</strong> (<em>list</em>) – Additional geometry columns to consider.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the images.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Types dictionary mapping column to detected type info.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_single_text">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_single_text</code><span class="sig-paren">(</span><em>my_file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_single_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_single_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for a text file that exists in the given path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>my_file_path</strong> (<em>str</em>) – the path to a text file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict which contains the results of the profiler for the text.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.type_detection_with_config">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">type_detection_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/tabular_timeseries/profiler.html#type_detection_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.type_detection_with_config" title="Permalink to this definition"></a></dt>
+<dd><p>This method performs type detection on tabular or timeseries data and writes the resulting type detection dictionary based on a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – a dictionary with all configuration settings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.profile_multiple_texts">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">profile_multiple_texts</code><span class="sig-paren">(</span><em>my_folder_path: str</em>, <em>text_format: str = 'txt'</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#profile_multiple_texts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.profile_multiple_texts" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method performs profiling and generates a profiling dictionary for the text files that exist in the given folder path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>my_folder_path</strong> (<em>str</em>) – the path to a folder that has text files.</li>
-<li><strong>text_format</strong> (<em>str</em><em>, </em><em>optional</em>) – the suffix of the texts that exist in the given folder path.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dict which contains the results of the profiler for the texts.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stelardataprofiler.write_to_json">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">write_to_json</code><span class="sig-paren">(</span><em>output_dict: dict, output_file: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#write_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.write_to_json" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="stelardataprofiler.write_to_json">
+<span class="sig-prename descclassname"><span class="pre">stelardataprofiler.</span></span><span class="sig-name descname"><span class="pre">write_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/stelardataprofiler/utils.html#write_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stelardataprofiler.write_to_json" title="Permalink to this definition"></a></dt>
 <dd><p>Write the profile dictionary to a file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>output_dict</strong> (<em>dict</em>) – the profile dictionary that will writen.</li>
-<li><strong>output_file</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – The name or the path of the file to generate including the extension (.json).</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_dict</strong> (<em>dict</em>) – the profile dictionary that will writen.</p></li>
+<li><p><strong>output_file</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – The name or the path of the file to generate including the extension (.json).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a dict which contains the results of the profiler for the texts.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a dict which contains the results of the profiler for the texts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="stelardataprofiler.read_config">
-<code class="descclassname">stelardataprofiler.</code><code class="descname">read_config</code><span class="sig-paren">(</span><em>json_file: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/stelardataprofiler/profiler.html#read_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stelardataprofiler.read_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method reads configuration settings from a json file. Configuration includes all parameters for input/output.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>json_file</strong> (<em>str</em>) – path to .json file that contains the configuration parameters.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary with all configuration settings.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
+</section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="data-profiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="stelardataprofiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Panagiotis Betchavas.</p>
+    <p>&#169; Copyright 2025, Panagiotis Betchavas.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

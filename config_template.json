@@ -1,27 +1,32 @@
 {
 	"input": {
-		"path": "datasets/tabular/csv",
-		"file": "tabular_vector_example.csv",
-		"format": ".csv",
+		"files": "datasets/tabular_vector_example.csv",
 		"_COMMENT_format_options_" : [".csv", ".txt", ".tif", ".rdf", "..."],
-		"separator": "|",
+		"sep": "|",
 		"header": 0,
 		"serialization" : "turtle",
 		"_COMMENT_serialization_options_" : ["application/rdf+xml (DEFAULT)", "nquads", "nquads", "turtle", "ntriples", "trig", "trix", "jsonld", "hdt", "..."],
-		"columns" : {	
+		"_COMMENT_parameters": "Optional parameters for timeseries and tabular cases",
+		"light_mode": false,
+		"num_cat_perc_threshold": 0.5,
+		"max_freq_distr": 10,
+		"_COMMENT_ts_parameters": "Parameters for timeseries cases",
+		"ts_mode": false,
+		"ts_mode_datetime_col" : "date",
+		"_COMMENT_tabular_parameters": "Parameters for tabular cases",
+		"crs": "EPSG:4326",
+		"eps_distance": 1000,
+		"extra_geometry_columns" : [{
 			"longitude": "lon",
-			"latitude": "lat",
-			"wkt": "wkt",
-			"time": "date" 
-		}
+			"latitude": "lat"
+		}]
 	},
 	"output": {
-		"path": "output",
-		"json": "json/tabular_vector_profile.json",
-		"html": "html/tabular_vector_profile.html",
-		"rdf": "results.rdf",
+		"json": "output/json/tabular_vector_profile.json",
+		"rdf": "output/json/results.rdf",
 		"serialization" : "nquads",
 		"_COMMENT_serialization_options_" : ["nquads (DEFAULT)", "turtle", "ntriples", "trig", "trix", "jsonld", "hdt"]
+
 	},
 	"profile": {
 		"type": "tabular",

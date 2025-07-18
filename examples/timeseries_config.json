@@ -1,19 +1,17 @@
 {
 	"input": {
-		"path": "../datasets/timeseries",
-		"file": "one_timeseries_example.csv",
-		"format": ".csv",
-		"separator": ",",
+		"files": "../datasets/timeseries/one_timeseries_example.csv",
+		"sep": ",",
 		"header": 0,
-		"columns" : {	
-			"time": "date" 
-		}
+		"ts_mode_datetime_col" : "date",
+		"_comment": "Optional parameters",
+		"light_mode": false,
+		"num_cat_perc_threshold": 0.5,
+		"max_freq_distr": 10
 	},
 	"output": {
-		"path": "./output",
-		"json": "timeseries_profile.json",
-		"html": "timeseries_profile.html",
-		"rdf": "timeseries_results.rdf",
+		"json": "./output/timeseries_profile.json",
+		"rdf": "./output/timeseries_results.rdf",
 		"serialization" : "turtle"
 	},
 	"profile": {

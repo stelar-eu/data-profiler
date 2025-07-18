@@ -1,5 +1,5 @@
-data-profiler
-=============
+stelardataprofiler
+==================
 
 .. toctree::
    :maxdepth: 4
