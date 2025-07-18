@@ -26,7 +26,7 @@ JSON file and execute an enhanced (more user-controlled) profiling task.
 | Data Type       | Description                                                  | Required Parameters   |
 |-----------------|--------------------------------------------------------------|-----------------------|
 | **Unsupported** | Type is not currently supported                              | None                  |
-| **Datetime**    | Date or time-related values                                  | None                  |
+| **DateTime**    | Date or time-related values                                  | None                  |
 | **Geometry**    | Geospatial data (points, shapes)                             | `crs`, `eps_distance` |
 | **Categorical** | Discrete, labeled values                                     | None                  |
 | **Textual**     | Free-form text data                                          | None                  |
@@ -50,7 +50,7 @@ After detection, users can manually override the detected data types **as long a
 | **Textual**     | Categorical, Unsupported                                                       |
 | **Boolean**     | Numeric*, Categorical, Textual, Unsupported                                    |
 | **Geometry**    | Categorical, Textual, Unsupported                                              |
-| **Datetime**    | Categorical, Textual, Unsupported                                              |
+| **DateTime**    | Categorical, Textual, Unsupported                                              |
 
 > 🚫 Incompatible conversions (e.g., Boolean → Geometry, Categorical → Numeric 
 > if we do not only have numeric data or Boolean → Numeric if we have true or false values 
