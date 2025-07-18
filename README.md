@@ -1,8 +1,6 @@
 
 # stelardataprofiler
 
-## Overview
-
 stelardataprofiler is a Python library providing various functions for profiling different types of data and files.
 
 ## Quick start
