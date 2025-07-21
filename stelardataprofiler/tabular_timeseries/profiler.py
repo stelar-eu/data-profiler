@@ -428,26 +428,26 @@ def __calculate_variable_stats(df: pd.DataFrame, types_dict: dict, generic_dict:
         if var_general['hashable'] and not light_mode:
             var_type = var_dict['type'].lower()
           
-            if var_dict['type'] == 'datetime':
+            if var_type == 'datetime':
                 describe_datetime(df[column], var_dict)
 
-            if var_dict['type'] == 'boolean':
+            if var_type == 'boolean':
                 describe_boolean(df[column], var_dict, column)
 
-            if var_dict['type'] == 'numeric':
+            if var_type == 'numeric':
                 describe_numeric(df[column], var_dict, column, types_dict[column]['max_freq_distr'])
 
-            if var_dict['type'] == 'timeseries':
+            if var_type == 'timeseries':
                 describe_timeseries(df[column], var_dict, column, types_dict[column]['max_freq_distr'],
                                     gaps_variable_dict[column])
 
-            if var_dict['type'] == 'categorical':
+            if var_type == 'categorical':
                 describe_categorical(df[column], var_dict, column)
 
-            if var_dict['type'] == 'textual':
+            if var_type == 'textual':
                 describe_textual(df[column], var_dict, column)
 
-            if var_dict['type'] == 'geometry':
+            if var_type == 'geometry':
                 describe_geometry(df[column], var_dict, column, types_dict[column]['crs'],
                                   types_dict[column]['eps_distance'])
 
