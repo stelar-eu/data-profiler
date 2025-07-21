@@ -15,7 +15,7 @@ Please see [here](https://stelar-eu.github.io/data-profiler/).
 
 In tabular and timeseries, the profiler automatically analyzes each column in the 
 input data and assigns one of the following eight supported data types. 
-The result can be stored in either on a dictionary or a JSON file, which the user 
+The result can be stored either in a dictionary or a JSON file, which the user 
 can review and modify if needed. The user may provide the modified dictionary or 
 JSON file and execute an enhanced (more user-controlled) profiling task.
 
