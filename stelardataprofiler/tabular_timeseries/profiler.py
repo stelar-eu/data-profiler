@@ -426,26 +426,28 @@ def __calculate_variable_stats(df: pd.DataFrame, types_dict: dict, generic_dict:
         }
 
         if var_general['hashable'] and not light_mode:
-            if var_dict['type'] == 'DateTime':
+            var_type = var_dict['type'].lower()
+          
+            if var_dict['type'] == 'datetime':
                 describe_datetime(df[column], var_dict)
 
-            if var_dict['type'] == 'Boolean':
+            if var_dict['type'] == 'boolean':
                 describe_boolean(df[column], var_dict, column)
 
-            if var_dict['type'] == 'Numeric':
+            if var_dict['type'] == 'numeric':
                 describe_numeric(df[column], var_dict, column, types_dict[column]['max_freq_distr'])
 
-            if var_dict['type'] == 'TimeSeries':
+            if var_dict['type'] == 'timeseries':
                 describe_timeseries(df[column], var_dict, column, types_dict[column]['max_freq_distr'],
                                     gaps_variable_dict[column])
 
-            if var_dict['type'] == 'Categorical':
+            if var_dict['type'] == 'categorical':
                 describe_categorical(df[column], var_dict, column)
 
-            if var_dict['type'] == 'Textual':
+            if var_dict['type'] == 'textual':
                 describe_textual(df[column], var_dict, column)
 
-            if var_dict['type'] == 'Geometry':
+            if var_dict['type'] == 'geometry':
                 describe_geometry(df[column], var_dict, column, types_dict[column]['crs'],
                                   types_dict[column]['eps_distance'])
 
