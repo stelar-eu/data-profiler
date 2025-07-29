@@ -93,9 +93,8 @@ def read_tabular_timeseries(input_path: Union[str, pd.DataFrame, gpd.GeoDataFram
         if ts_mode_datetime_col not in df.columns:
             raise KeyError(f"Date column '{ts_mode_datetime_col}' not found in CSV headers")
 
-        df[ts_mode_datetime_col] = pd.to_datetime(
-            df[ts_mode_datetime_col],
-            errors='coerce'
+        df[ts_mode_datetime_col] = to_datetime(
+            df[ts_mode_datetime_col]
         )
 
         # Set datetime index and sort
@@ -207,7 +206,7 @@ def check_if_datetime(series: Union[pd.Series, gpd.GeoSeries]) -> bool:
     """If we can transform data to datetime and at least one is valid date."""
     try:
         # Convert to datetime, errors='coerce' will turn invalid parsing into NaT
-        converted = pd.to_datetime(series, errors='coerce')
+        converted = to_datetime(series)
         # Check if all non-null values were successfully converted
         if converted.notna().all():
             return True

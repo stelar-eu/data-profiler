@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>stelardataprofiler.tabular_timeseries.profiler &mdash; stelardataprofiler 0.0.1 documentation</title>
+  <title>stelardataprofiler.tabular_timeseries.profiler &mdash; stelardataprofiler 0.0.2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -121,17 +121,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;input_path&#39;</span><span class="p">:</span> <span class="n">input_path</span><span class="p">,</span>
-            <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">header</span><span class="p">,</span>
-            <span class="s1">&#39;sep&#39;</span><span class="p">:</span> <span class="n">sep</span><span class="p">,</span>
-            <span class="s1">&#39;light_mode&#39;</span><span class="p">:</span> <span class="n">light_mode</span><span class="p">,</span>
-            <span class="s1">&#39;num_cat_perc_threshold&#39;</span><span class="p">:</span> <span class="n">num_cat_perc_threshold</span><span class="p">,</span>
-            <span class="s1">&#39;max_freq_distr&#39;</span><span class="p">:</span> <span class="n">max_freq_distr</span><span class="p">,</span>
-            <span class="s1">&#39;ts_mode&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;extra_geometry_columns&#39;</span><span class="p">:</span> <span class="n">extra_geometry_columns</span><span class="p">,</span>
-            <span class="s1">&#39;crs&#39;</span><span class="p">:</span> <span class="n">crs</span><span class="p">,</span>
-            <span class="s1">&#39;eps_distance&#39;</span><span class="p">:</span> <span class="n">eps_distance</span>
-        <span class="p">}</span>
+        <span class="s1">&#39;input_path&#39;</span><span class="p">:</span> <span class="n">input_path</span><span class="p">,</span>
+        <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">header</span><span class="p">,</span>
+        <span class="s1">&#39;sep&#39;</span><span class="p">:</span> <span class="n">sep</span><span class="p">,</span>
+        <span class="s1">&#39;light_mode&#39;</span><span class="p">:</span> <span class="n">light_mode</span><span class="p">,</span>
+        <span class="s1">&#39;num_cat_perc_threshold&#39;</span><span class="p">:</span> <span class="n">num_cat_perc_threshold</span><span class="p">,</span>
+        <span class="s1">&#39;max_freq_distr&#39;</span><span class="p">:</span> <span class="n">max_freq_distr</span><span class="p">,</span>
+        <span class="s1">&#39;ts_mode&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;extra_geometry_columns&#39;</span><span class="p">:</span> <span class="n">extra_geometry_columns</span><span class="p">,</span>
+        <span class="s1">&#39;crs&#39;</span><span class="p">:</span> <span class="n">crs</span><span class="p">,</span>
+        <span class="s1">&#39;eps_distance&#39;</span><span class="p">:</span> <span class="n">eps_distance</span>
+    <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">__profiler_tabular_timeseries</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">)</span></div>
 
@@ -498,26 +498,28 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">var_general</span><span class="p">[</span><span class="s1">&#39;hashable&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">light_mode</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DateTime&#39;</span><span class="p">:</span>
+            <span class="n">var_type</span> <span class="o">=</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;datetime&#39;</span><span class="p">:</span>
                 <span class="n">describe_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Boolean&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;boolean&#39;</span><span class="p">:</span>
                 <span class="n">describe_boolean</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Numeric&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;numeric&#39;</span><span class="p">:</span>
                 <span class="n">describe_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;max_freq_distr&#39;</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TimeSeries&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">:</span>
                 <span class="n">describe_timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;max_freq_distr&#39;</span><span class="p">],</span>
                                     <span class="n">gaps_variable_dict</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Categorical&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;categorical&#39;</span><span class="p">:</span>
                 <span class="n">describe_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Textual&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;textual&#39;</span><span class="p">:</span>
                 <span class="n">describe_textual</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">var_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Geometry&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s1">&#39;geometry&#39;</span><span class="p">:</span>
                 <span class="n">describe_geometry</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">var_dict</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;crs&#39;</span><span class="p">],</span>
                                   <span class="n">types_dict</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="s1">&#39;eps_distance&#39;</span><span class="p">])</span>
 

@@ -49,17 +49,17 @@ def profile_tabular(input_path: Union[str, pd.DataFrame, gpd.GeoDataFrame],
     """
 
     input_dict = {
-            'input_path': input_path,
-            'header': header,
-            'sep': sep,
-            'light_mode': light_mode,
-            'num_cat_perc_threshold': num_cat_perc_threshold,
-            'max_freq_distr': max_freq_distr,
-            'ts_mode': False,
-            'extra_geometry_columns': extra_geometry_columns,
-            'crs': crs,
-            'eps_distance': eps_distance
-        }
+        'input_path': input_path,
+        'header': header,
+        'sep': sep,
+        'light_mode': light_mode,
+        'num_cat_perc_threshold': num_cat_perc_threshold,
+        'max_freq_distr': max_freq_distr,
+        'ts_mode': False,
+        'extra_geometry_columns': extra_geometry_columns,
+        'crs': crs,
+        'eps_distance': eps_distance
+    }
 
     return __profiler_tabular_timeseries(input_dict, types_dict)
 
@@ -427,7 +427,7 @@ def __calculate_variable_stats(df: pd.DataFrame, types_dict: dict, generic_dict:
 
         if var_general['hashable'] and not light_mode:
             var_type = var_dict['type'].lower()
-          
+            
             if var_type == 'datetime':
                 describe_datetime(df[column], var_dict)
 
