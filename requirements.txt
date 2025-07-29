@@ -40,3 +40,4 @@ python-Levenshtein==0.20.9
 numba==0.58.1
 typing_extensions==4.12.2
 param==1.13.0
+cramjam==2.10.0
