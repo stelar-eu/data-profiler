@@ -55,11 +55,11 @@ After detection, users can manually override the detected data types **as long a
 
 ### Parameter Reference
 
-| Parameter        | Used By             | Description                                                       |
-|------------------|---------------------|-------------------------------------------------------------------|
-| `max_freq_distr` | Numeric, TimeSeries | Maximum number of bins for frequency distribution visualizations  |
-| `eps_distance`   | Geometry            | Distance tolerance for spatial clustering in geometry heatmaps    |
-| `crs`            | Geometry            | Coordinate Reference System used for interpreting geospatial data |
+| Parameter        | Used By             | Description                                                               |
+|------------------|---------------------|---------------------------------------------------------------------------|
+| `max_freq_distr` | Numeric, TimeSeries | Top-K most frequent values to be displayed in the frequency distribution. |
+| `eps_distance`   | Geometry            | Distance tolerance for spatial clustering in geometry heatmaps            |
+| `crs`            | Geometry            | Coordinate Reference System used for interpreting geospatial data         |
 
 
 ## Installation
