@@ -36,7 +36,7 @@ def profile_tabular(input_path: Union[str, pd.DataFrame, gpd.GeoDataFrame],
     :type crs: str
     :param num_cat_perc_threshold: Threshold for treating numeric as categorical.
     :type num_cat_perc_threshold: float
-    :param max_freq_distr: Max number of frequency distribution bins.
+    :param max_freq_distr: Top-K most frequent values to be displayed in the frequency distribution.
     :type max_freq_distr: int
     :param eps_distance: Distance tolerance for geometry heatmap calculations.
     :type eps_distance: int
@@ -143,7 +143,7 @@ def profile_timeseries(input_path: Union[str, pd.DataFrame],
        :type light_mode: bool
        :param num_cat_perc_threshold: Threshold for treating numeric as categorical.
        :type num_cat_perc_threshold: float
-       :param max_freq_distr: Maximum bins for frequency distribution.
+       :param max_freq_distr: Top-K most frequent values to be displayed in the frequency distribution.
        :type max_freq_distr: int
        :param types_dict: Pre-computed types dictionary to use instead of detecting.
        :type types_dict: dict or None
@@ -241,7 +241,7 @@ def type_detection(input_path: Union[str, pd.DataFrame, gpd.GeoDataFrame],
    :type crs: str
    :param num_cat_perc_threshold: Threshold for treating numeric as categorical.
    :type num_cat_perc_threshold: float
-   :param max_freq_distr: Max number of frequency distribution bins.
+   :param max_freq_distr: Top-K most frequent values to be displayed in the frequency distribution.
    :type max_freq_distr: int
    :param eps_distance: Distance tolerance for geometry heatmap calculations.
    :type eps_distance: int
