@@ -14,8 +14,8 @@ Please see [here](https://stelar-eu.github.io/data-profiler/).
 
 | Profiler Type | Supported File Extensions               |
 |---------------|---------------------------------------|
-| timeseries    | `.csv`, `.xlsx`, `.xls`                |
-| tabular       | `.csv`, `.xlsx`, `.xls`, `.shp`       |
+| timeseries    | `.csv`               |
+| tabular       | `.csv`, `.shp`       |
 | raster        | `.tif`, `.tiff`, `.img`, `.vrt`, `.nc`, `.grd`, `.asc`, `.jp2`, `.hdf`, `.hdr`, `.bil`, `.png` |
 | textual       | `.txt`                                |
 | hierarchical  | `.json`                               |
