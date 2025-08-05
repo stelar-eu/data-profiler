@@ -10,7 +10,7 @@ Please see the provided [notebooks](https://github.com/stelar-eu/data-profiler/t
 
 Please see [here](https://stelar-eu.github.io/data-profiler/).
 
-# Profiler Types and Their Supported File Extensions
+## Profiler Types and Their Supported File Extensions
 
 | Profiler Type | Supported File Extensions               |
 |---------------|---------------------------------------|
