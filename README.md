@@ -10,6 +10,17 @@ Please see the provided [notebooks](https://github.com/stelar-eu/data-profiler/t
 
 Please see [here](https://stelar-eu.github.io/data-profiler/).
 
+# Profiler Types and Their Supported File Extensions
+
+| Profiler Type | Supported File Extensions               |
+|---------------|---------------------------------------|
+| timeseries    | `.csv`, `.xlsx`, `.xls`                |
+| tabular       | `.csv`, `.xlsx`, `.xls`, `.shp`       |
+| raster        | `.tif`, `.tiff`, `.img`, `.vrt`, `.nc`, `.grd`, `.asc`, `.jp2`, `.hdf`, `.hdr`, `.bil`, `.png` |
+| textual       | `.txt`                                |
+| hierarchical  | `.json`                               |
+| rdfGraph      | `.ttl`, `.turtle`, `.rdf`, `.owl`, `.xml`, `.nt`, `.nq`, `.trig`, `.jsonld`, `.n3`             |
+
 ## Type Detection - Customize the profiler
 
 In tabular and timeseries, the profiler automatically analyzes each column in the 
