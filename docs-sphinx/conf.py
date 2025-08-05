@@ -9,15 +9,20 @@
 project = 'stelardataprofiler'
 copyright = '2025, Panagiotis Betchavas'
 author = 'Panagiotis Betchavas'
-release = '0.0.2'
+release = '0.0.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
+    'sphinx.ext.githubpages'
+]
+
+autodoc_mock_imports = [
+    "stelardataprofiler.tabular_timeseries.variables"
 ]
 
 templates_path = ['_templates']
