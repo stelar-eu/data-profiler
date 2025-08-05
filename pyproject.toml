@@ -13,6 +13,7 @@ authors = [
 requires-python = ">=3.8, <3.13, !=3.9.7"
 license = { file = "LICENSE" }
 dependencies = [
+    "jupyter-server==1.24.0",
     "jupyter==1.0.0",
     "DataProfiler==0.8.9",
     "panel==0.12.4",
@@ -40,7 +41,7 @@ dependencies = [
     "streamlit-option-menu==0.3.6",
     "protobuf==3.20.0",
     "plotly==5.15.0",
-    "minio==7.1.15",
+    "altair==5.0.1",
     "streamlit-folium==0.22.1",
     "python-dateutil==2.8.2",
     "IPython==8.12.2",
@@ -53,6 +54,7 @@ dependencies = [
     "spacy-language-detection==0.2.1",
     "python-Levenshtein==0.20.9",
     "numba==0.58.1",
+    "llvmlite==0.41.0",
     "typing_extensions==4.12.2",
     "param==1.13.0",
     "cramjam==2.10.0"

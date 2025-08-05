@@ -21,10 +21,6 @@ extensions = [
     'sphinx.ext.githubpages'
 ]
 
-autodoc_mock_imports = [
-    "stelardataprofiler.tabular_timeseries.variables"
-]
-
 templates_path = ['_templates']
 exclude_patterns = []
 

@@ -1,3 +1,6 @@
+import os
+os.environ["NUMBA_DISABLE_CUDA"] = "1"
+
 from .raster.profiler import (profile_raster,
                               profile_vista_rasters,
                               profile_raster_with_config,
@@ -39,11 +42,11 @@ __all__ = [
 
     # Text profilers
     'profile_text',
-    'profile_text_with_config'
+    'profile_text_with_config',
 
     # General profilers
     'run_profile',
-    'prepare_mapping'
+    'prepare_mapping',
 
     # Read + Write
     'read_config',
