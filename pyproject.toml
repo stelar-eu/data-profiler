@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stelardataprofiler"
-version = "0.0.3"
+version = "0.0.4"
 description = "stelardataprofiler is a Python library providing various functions for profiling different types of data and files."
 readme = "README.md"
 authors = [
